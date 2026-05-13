@@ -1,6 +1,6 @@
 {
   "name": "Rabbit Hole",
-  "description": "Collate, organise and share your browser histroy!",
+  "description": "Collate, organise and share your browser history!",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
