@@ -1,3 +1,7 @@
+/*
+	Controls the javascript documentation on the popup
+*/
+
 document.addEventListener('DOMContentLoaded', function () {
 	document.getElementById("RabbitHole_Btn").addEventListener('click', () => {
 		chrome.tabs.create({'url': chrome.runtime.getURL('index.html')});
