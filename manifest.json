@@ -10,7 +10,6 @@
   "background": {},
   "permissions": [
   "storage",
-  "history",
-  "offscreen"
+  "history"
   ]
 }

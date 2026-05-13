@@ -1,13 +1,12 @@
 /*
 	Controls the javascript documentation on the popup page
 */
-let offscreenPromise;
 document.addEventListener('DOMContentLoaded', function () {
 	/*
 	 * we'll want a start/end
 	 */
-	document.getElementById("RabbitHole_Record").addEventListener('click', () => {
-		createRemoveDocument('offscreen.html');
+	document.getElementById("RabbitHole_Record").addEventListener('click', async () => {
+		startTimer();
 	});
 
 	document.getElementById("RabbitHole_Index").addEventListener('click', () => {
@@ -15,41 +14,20 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
 });
 
-async function createRemoveDocument(path) {
-	// Check all windows controlled by the service worker to see if one
-	// of them is the offscreen document with the given path
-	const offscreenUrl = chrome.runtime.getURL(path);
-	const existingContexts = await chrome.runtime.getContexts({
-		contextTypes: ['OFFSCREEN_DOCUMENT'],
-		documentUrls: [offscreenUrl]
-	});
-
-	if (existingContexts.length > 0) {
-		console.log("Stopping");
-		chrome.offscreen.closeDocument();
-		return;
+async function startTimer() {
+	const data = await chrome.storage.session.get(["rabbit_hole_startTime"]);
+	const startTime = data.rabbit_hole_startTime;
+	if (startTime)
+	{
+		console.log("history getting");
+		const history = await chrome.history.search(
+			{
+				text: "",
+				startTime:startTime,
+			});
+		await chrome.storage.session.remove(["rabbit_hole_startTime"]);
 	}
-
-	// create offscreen document
-	if (offscreenPromise) {
-		await offscreenPromise;
-	} else {
-		console.log("Starting");
-		offscreenPromise = chrome.offscreen.createDocument({
-			url: path,
-			reasons: ['WORKERS'],
-			justification: 'Creating History Worker',
-		});
-		await offscreenPromise;
-		offscreenPromise = null;
+	else {
+		await chrome.storage.session.set({rabbit_hole_startTime: Date.now()});
 	}
 }
-/*
- * chrome.action.onClicked.addListener(function(tab) {
- *	chrome.tabs.create({'url': chrome.runtime.getURL('index.html')},
- *	function(tab) {
- *		// Tab opened.
- *	});
- * });
- */
-
