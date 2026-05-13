@@ -7,9 +7,10 @@
     "default_popup": "popup.html",
     "default_icon": "assets/rbe_logo_390.png"
   },
-  "background": {"service_worker": "gethistory.js"},
+  "background": {},
   "permissions": [
   "storage",
-  "history"
+  "history",
+  "offscreen"
   ]
 }
