@@ -17,15 +17,20 @@ document.addEventListener('DOMContentLoaded', function () {
 async function startTimer() {
 	const data = await chrome.storage.session.get(["rabbit_hole_startTime"]);
 	const startTime = data.rabbit_hole_startTime;
-	if (startTime)
-	{
+	if (startTime) {
 		console.log("history getting");
 		const history = await chrome.history.search(
 			{
 				text: "",
 				startTime:startTime,
 			});
+		console.log(history);
 		await chrome.storage.session.remove(["rabbit_hole_startTime"]);
+		const newSession = {};
+		const rabbit_hole_name = `rabbit_hole_session_${Date.now()}`;
+		newSession[rabbit_hole_name] = history
+
+		await chrome.storage.local.set(newSession);
 	}
 	else {
 		await chrome.storage.session.set({rabbit_hole_startTime: Date.now()});
