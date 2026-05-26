@@ -1,0 +1,16 @@
+{
+  "name": "rabbit-hole-browser-extension",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:index": "esbuild src/index.jsx --bundle --format=iife --outfile=homepage.js --jsx=automatic"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.1"
+  }
+}
