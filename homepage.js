@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	console.log("Getting keys")
 	await GetHistory();
 });
-
+})
 async function GetHistory() {
 	const keyList = await chrome.storage.local.getKeys();
 
