@@ -1,7 +1,7 @@
 export default function makeTag(historyEntry) {
   return new Promise((resolve, reject) => {
     try {
-      const tag = "derp"
+      const tag = "derp";
 
       resolve({
         ...historyEntry,
@@ -10,6 +10,5 @@ export default function makeTag(historyEntry) {
     } catch (error) {
       reject(error);
     }
-
   });
 }
