@@ -30,9 +30,9 @@ async function startTimer() {
     await chrome.storage.session.remove(["rabbit_hole_startTime"]);
     const newSession = {};
     const rabbit_hole_name = `rabbit_hole_session_${Date.now()}`;
-    newSession[rabbit_hole_name] = history
+    newSession[rabbit_hole_name] = history;
 
-    //Making tags here for now so we Have them
+    // Making tags here for now so we have them.
     const taggedHistory = [];
 
     console.log(newSession);
@@ -42,8 +42,7 @@ async function startTimer() {
     }
     newSession[rabbit_hole_name] = taggedHistory;
     await chrome.storage.local.set(newSession);
-  }
-  else {
+  } else {
     await chrome.storage.session.set({ rabbit_hole_startTime: Date.now() });
   }
 }

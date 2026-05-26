@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:index": "esbuild src/index.jsx --bundle --format=iife --outfile=homepage.js --jsx=automatic"
+    "build:index": "esbuild src/index.jsx --bundle --format=iife --outfile=dist/homepage.js --jsx=automatic",
+    "build:popup": "esbuild src/popup.js --bundle --format=iife --outfile=dist/popup.js",
+    "build:gethistory": "esbuild src/gethistory.js --bundle --format=iife --outfile=dist/gethistory.js",
+    "build": "npm run build:index && npm run build:popup && npm run build:gethistory"
   },
   "dependencies": {
     "react": "^18.3.1",

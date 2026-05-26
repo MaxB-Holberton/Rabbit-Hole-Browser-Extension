@@ -4,10 +4,10 @@
  */
 /*
 chrome.history.onVisited.addListener(function (res) {
-	console.log("------ getting history -----");
-	console.log(res);
+  console.log("------ getting history -----");
+  console.log(res);
 });
 */
-chrome.tabs.onCreated.addListener(function(res) {
-	console.log(res);
+chrome.tabs.onCreated.addListener(function (res) {
+  console.log(res);
 });
