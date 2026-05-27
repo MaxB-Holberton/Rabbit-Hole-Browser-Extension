@@ -1084,7 +1084,7 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState3(initialState) {
+          function useState4(initialState) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState);
           }
@@ -1096,7 +1096,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect3(create, deps) {
+          function useEffect4(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1879,7 +1879,7 @@
           exports.useContext = useContext3;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect3;
+          exports.useEffect = useEffect4;
           exports.useId = useId;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useInsertionEffect = useInsertionEffect;
@@ -1887,7 +1887,7 @@
           exports.useMemo = useMemo3;
           exports.useReducer = useReducer;
           exports.useRef = useRef3;
-          exports.useState = useState3;
+          exports.useState = useState4;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -24488,6 +24488,7 @@
 
   // src/index.jsx
   var import_react = __toESM(require_react());
+  var import_react2 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // node_modules/react-router-dom/dist/index.js
@@ -26520,6 +26521,19 @@
     return matchPath(path.pathname, nextPath) != null || matchPath(path.pathname, currentPath) != null;
   }
 
+  // src/history.js
+  async function GetRabbitHoleHistory() {
+    const rtn_history = [];
+    const key_list = await chrome.storage.local.getKeys();
+    for (const key of key_list) {
+      if (key.includes("_session_")) {
+        const history_item = await chrome.storage.local.get(key);
+        rtn_history.push(history_item[key]);
+      }
+    }
+    return rtn_history;
+  }
+
   // src/index.jsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
   function Header() {
@@ -26529,9 +26543,17 @@
     ] }) });
   }
   function ViewNav() {
+    const [sessions, setSessions] = (0, import_react2.useState)([]);
+    (0, import_react2.useEffect)(() => {
+      GetRabbitHoleHistory().then((sessions2) => setSessions(sessions2));
+    }, []);
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", id: "counter", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Topic:" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "You have -- rabbit holes!" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
+        "You have ",
+        sessions.length,
+        " rabbit holes!"
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, { to: "/overview", children: "Overview" }),
         " | ",
@@ -26564,18 +26586,33 @@
     ] });
   }
   function PreviousView() {
-    const cards = Array.from({ length: 6 });
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { id: "white", children: "My Rabbit Holes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "Previous Rabbit Holes" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", id: "previous", children: cards.map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Topic:" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Date:" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Duration:" }) }),
+    const [sessions, setSessions] = (0, import_react2.useState)([]);
+    (0, import_react2.useEffect)(() => {
+      GetRabbitHoleHistory().then((sessions2) => setSessions(sessions2));
+    }, []);
+    const display_sessions = sessions.map(
+      (session, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+          "Topic: ",
+          session.title
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+          "Date: ",
+          session.start_time
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+          "Duration: ",
+          session.end_time - session.start_time
+        ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Pages:" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Save" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Share" })
-      ] }, index)) })
+      ] }, index)
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { id: "white", children: "My Rabbit Holes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "Previous Rabbit Holes" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", id: "previous", children: display_sessions })
     ] });
   }
   function AppShell() {

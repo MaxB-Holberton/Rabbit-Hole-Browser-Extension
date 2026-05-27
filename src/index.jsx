@@ -1,6 +1,8 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
+import { GetRabbitHoleHistory } from "./history.js";
 
 function Header() {
   return (
@@ -14,11 +16,17 @@ function Header() {
 }
 
 function ViewNav() {
+  const [sessions, setSessions] = useState([]);
+
+  useEffect(() => {
+    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
+  }, []);
+
   return (
     <section className="rabbitHole">
       <div className="rabbitHole" id="counter">
         <p>Topic:</p>
-        <p>You have -- rabbit holes!</p>
+        <p>You have {sessions.length} rabbit holes!</p>
         <p>
           <Link to="/overview">Overview</Link> | <Link to="/recent">Most Recent</Link> |{' '}
           <Link to="/previous">Previous</Link>
@@ -66,26 +74,32 @@ function MostRecentView() {
 }
 
 function PreviousView() {
-  const cards = Array.from({ length: 6 });
+  const [sessions, setSessions] = useState([]);
+
+  useEffect(() => {
+    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
+  }, [])
+
+  const display_sessions = sessions.map((session, index) =>
+    <div className="rabbitHole" key={index}>
+      <p><b>Topic: {session.title}</b></p>
+      <p><b>Date: {session.start_time}</b></p>
+      <p><b>Duration: {session.end_time - session.start_time}</b></p>
+      <p><b>Pages:</b></p>
+      <button>Save</button>
+      <button>Share</button>
+    </div>
+  );
 
   return (
     <>
-      <h2 id="white">My Rabbit Holes</h2>
-      <div>
-        <h3 id="white">Previous Rabbit Holes</h3>
-      </div>
-      <section className="rabbitHole" id="previous">
-        {cards.map((_, index) => (
-          <div className="rabbitHole" key={index}>
-            <p><b>Topic:</b></p>
-            <p><b>Date:</b></p>
-            <p><b>Duration:</b></p>
-            <p><b>Pages:</b></p>
-            <button>Save</button>
-            <button>Share</button>
-          </div>
-        ))}
-      </section>
+    <h2 id="white">My Rabbit Holes</h2>
+    <div>
+    <h3 id="white">Previous Rabbit Holes</h3>
+    </div>
+    <section className="rabbitHole" id="previous">
+    {display_sessions}
+    </section>
     </>
   );
 }
