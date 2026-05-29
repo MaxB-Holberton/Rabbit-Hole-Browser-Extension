@@ -1,7 +1,32 @@
+
 /*
- * functions for dealing with getting/setting history & rabbits holes
+ * Time functions for
  */
-export async function RabbitHoleMetadata(hist, start, end) {
+function MiliToDatetime(milis) {
+  return new Date(milis).toLocaleString();
+}
+
+function MiliToTimeString(milis) {
+  let seconds = (milis / 1000);
+  let minutes = (milis / (1000 * 60));
+  let hours = (milis / (1000 * 60 * 60));
+  let days = (milis / (1000 * 60 * 60 * 24));
+  if (seconds < 60) {
+    return seconds + " Sec";
+  }
+  if (minutes < 60) {
+    return minutes + " Min";
+  }
+  if (hours < 24) {
+    return hours + " H";
+  }
+  return days + " D";
+}
+
+/*
+* Adding metadata to Session
+*/
+export function RabbitHoleMetadata(hist, start, end) {
   const rabbit_hole_name = `rabbit_hole_session_${Date.now()}`;
 
   const new_session = {};
@@ -9,14 +34,21 @@ export async function RabbitHoleMetadata(hist, start, end) {
   // create the metadata
   new_session_metadata['title'] = 'New Rabbit Hole Name';
   new_session_metadata['tag_list'] = 'taglist Here';
-  new_session_metadata['start_time'] = start;
-  new_session_metadata['end_time'] = end;
+  new_session_metadata['start_time_ms'] = start;
+  new_session_metadata['end_time_ms'] = end;
+  new_session_metadata['start_time_datetime'] = MiliToDatetime(start);
+  new_session_metadata['end_time_datetime'] = MiliToDatetime(end);
+  new_session_metadata['duration_string'] = MiliToTimeString(end - start);
+  new_session_metadata['session_key'] = rabbit_hole_name;
   new_session_metadata['data'] = hist;
   new_session[rabbit_hole_name] = new_session_metadata;
 
   return (new_session);
 }
 
+/*
+ * Getting the History
+ */
 export async function GetRabbitHoleHistory() {
   const rtn_history = [];
   const key_list = await chrome.storage.local.getKeys();
@@ -30,3 +62,7 @@ export async function GetRabbitHoleHistory() {
 
   return rtn_history;
 }
+// Functions needed
+// Pages added | pages updated | pages deleted
+// Title updated | tags updated |
+// Session Deleted

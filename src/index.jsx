@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { GetRabbitHoleHistory } from "./history.js";
 
+
 function Header() {
   return (
     <header>
@@ -60,37 +61,13 @@ function MostRecentView() {
         <h3 id="white">Most Recent Rabbit Hole</h3>
       </div>
       <section className="rabbitHole">
-        <div className="rabbitHole" id="recent">
-          <p><b>Topic:</b></p>
-          <p><b>Date:</b></p>
-          <p><b>Duration:</b></p>
-          <p><b>Pages:</b></p>
-          <button>Save</button>
-          <button>Share</button>
-        </div>
+        {BuildSessionsDiv()}
       </section>
     </>
   );
 }
 
 function PreviousView() {
-  const [sessions, setSessions] = useState([]);
-
-  useEffect(() => {
-    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
-  }, [])
-
-  const display_sessions = sessions.map((session, index) =>
-    <div className="rabbitHole" key={index}>
-      <p><b>Topic: {session.title}</b></p>
-      <p><b>Date: {session.start_time}</b></p>
-      <p><b>Duration: {session.end_time - session.start_time}</b></p>
-      <p><b>Pages:</b></p>
-      <button>Save</button>
-      <button>Share</button>
-    </div>
-  );
-
   return (
     <>
     <h2 id="white">My Rabbit Holes</h2>
@@ -98,10 +75,35 @@ function PreviousView() {
     <h3 id="white">Previous Rabbit Holes</h3>
     </div>
     <section className="rabbitHole" id="previous">
-    {display_sessions}
+    {BuildSessionsDiv()}
     </section>
     </>
   );
+}
+
+function BuildSessionsDiv() {
+  const [sessions, setSessions] = useState([]);
+
+  useEffect(() => {
+    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
+  }, [])
+
+  const display_sessions = sessions.map((session, index) =>
+  <div className="rabbitHole" key={index}>
+  <p><b>Topic: {session.title}</b></p>
+  <p><b>Date: {session.start_time_datetime}</b></p>
+  <p><b>Duration: {session.duration_string}</b></p>
+  <p><b>Pages:</b></p>
+  {session.data.map((item, index2) =>
+    <div key={index2}>
+    <p><a href={item.url}>{item.title}</a></p>
+    </div>
+  )}
+  <button>Save</button>
+  <button>Share</button>
+  </div>
+  );
+  return display_sessions;
 }
 
 function AppShell() {

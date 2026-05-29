@@ -34,6 +34,8 @@ async function ToggleTimer() {
       await chrome.storage.session.set({ rabbit_hole_startTime: Date.now() });
       return;
     }
+    // Any button changes for RabbitHole_Record should happen here
+    // If possible - lock the button while this is running until it is finished
 
     await chrome.storage.session.remove(["rabbit_hole_startTime"]);
     const end_time = Date.now();
@@ -54,8 +56,12 @@ async function ToggleTimer() {
       console.log("No history found, skipping session save");
       return;
     }
-    const new_session = await RabbitHoleMetadata(taggedHistory, start_time, end_time);
+    const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
     await chrome.storage.local.set(new_session);
+
+    // If possible - unlock the button here so user knows their session has been saved
+    // add some form of notification for the user to know their session was successful/unsuccessful
+
   } catch (error) {
     console.error("TOGGLETIMER ERROR:", error);
   }
