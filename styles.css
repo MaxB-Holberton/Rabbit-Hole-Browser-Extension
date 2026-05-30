@@ -2,8 +2,26 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: Verdana;
 }
 
+.popupBody {
+  background-color: white;
+  padding: 5%;
+}
+.popupBody h1 {
+  font-size: 25px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+.popupBody p {
+  text-align: left;
+  font-family: 'Cause', Verdana;
+  font-size: 15px;
+}
+.popupBody button {
+  font-family: 'Cause', Verdana;
+}
 html, body {
   min-height: 100%;
 }
@@ -54,6 +72,8 @@ nav {
 }
 body {
   background-color: black;
+}
+#root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -109,5 +129,4 @@ div#counter button:first-of-type {
 footer {
   background-color: white;
   color: black;
-  margin-top: auto;
 }
