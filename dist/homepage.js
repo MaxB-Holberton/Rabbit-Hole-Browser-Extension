@@ -26567,8 +26567,15 @@
   function OverviewView() {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { id: "white", children: "My Rabbit Holes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "SPA Overview" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "rabbitHole", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Use the links above to switch views." }) }) }) })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "Overview" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Ready to explore your rabbit holes?" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Use the links above to switch views." }) })
+      ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "How does Rabbit Hole Explorer work?" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!" })
+      ] }) })
     ] });
   }
   function MostRecentView() {
@@ -26593,6 +26600,8 @@
     const display_sessions = sessions.map((session, index) => {
       const sessionPages = Array.isArray(session?.data) ? session.data : [];
       return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Edit" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Delete" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
           "Topic: ",
           session.title

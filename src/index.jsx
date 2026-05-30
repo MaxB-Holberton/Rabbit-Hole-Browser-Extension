@@ -42,11 +42,18 @@ function OverviewView() {
     <>
       <h2 id="white">My Rabbit Holes</h2>
       <div>
-        <h3 id="white">SPA Overview</h3>
+        <h3 id="white">Overview</h3>
       </div>
       <section className="rabbitHole">
         <div className="rabbitHole">
+          <p>Ready to explore your rabbit holes?</p>
           <p><b>Use the links above to switch views.</b></p>
+        </div>
+      </section>
+            <section className="rabbitHole">
+        <div className="rabbitHole">
+          <p><b>How does Rabbit Hole Explorer work?</b></p>
+          <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
         </div>
       </section>
     </>
@@ -93,6 +100,8 @@ function BuildSessionsDiv() {
 
     return (
       <div className="rabbitHole" key={index}>
+        <button>Edit</button>
+        <button>Delete</button>
         <p><b>Topic: {session.title}</b></p>
         <p><b>Date: {session.start_time_datetime}</b></p>
         <p><b>Duration: {session.duration_string}</b></p>
