@@ -88,21 +88,25 @@ function BuildSessionsDiv() {
     GetRabbitHoleHistory().then(sessions => setSessions(sessions));
   }, [])
 
-  const display_sessions = sessions.map((session, index) =>
-  <div className="rabbitHole" key={index}>
-  <p><b>Topic: {session.title}</b></p>
-  <p><b>Date: {session.start_time_datetime}</b></p>
-  <p><b>Duration: {session.duration_string}</b></p>
-  <p><b>Pages:</b></p>
-  {session.data.map((item, index2) =>
-    <div key={index2}>
-    <p><a href={item.url}>{item.title}</a></p>
-    </div>
-  )}
-  <button>Save</button>
-  <button>Share</button>
-  </div>
-  );
+  const display_sessions = sessions.map((session, index) => {
+    const sessionPages = Array.isArray(session?.data) ? session.data : [];
+
+    return (
+      <div className="rabbitHole" key={index}>
+        <p><b>Topic: {session.title}</b></p>
+        <p><b>Date: {session.start_time_datetime}</b></p>
+        <p><b>Duration: {session.duration_string}</b></p>
+        <p><b>Pages:</b></p>
+        {sessionPages.map((item, index2) => (
+          <div key={index2}>
+            <p><a href={item.url}>{item.title}</a></p>
+          </div>
+        ))}
+        <button>Save</button>
+        <button>Share</button>
+      </div>
+    );
+  });
   return display_sessions;
 }
 
