@@ -26575,17 +26575,17 @@
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { id: "white", children: "My Rabbit Holes" }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "Most Recent Rabbit Hole" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", id: "recent", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Topic:" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Date:" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Duration:" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Pages:" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Save" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Share" })
-      ] }) })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", children: BuildSessionsDiv() })
     ] });
   }
   function PreviousView() {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { id: "white", children: "My Rabbit Holes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "Previous Rabbit Holes" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", id: "previous", children: BuildSessionsDiv() })
+    ] });
+  }
+  function BuildSessionsDiv() {
     const [sessions, setSessions] = (0, import_react2.useState)([]);
     (0, import_react2.useEffect)(() => {
       GetRabbitHoleHistory().then((sessions2) => setSessions(sessions2));
@@ -26598,22 +26598,21 @@
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
           "Date: ",
-          session.start_time
+          session.start_time_datetime
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
           "Duration: ",
-          session.end_time - session.start_time
+          session.duration_string
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Pages:" }) }),
+        session.data.map(
+          (item, index2) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: item.url, children: item.title }) }) }, index2)
+        ),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Save" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Share" })
       ] }, index)
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { id: "white", children: "My Rabbit Holes" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "Previous Rabbit Holes" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", id: "previous", children: display_sessions })
-    ] });
+    return display_sessions;
   }
   function AppShell() {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [

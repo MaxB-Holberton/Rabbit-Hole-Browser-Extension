@@ -43,14 +43,37 @@
   }
 
   // src/history.js
-  async function RabbitHoleMetadata(hist, start, end) {
+  function MiliToDatetime(milis) {
+    return new Date(milis).toLocaleString();
+  }
+  function MiliToTimeString(milis) {
+    let seconds = milis / 1e3;
+    let minutes = milis / (1e3 * 60);
+    let hours = milis / (1e3 * 60 * 60);
+    let days = milis / (1e3 * 60 * 60 * 24);
+    if (seconds < 60) {
+      return seconds + " Sec";
+    }
+    if (minutes < 60) {
+      return minutes + " Min";
+    }
+    if (hours < 24) {
+      return hours + " H";
+    }
+    return days + " D";
+  }
+  function RabbitHoleMetadata(hist, start, end) {
     const rabbit_hole_name = `rabbit_hole_session_${Date.now()}`;
     const new_session = {};
     const new_session_metadata = {};
     new_session_metadata["title"] = "New Rabbit Hole Name";
     new_session_metadata["tag_list"] = "taglist Here";
-    new_session_metadata["start_time"] = start;
-    new_session_metadata["end_time"] = end;
+    new_session_metadata["start_time_ms"] = start;
+    new_session_metadata["end_time_ms"] = end;
+    new_session_metadata["start_time_datetime"] = MiliToDatetime(start);
+    new_session_metadata["end_time_datetime"] = MiliToDatetime(end);
+    new_session_metadata["duration_string"] = MiliToTimeString(end - start);
+    new_session_metadata["session_key"] = rabbit_hole_name;
     new_session_metadata["data"] = hist;
     new_session[rabbit_hole_name] = new_session_metadata;
     return new_session;
@@ -90,7 +113,11 @@
         const taggedEntry = await makeTag(entry);
         taggedHistory.push(taggedEntry);
       }
-      const new_session = await RabbitHoleMetadata(taggedHistory, start_time, end_time);
+      if (taggedHistory.length === 0) {
+        console.log("No history found, skipping session save");
+        return;
+      }
+      const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
       await chrome.storage.local.set(new_session);
     } catch (error) {
       console.error("TOGGLETIMER ERROR:", error);
