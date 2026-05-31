@@ -26533,6 +26533,14 @@
     }
     return rtn_history;
   }
+  async function DeleteRabbitHoleSession(session_key) {
+    console.log(session_key);
+    if (confirm("Are you sure you want to delete this rabbit hole?")) {
+      console.log("deleting...");
+      await chrome.storage.local.remove([session_key]);
+      document.getElementById(session_key).remove();
+    }
+  }
 
   // src/index.jsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
@@ -26599,13 +26607,24 @@
     }, []);
     const display_sessions = sessions.map((session, index) => {
       const sessionPages = Array.isArray(session?.data) ? session.data : [];
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
+      const sessionTags = Array.isArray(session?.tag_list) ? session.tag_list : [];
+      ;
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: session.session_key, className: "rabbitHole", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Edit" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Delete" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+          DeleteRabbitHoleSession(session.session_key);
+        }, children: "Delete" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
-          "Topic: ",
-          session.title
+          "Topic:",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { contentEditable: "true", children: [
+            " ",
+            session.title
+          ] })
         ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: sessionTags.map((tag, indextag) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "tag" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "x" })
+        ] }, indextag)) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
           "Date: ",
           session.start_time_datetime
@@ -26614,8 +26633,11 @@
           "Duration: ",
           session.duration_string
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Pages:" }) }),
-        sessionPages.map((item, index2) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: item.url, children: item.title }) }) }, index2)),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Pages:" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: sessionPages.map((item, index2) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { display: "none" }, children: "Delete" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: item.url, children: item.title })
+        ] }, index2)) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Save" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Share" })
       ] }, index);

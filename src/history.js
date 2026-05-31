@@ -33,7 +33,7 @@ export function RabbitHoleMetadata(hist, start, end) {
   const new_session_metadata = {};
   // create the metadata
   new_session_metadata['title'] = 'New Rabbit Hole Name';
-  new_session_metadata['tag_list'] = 'taglist Here';
+  new_session_metadata['tag_list'] = ['newTag'];
   new_session_metadata['start_time_ms'] = start;
   new_session_metadata['end_time_ms'] = end;
   new_session_metadata['start_time_datetime'] = MiliToDatetime(start);
@@ -64,5 +64,19 @@ export async function GetRabbitHoleHistory() {
 }
 // Functions needed
 // Pages added | pages updated | pages deleted
+
 // Title updated | tags updated |
+export async function ToggleSessionEdits(session_key) {
+
+}
+
 // Session Deleted
+export async function DeleteRabbitHoleSession(session_key) {
+  console.log(session_key);
+  if(confirm("Are you sure you want to delete this rabbit hole?"))
+  {
+    console.log("deleting...");
+    await chrome.storage.local.remove([session_key]);
+    document.getElementById(session_key).remove();
+  }
+}

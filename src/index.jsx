@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
-import { GetRabbitHoleHistory } from "./history.js";
+import { GetRabbitHoleHistory, DeleteRabbitHoleSession } from "./history.js";
 
 
 function Header() {
@@ -97,20 +97,31 @@ function BuildSessionsDiv() {
 
   const display_sessions = sessions.map((session, index) => {
     const sessionPages = Array.isArray(session?.data) ? session.data : [];
-
+    const sessionTags = Array.isArray(session?.tag_list) ? session.tag_list : [];;
+    // For Each tag | create a span that can be edited when the edit button is clicked
+    // display a delete button to delete a tag
+    // place it in a div so all spans within that div are collected and updated
     return (
-      <div className="rabbitHole" key={index}>
+      <div id={session.session_key} className="rabbitHole" key={index}>
         <button>Edit</button>
-        <button>Delete</button>
-        <p><b>Topic: {session.title}</b></p>
-        <p><b>Date: {session.start_time_datetime}</b></p>
-        <p><b>Duration: {session.duration_string}</b></p>
-        <p><b>Pages:</b></p>
-        {sessionPages.map((item, index2) => (
-          <div key={index2}>
-            <p><a href={item.url}>{item.title}</a></p>
+        <button onClick={() => { DeleteRabbitHoleSession(session.session_key); }}>Delete</button>
+        <p><b>Topic:<span contentEditable="true"> {session.title}</span></b></p>
+        <div>
+        {sessionTags.map((tag, indextag) => (
+          <div key={indextag}>
+            <span>tag</span>
+            <button>x</button>
           </div>
         ))}
+        </div>
+        <p><b>Date: {session.start_time_datetime}</b></p>
+        <p><b>Duration: {session.duration_string}</b></p>
+        <div><b>Pages:</b></div>
+        <ul>
+        {sessionPages.map((item, index2) => (
+            <li key={index2}><button style={{display: 'none'}}>Delete</button><a href={item.url}>{item.title}</a></li>
+        ))}
+        </ul>
         <button>Save</button>
         <button>Share</button>
       </div>
