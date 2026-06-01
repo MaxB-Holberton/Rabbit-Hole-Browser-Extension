@@ -21,7 +21,7 @@ async function enrichHistory(history) {
 
 async function refreshUI(history) {
   const enriched = await enrichHistory(history);
-  console.log("RENDER:", enriched);
+  console.log("UI DATA READY:", enriched);
   // render(enriched); YOUR DOM RENDERING GOES IN HERE
 }
 
