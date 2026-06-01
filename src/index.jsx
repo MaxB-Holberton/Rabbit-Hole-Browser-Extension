@@ -1,8 +1,8 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
-import { GetRabbitHoleHistory, DeleteRabbitHoleSession } from "./history.js";
+import { HashRouter, Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { GetRabbitHoleHistory, DeleteRabbitHoleSession, StartSessionEditing, GetRabbitHolePage } from "./history.js";
 
 
 function Header() {
@@ -88,6 +88,42 @@ function PreviousView() {
   );
 }
 
+function BuildTagsDiv(sessionTags) {
+  return (
+    <div>
+    <b>Tags: </b>
+    <button className="EditBtnGroup" onClick={() => {}}>Edit Tags</button>
+    <ul>
+    {sessionTags.map((tag, indextag) => (
+      <li key={indextag}>
+      <span>{tag}</span>
+      <button className="EditTagBtnGroup">x</button>
+      </li>
+    ))}
+    </ul>
+    </div>
+  );
+}
+
+function BuildPagesDiv(sessionPages) {
+  return (
+    <div>
+    <button>Ex</button>
+    <b>Pages: </b>
+    <button className="EditBtnGroup">Edit Pages</button>
+    <ul>
+    {sessionPages.map((item, index2) => (
+      <li key={index2}>
+      <button className="EditPagesBtnGroup">Edit</button>
+      <button className="EditPagesBtnGroup">Delete</button>
+      <a href={item.url}>{item.title}</a>
+      </li>
+    ))}
+    </ul>
+    </div>
+  );
+}
+
 function BuildSessionsDiv() {
   const [sessions, setSessions] = useState([]);
 
@@ -95,43 +131,53 @@ function BuildSessionsDiv() {
     GetRabbitHoleHistory().then(sessions => setSessions(sessions));
   }, [])
 
-  const display_sessions = sessions.map((session, index) => {
+  const display_all_sessions = sessions.map((session, index) => {
     const sessionPages = Array.isArray(session?.data) ? session.data : [];
     const sessionTags = Array.isArray(session?.tag_list) ? session.tag_list : [];
-    // For Each tag | create a span that can be edited when the edit button is clicked
-    // display a delete button to delete a tag
-    // place it in a div so all spans within that div are collected and updated
+
     return (
       <div id={session.session_key} className="rabbitHole" key={index}>
-        <button>Edit</button>
-        <button onClick={() => { DeleteRabbitHoleSession(session.session_key); }}>Delete</button>
-        <p><b>Topic:<span contentEditable="true"> {session.title}</span></b></p>
-
-        <div>
-        <button>Add Tag</button>
-        {sessionTags.map((tag, indextag) => (
-          <div key={indextag}>
-            <span>{tag}</span>
-            <button>x</button>
-          </div>
-        ))}
-        </div>
-
+        <p><b>Topic: {session.title}</b></p>
         <p><b>Date: {session.start_time_datetime}</b></p>
         <p><b>Duration: {session.duration_string}</b></p>
-        <div><b>Pages:</b></div>
-        <ul>
-        {sessionPages.map((item, index2) => (
-            <li key={index2}><button style={{display: 'none'}}>Delete</button><a href={item.url}>{item.title}</a></li>
-        ))}
-        </ul>
-        <button>Save</button>
+
+        {BuildTagsDiv(sessionTags)}
+        {BuildPagesDiv(sessionPages)}
+
+        <button onClick={() => { StartSessionEditing(session.session_key) }}>Edit</button>
+        <button onClick={() => { DeleteRabbitHoleSession(session.session_key); }}>Delete</button>
         <button>Share</button>
+        <Link to={`/session/${session.session_key}`}>Open Session</Link>
       </div>
     );
   });
-  return display_sessions;
+  return display_all_sessions;
 }
+
+function SessionPage() {
+  const session_id = useParams();
+
+  const [page_data, setData] = useState([]);
+
+  useEffect(() => {
+    GetRabbitHolePage(session_id).then(page_data => setData(page_data));
+  }, [])
+  console.log(page_data);
+  return (
+    <>
+    <h2 id="white">Session!</h2>
+    <div>
+    <h3 id="white">Yippee!!!</h3>
+    </div>
+    <section className="rabbitHole" id="session">
+      <p><b>Topic: {page_data.title}</b></p>
+      <p><b>Date: {page_data.start_time_datetime}</b></p>
+      <p><b>Duration: {page_data.duration_string}</b></p>
+    </section>
+    </>
+    );
+}
+
 
 function AppShell() {
   return (
@@ -144,6 +190,7 @@ function AppShell() {
           <Route path="/overview" element={<OverviewView />} />
           <Route path="/recent" element={<MostRecentView />} />
           <Route path="/previous" element={<PreviousView />} />
+          <Route path="/session/:session_id" element={<SessionPage />} />
         </Routes>
       </main>
       <footer>

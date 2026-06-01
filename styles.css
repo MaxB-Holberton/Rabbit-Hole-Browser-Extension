@@ -130,3 +130,15 @@ footer {
   background-color: white;
   color: black;
 }
+
+.EditBtnGroup {
+  display: none;
+}
+
+.EditTagBtnGroup {
+  display: none;
+}
+
+.EditPagesBtnGroup {
+  display: none;
+}

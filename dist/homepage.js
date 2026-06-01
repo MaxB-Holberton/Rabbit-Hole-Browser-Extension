@@ -25287,6 +25287,13 @@
     }, [basename, navigator2, routePathnamesJson, locationPathname, dataRouterContext]);
     return navigate;
   }
+  function useParams() {
+    let {
+      matches
+    } = React.useContext(RouteContext);
+    let routeMatch = matches[matches.length - 1];
+    return routeMatch ? routeMatch.params : {};
+  }
   function useResolvedPath(to, _temp2) {
     let {
       relative
@@ -26533,6 +26540,14 @@
     }
     return rtn_history;
   }
+  async function GetRabbitHolePage(key) {
+    const history_item = await chrome.storage.local.get(key);
+    return history_item;
+  }
+  function StartSessionEditing(session_key) {
+    const data = document.getElementById(session_key);
+    console.log(data.childNodes[3]);
+  }
   async function DeleteRabbitHoleSession(session_key) {
     console.log(session_key);
     if (confirm("Are you sure you want to delete this rabbit hole?")) {
@@ -26600,34 +26615,42 @@
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", id: "previous", children: BuildSessionsDiv() })
     ] });
   }
+  function BuildTagsDiv(sessionTags) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Tags: " }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "EditBtnGroup", onClick: () => {
+      }, children: "Edit Tags" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: sessionTags.map((tag, indextag) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: tag }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "EditTagBtnGroup", children: "x" })
+      ] }, indextag)) })
+    ] });
+  }
+  function BuildPagesDiv(sessionPages) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Ex" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Pages: " }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "EditBtnGroup", children: "Edit Pages" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: sessionPages.map((item, index2) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "EditPagesBtnGroup", children: "Edit" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "EditPagesBtnGroup", children: "Delete" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: item.url, children: item.title })
+      ] }, index2)) })
+    ] });
+  }
   function BuildSessionsDiv() {
     const [sessions, setSessions] = (0, import_react2.useState)([]);
     (0, import_react2.useEffect)(() => {
       GetRabbitHoleHistory().then((sessions2) => setSessions(sessions2));
     }, []);
-    const display_sessions = sessions.map((session, index) => {
+    const display_all_sessions = sessions.map((session, index) => {
       const sessionPages = Array.isArray(session?.data) ? session.data : [];
       const sessionTags = Array.isArray(session?.tag_list) ? session.tag_list : [];
-      ;
       return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: session.session_key, className: "rabbitHole", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Edit" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
-          DeleteRabbitHoleSession(session.session_key);
-        }, children: "Delete" }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
-          "Topic:",
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { contentEditable: "true", children: [
-            " ",
-            session.title
-          ] })
+          "Topic: ",
+          session.title
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Add Tag" }),
-          sessionTags.map((tag, indextag) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: tag }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "x" })
-          ] }, indextag))
-        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
           "Date: ",
           session.start_time_datetime
@@ -26636,16 +26659,44 @@
           "Duration: ",
           session.duration_string
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Pages:" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: sessionPages.map((item, index2) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { style: { display: "none" }, children: "Delete" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { href: item.url, children: item.title })
-        ] }, index2)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Save" }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Share" })
+        BuildTagsDiv(sessionTags),
+        BuildPagesDiv(sessionPages),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+          StartSessionEditing(session.session_key);
+        }, children: "Edit" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+          DeleteRabbitHoleSession(session.session_key);
+        }, children: "Delete" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Share" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, { to: `/session/${session.session_key}`, children: "Open Session" })
       ] }, index);
     });
-    return display_sessions;
+    return display_all_sessions;
+  }
+  function SessionPage() {
+    const session_id = useParams();
+    const [page_data, setData] = (0, import_react2.useState)([]);
+    (0, import_react2.useEffect)(() => {
+      GetRabbitHolePage(session_id).then((page_data2) => setData(page_data2));
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { id: "white", children: "Session!" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: "Yippee!!!" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "rabbitHole", id: "session", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+          "Topic: ",
+          page_data.title
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+          "Date: ",
+          page_data.start_time_datetime
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+          "Duration: ",
+          page_data.duration_string
+        ] }) })
+      ] })
+    ] });
   }
   function AppShell() {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
@@ -26656,7 +26707,8 @@
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, { to: "/overview", replace: true }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, { path: "/overview", element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(OverviewView, {}) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, { path: "/recent", element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(MostRecentView, {}) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, { path: "/previous", element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PreviousView, {}) })
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, { path: "/previous", element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PreviousView, {}) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, { path: "/session/:session_id", element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SessionPage, {}) })
         ] })
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { id: "footerP", children: "2026 Rabbit Hole Explorer. Andrew Kasapidis, Uliana Deshin, Max Brook, Pavith Raj." }) })
