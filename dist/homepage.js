@@ -26621,10 +26621,13 @@
             session.title
           ] })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: sessionTags.map((tag, indextag) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "tag" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "x" })
-        ] }, indextag)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "Add Tag" }),
+          sessionTags.map((tag, indextag) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: tag }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { children: "x" })
+          ] }, indextag))
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
           "Date: ",
           session.start_time_datetime

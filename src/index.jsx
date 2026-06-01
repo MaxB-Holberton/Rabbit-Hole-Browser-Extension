@@ -97,7 +97,7 @@ function BuildSessionsDiv() {
 
   const display_sessions = sessions.map((session, index) => {
     const sessionPages = Array.isArray(session?.data) ? session.data : [];
-    const sessionTags = Array.isArray(session?.tag_list) ? session.tag_list : [];;
+    const sessionTags = Array.isArray(session?.tag_list) ? session.tag_list : [];
     // For Each tag | create a span that can be edited when the edit button is clicked
     // display a delete button to delete a tag
     // place it in a div so all spans within that div are collected and updated
@@ -106,14 +106,17 @@ function BuildSessionsDiv() {
         <button>Edit</button>
         <button onClick={() => { DeleteRabbitHoleSession(session.session_key); }}>Delete</button>
         <p><b>Topic:<span contentEditable="true"> {session.title}</span></b></p>
+
         <div>
+        <button>Add Tag</button>
         {sessionTags.map((tag, indextag) => (
           <div key={indextag}>
-            <span>tag</span>
+            <span>{tag}</span>
             <button>x</button>
           </div>
         ))}
         </div>
+
         <p><b>Date: {session.start_time_datetime}</b></p>
         <p><b>Duration: {session.duration_string}</b></p>
         <div><b>Pages:</b></div>
