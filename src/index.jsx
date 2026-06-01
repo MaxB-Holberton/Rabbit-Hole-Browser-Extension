@@ -2,16 +2,161 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
-import { GetRabbitHoleHistory, DeleteRabbitHoleSession, StartSessionEditing, GetRabbitHolePage } from "./history.js";
+import { RHGetSessionList, RHGetPage, RHDeleteSession} from "./history.js";
+
+/*
+ * Display Functions to use within the routes
+ */
+function SectionRibbon(title_h3) {
+  //returns the Section Ribbon
+  return (
+    <div>
+    <h3 id="white">{title_h3}</h3>
+    </div>
+  );
+}
+
+function ShowSessionDetailBtns() {
+  return (
+    <>
+    </>
+  );
+}
+
+function ShowSessionBtns() {
+  //Creates the buttons for interecting with the session
+  //These are generic buttons that do not have much detail required
+  /*
+   * dev note - maybe make the link a button in here for accessing the details Page
+   */
+  return (
+    <>
+      <button onClick={() => { RHDeleteSession(session.session_key); }}>Delete</button>
+      <button>Share</button>
+    </>
+  );
+}
+
+function ShowSessionPageList(data) {
+  //Shows all the visited pages from the last session
+  //Will integrate with the page tags for more details
+  //will need the ability to add/remove items
+  //will need the ability to add/remove tags both manual and ai
+  const pages = Array.isArray(data?.data) ? data.data : [];
+  return (
+    <div>
+      <b>Pages: </b>
+      <ul>
+      {pages.map((item, index2) => (
+        <li key={index2}>
+        <a href={item.url}>{item.title}</a>
+        </li>
+      ))}
+      </ul>
+    </div>
+  );
+}
+
+function ShowSessionTags(data) {
+  //shows all the tags for each session itself
+  const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
+  return (
+    <div>
+      <b>Tags: </b>
+      <ul>
+      {tags.map((tag, index) => (
+        <li key={index}>
+        <span>{tag}</span>
+        </li>
+      ))}
+      </ul>
+    </div>
+  );
+}
+
+function ShowSessionMetadata(data) {
+  //shows the metadata for each session
+  return (
+    <>
+    <p><b>Topic: {data.title}</b></p>
+    <p><b>Date: {data.start_time_datetime}</b></p>
+    <p><b>Duration: {data.duration_string}</b></p>
+    </>
+  );
+}
+
+function ShowLastSession() {
+  const [last_session, setLastSession] = useState([]);
+
+  useEffect(() => {
+    RHGetSessionList().then((sessions) => setLastSession(sessions[sessions.length - 1]));
+  }, []);
+  return (
+    <Link to={`/session/${last_session.session_key}`}>
+      <div id={last_session.session_key} className="rabbitHole">
+        {ShowSessionMetadata(last_session)}
+        {ShowSessionTags(last_session)}
+      </div>
+    </Link>
+  );
+}
 
 
+function ShowAllSessions() {
+  const [sessions, setSessionsList] = useState([]);
+
+  useEffect(() => {
+    RHGetSessionList().then((sessions) => setSessionsList(sessions));
+  }, []);
+
+  return sessions.map((session, index) => {
+    return (
+      <Link to={`/session/${session.session_key}`}>
+        <div id={session.session_key} className="rabbitHole" key={index}>
+            {ShowSessionMetadata(session)}
+            {ShowSessionTags(session)}
+        </div>
+      </Link>
+    );
+  });
+}
+
+/*
+ * Routes function w/UseEffect UseState Hook
+ */
+function SessionDetailsPage() {
+  const params = useParams();
+  const [page_data, setPageData] = useState([]);
+
+  useEffect(() => {
+    RHGetPage(params.session_id).then((data) => setPageData(data));
+  }, []);
+
+  return (
+    <>
+    <h2 id="white">Session!</h2>
+    {SectionRibbon(`${page_data.title}`)}
+    <section className="rabbitHole" id="previous">
+    <div className="rabbitHole">
+    {ShowSessionMetadata(page_data)}
+    {ShowSessionTags(page_data)}
+    {ShowSessionPageList(page_data)}
+    </div>
+    </section>
+    </>
+  );
+}
+
+/*
+ * Routes functions
+ */
 function Header() {
   return (
     <header>
-      <nav>
-        <img src="assets/rbe_logo_390.png" alt="Rabbit Hole Explorer Static Logo" id="headerLogo" />
-        <h1>Rabbit Hole Explorer</h1>
-      </nav>
+    <nav>
+    <img src="assets/rbe_logo_390.png" alt="Rabbit Hole Explorer Static Logo" id="headerLogo" />
+    <h1>Rabbit Hole Explorer</h1>
+    </nav>
     </header>
   );
 }
@@ -20,19 +165,19 @@ function ViewNav() {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
-  }, []);
+    RHGetSessionList().then(sessions => setSessions(sessions));
+  }, [sessions.length]);
 
   return (
     <section className="rabbitHole">
-      <div className="rabbitHole" id="counter">
-        <p>Topic:</p>
-        <p>You have {sessions.length} rabbit holes!</p>
-        <p>
-          <Link to="/overview">Overview</Link> | <Link to="/recent">Most Recent</Link> |{' '}
-          <Link to="/previous">Previous</Link>
-        </p>
-      </div>
+    <div className="rabbitHole" id="counter">
+    <p>Topic:</p>
+    <p>You have {sessions.length} rabbit holes!</p>
+    <p>
+    <Link to="/overview">Overview</Link> | <Link to="/recent">Most Recent</Link> |{' '}
+    <Link to="/previous">Previous</Link>
+    </p>
+    </div>
     </section>
   );
 }
@@ -40,22 +185,20 @@ function ViewNav() {
 function OverviewView() {
   return (
     <>
-      <h2 id="white">My Rabbit Holes</h2>
-      <div>
-        <h3 id="white">Overview</h3>
-      </div>
-      <section className="rabbitHole">
-        <div className="rabbitHole">
-          <p>Ready to explore your rabbit holes?</p>
-          <p><b>Use the links above to switch views.</b></p>
-        </div>
-      </section>
-            <section className="rabbitHole">
-        <div className="rabbitHole">
-          <p><b>How does Rabbit Hole Explorer work?</b></p>
-          <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
-        </div>
-      </section>
+    <h2 id="white">My Rabbit Holes</h2>
+    {SectionRibbon('Overview')}
+    <section className="rabbitHole">
+    <div className="rabbitHole">
+    <p>Ready to explore your rabbit holes?</p>
+    <p><b>Use the links above to switch views.</b></p>
+    </div>
+    </section>
+    <section className="rabbitHole">
+    <div className="rabbitHole">
+    <p><b>How does Rabbit Hole Explorer work?</b></p>
+    <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
+    </div>
+    </section>
     </>
   );
 }
@@ -63,13 +206,11 @@ function OverviewView() {
 function MostRecentView() {
   return (
     <>
-      <h2 id="white">My Rabbit Holes</h2>
-      <div>
-        <h3 id="white">Most Recent Rabbit Hole</h3>
-      </div>
-      <section className="rabbitHole">
-        {BuildSessionsDiv()}
-      </section>
+    <h2 id="white">My Rabbit Holes</h2>
+    {SectionRibbon('Most Recent Rabbit Hole')}
+    <section className="rabbitHole">
+    {ShowLastSession()}
+    </section>
     </>
   );
 }
@@ -78,106 +219,13 @@ function PreviousView() {
   return (
     <>
     <h2 id="white">My Rabbit Holes</h2>
-    <div>
-    <h3 id="white">Previous Rabbit Holes</h3>
-    </div>
+    {SectionRibbon('Previous Rabbit Holes')}
     <section className="rabbitHole" id="previous">
-    {BuildSessionsDiv()}
+    {ShowAllSessions()}
     </section>
     </>
   );
 }
-
-function BuildTagsDiv(sessionTags) {
-  return (
-    <div>
-    <b>Tags: </b>
-    <button className="EditBtnGroup" onClick={() => {}}>Edit Tags</button>
-    <ul>
-    {sessionTags.map((tag, indextag) => (
-      <li key={indextag}>
-      <span>{tag}</span>
-      <button className="EditTagBtnGroup">x</button>
-      </li>
-    ))}
-    </ul>
-    </div>
-  );
-}
-
-function BuildPagesDiv(sessionPages) {
-  return (
-    <div>
-    <button>Ex</button>
-    <b>Pages: </b>
-    <button className="EditBtnGroup">Edit Pages</button>
-    <ul>
-    {sessionPages.map((item, index2) => (
-      <li key={index2}>
-      <button className="EditPagesBtnGroup">Edit</button>
-      <button className="EditPagesBtnGroup">Delete</button>
-      <a href={item.url}>{item.title}</a>
-      </li>
-    ))}
-    </ul>
-    </div>
-  );
-}
-
-function BuildSessionsDiv() {
-  const [sessions, setSessions] = useState([]);
-
-  useEffect(() => {
-    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
-  }, [])
-
-  const display_all_sessions = sessions.map((session, index) => {
-    const sessionPages = Array.isArray(session?.data) ? session.data : [];
-    const sessionTags = Array.isArray(session?.tag_list) ? session.tag_list : [];
-
-    return (
-      <div id={session.session_key} className="rabbitHole" key={index}>
-        <p><b>Topic: {session.title}</b></p>
-        <p><b>Date: {session.start_time_datetime}</b></p>
-        <p><b>Duration: {session.duration_string}</b></p>
-
-        {BuildTagsDiv(sessionTags)}
-        {BuildPagesDiv(sessionPages)}
-
-        <button onClick={() => { StartSessionEditing(session.session_key) }}>Edit</button>
-        <button onClick={() => { DeleteRabbitHoleSession(session.session_key); }}>Delete</button>
-        <button>Share</button>
-        <Link to={`/session/${session.session_key}`}>Open Session</Link>
-      </div>
-    );
-  });
-  return display_all_sessions;
-}
-
-function SessionPage() {
-  const session_id = useParams();
-
-  const [page_data, setData] = useState([]);
-
-  useEffect(() => {
-    GetRabbitHolePage(session_id).then(page_data => setData(page_data));
-  }, [])
-  console.log(page_data);
-  return (
-    <>
-    <h2 id="white">Session!</h2>
-    <div>
-    <h3 id="white">Yippee!!!</h3>
-    </div>
-    <section className="rabbitHole" id="session">
-      <p><b>Topic: {page_data.title}</b></p>
-      <p><b>Date: {page_data.start_time_datetime}</b></p>
-      <p><b>Duration: {page_data.duration_string}</b></p>
-    </section>
-    </>
-    );
-}
-
 
 function AppShell() {
   return (
@@ -190,7 +238,7 @@ function AppShell() {
           <Route path="/overview" element={<OverviewView />} />
           <Route path="/recent" element={<MostRecentView />} />
           <Route path="/previous" element={<PreviousView />} />
-          <Route path="/session/:session_id" element={<SessionPage />} />
+          <Route path="/session/:session_id" element={<SessionDetailsPage />} />
         </Routes>
       </main>
       <footer>

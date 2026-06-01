@@ -49,7 +49,7 @@ export function RabbitHoleMetadata(hist, start, end) {
 /*
  * Getting the History
  */
-export async function GetRabbitHoleHistory() {
+export async function RHGetSessionList() {
   const rtn_history = [];
   const key_list = await chrome.storage.local.getKeys();
 
@@ -63,22 +63,13 @@ export async function GetRabbitHoleHistory() {
   return rtn_history;
 }
 
-export async function GetRabbitHolePage(key) {
+export async function RHGetPage(key) {
   const history_item = await chrome.storage.local.get(key);
-  return history_item;
-}
-
-// Functions needed
-// Pages added | pages updated | pages deleted
-
-// Title updated | tags updated |
-export function StartSessionEditing(session_key) {
-  const data = document.getElementById(session_key)
-  console.log(data.childNodes[3]);
+  return history_item[key];
 }
 
 // Session Deleted
-export async function DeleteRabbitHoleSession(session_key) {
+export async function RHDeleteSession(session_key) {
   console.log(session_key);
   if(confirm("Are you sure you want to delete this rabbit hole?"))
   {

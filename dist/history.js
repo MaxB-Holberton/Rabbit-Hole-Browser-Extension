@@ -35,7 +35,7 @@
     new_session[rabbit_hole_name] = new_session_metadata;
     return new_session;
   }
-  async function GetRabbitHoleHistory() {
+  async function RHGetSessionList() {
     const rtn_history = [];
     const key_list = await chrome.storage.local.getKeys();
     for (const key of key_list) {
@@ -46,15 +46,11 @@
     }
     return rtn_history;
   }
-  async function GetRabbitHolePage(key) {
+  async function RHGetPage(key) {
     const history_item = await chrome.storage.local.get(key);
-    return history_item;
+    return history_item[key];
   }
-  function StartSessionEditing(session_key) {
-    const data = document.getElementById(session_key);
-    console.log(data.childNodes[3]);
-  }
-  async function DeleteRabbitHoleSession(session_key) {
+  async function RHDeleteSession(session_key) {
     console.log(session_key);
     if (confirm("Are you sure you want to delete this rabbit hole?")) {
       console.log("deleting...");
