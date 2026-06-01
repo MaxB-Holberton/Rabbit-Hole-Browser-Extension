@@ -1,5 +1,46 @@
 import makeTag from "./maketag.js";
 import { RabbitHoleMetadata } from "./history.js";
+import { getManualTags, addManualTag, getPageId } from "./tagStore";
+
+//====================
+// UI RENDER HELPERS |
+//====================
+
+async function enrichHistory(history) {
+  const manualTags = await getManualTags();
+
+  return history.map(entry => {
+    const pageId = getPageId(entry.url);
+
+    return {
+      ...entry,
+      manualTags: manualTags[pageId] ?? []
+    };
+  });
+}
+
+async function refreshUI(history) {
+  const enriched = await enrichHistory(history);
+  console.log("RENDER:", enriched);
+  // render(enriched); YOUR DOM RENDERING GOES IN HERE
+}
+
+//===============
+// USER TAGGING |
+//===============
+
+async function onAddTag(historyEntry, tag, currentHistory) {
+  const pageId = getPageId(historyEntry.url);
+
+  await addManualTag(pageId, tag);
+
+  //re-render after update
+  await refreshUI(currentHistory);
+}
+
+//=============
+// DOM EVENTS |
+//=============
 
 /*
  * Controls the javascript documentation on the popup page
@@ -8,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById("RabbitHole_Record").addEventListener('click', async () => {
     /* start/stop the timer for when a rabbit hole is created */
-    console.log("BUTTON PRESSED");
+    console.log("BUT:TON PRESSED");
     ToggleTimer();
     console.log("FUNCTION FINISHED");
   });
@@ -18,6 +59,10 @@ document.addEventListener('DOMContentLoaded', function () {
     chrome.tabs.create({ 'url': chrome.runtime.getURL('index.html') });
   });
 });
+
+//===================
+// SESSION CREATION |
+//===================
 
 async function ToggleTimer() {
   try {

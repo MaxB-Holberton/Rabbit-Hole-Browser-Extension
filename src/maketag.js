@@ -85,7 +85,6 @@ export default function makeTag(historyEntry) {
         structuralTags,
 
         concepts: [],
-        manualTags: [],
       });
     } catch (error) {
       reject(error);
