@@ -104,9 +104,11 @@ async function ToggleTimer() {
     const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
     await chrome.storage.local.set(new_session);
 
+    // Initial render that's totally optional
+    await refreshUI(taggedHistory);
+
     // If possible - unlock the button here so user knows their session has been saved
     // add some form of notification for the user to know their session was successful/unsuccessful
-
   } catch (error) {
     console.error("TOGGLETIMER ERROR:", error);
   }
