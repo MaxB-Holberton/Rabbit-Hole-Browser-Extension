@@ -11,14 +11,16 @@ function SectionRibbon(title_h3) {
   //returns the Section Ribbon
   return (
     <div>
-    <h3 id="white">{title_h3}</h3>
+      <h3 id="white">{title_h3}</h3>
     </div>
   );
 }
 
-function ShowSessionDetailBtns() {
+function ShowSessionDetailBtns(session) {
   return (
     <>
+      <button onClick={() => { RHEditSession(session.session_key); }}>Edit Session</button>
+      <button onClick={() => { RHDeleteSession(session.session_key); }}>Delete Session</button>
     </>
   );
 }
@@ -31,7 +33,6 @@ function ShowSessionBtns() {
    */
   return (
     <>
-      <button onClick={() => { RHDeleteSession(session.session_key); }}>Delete</button>
       <button>Share</button>
     </>
   );
@@ -63,13 +64,9 @@ function ShowSessionTags(data) {
   return (
     <div>
       <b>Tags: </b>
-      <ul>
       {tags.map((tag, index) => (
-        <li key={index}>
-        <span>{tag}</span>
-        </li>
+        <span>{tag}, </span>
       ))}
-      </ul>
     </div>
   );
 }
@@ -111,8 +108,8 @@ function ShowAllSessions() {
 
   return sessions.map((session, index) => {
     return (
-      <Link to={`/session/${session.session_key}`}>
-        <div id={session.session_key} className="rabbitHole" key={index}>
+      <Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
+        <div className="rabbitHole">
             {ShowSessionMetadata(session)}
             {ShowSessionTags(session)}
         </div>
@@ -137,11 +134,15 @@ function SessionDetailsPage() {
     <h2 id="white">Session!</h2>
     {SectionRibbon(`${page_data.title}`)}
     <section className="rabbitHole" id="previous">
-    <div className="rabbitHole">
-    {ShowSessionMetadata(page_data)}
-    {ShowSessionTags(page_data)}
-    {ShowSessionPageList(page_data)}
-    </div>
+      <div className="rabbitHole">
+        {ShowSessionMetadata(page_data)}
+        <br/>
+        {ShowSessionTags(page_data)}
+        <br/>
+        {ShowSessionPageList(page_data)}
+        <br/>
+        {ShowSessionDetailBtns(page_data)}
+      </div>
     </section>
     </>
   );

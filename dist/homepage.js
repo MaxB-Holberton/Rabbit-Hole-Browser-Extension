@@ -26544,11 +26544,29 @@
     const history_item = await chrome.storage.local.get(key);
     return history_item[key];
   }
+  async function RHDeleteSession(session_key) {
+    console.log(session_key);
+    if (confirm("Are you sure you want to delete this rabbit hole?")) {
+      console.log("deleting...");
+      await chrome.storage.local.remove([session_key]);
+      document.getElementById(session_key).remove();
+    }
+  }
 
   // src/index.jsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
   function SectionRibbon(title_h3) {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { id: "white", children: title_h3 }) });
+  }
+  function ShowSessionDetailBtns(session) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+        RHEditSession(session.session_key);
+      }, children: "Edit Session" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => {
+        RHDeleteSession(session.session_key);
+      }, children: "Delete Session" })
+    ] });
   }
   function ShowSessionPageList(data) {
     const pages = Array.isArray(data?.data) ? data.data : [];
@@ -26561,7 +26579,10 @@
     const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: "Tags: " }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", { children: tags.map((tag, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: tag }) }, index)) })
+      tags.map((tag, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+        tag,
+        ", "
+      ] }))
     ] });
   }
   function ShowSessionMetadata(data) {
@@ -26595,11 +26616,11 @@
     (0, import_react2.useEffect)(() => {
       RHGetSessionList().then((sessions2) => setSessionsList(sessions2));
     }, []);
-    return sessions.map((session2, index) => {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, { to: `/session/${session2.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { id: session2.session_key, className: "rabbitHole", children: [
-        ShowSessionMetadata(session2),
-        ShowSessionTags(session2)
-      ] }, index) });
+    return sessions.map((session, index) => {
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, { className: "div-links", to: `/session/${session.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
+        ShowSessionMetadata(session),
+        ShowSessionTags(session)
+      ] }) }, index);
     });
   }
   function SessionDetailsPage() {
@@ -26613,8 +26634,12 @@
       SectionRibbon(`${page_data.title}`),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", { className: "rabbitHole", id: "previous", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "rabbitHole", children: [
         ShowSessionMetadata(page_data),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
         ShowSessionTags(page_data),
-        ShowSessionPageList(page_data)
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+        ShowSessionPageList(page_data),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {}),
+        ShowSessionDetailBtns(page_data)
       ] }) })
     ] });
   }
