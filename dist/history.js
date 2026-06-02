@@ -55,7 +55,14 @@
     if (confirm("Are you sure you want to delete this rabbit hole?")) {
       console.log("deleting...");
       await chrome.storage.local.remove([session_key]);
-      document.getElementById(session_key).remove();
+      window.location.href = "/index.html#/overview";
     }
+  }
+  async function RHDeletePage(index, key) {
+    const item = await chrome.storage.local.get(key);
+    console.log(index);
+    const data_arr = item.data;
+    item.data = data_arr.toSplice(index, 1);
+    console.log(item);
   }
 })();

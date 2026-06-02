@@ -46,23 +46,21 @@ export function RabbitHoleMetadata(hist, start, end) {
   return (new_session);
 }
 
-/*
- * Getting the History
- */
+//Get all rabbit hole sessions
 export async function RHGetSessionList() {
   const rtn_history = [];
   const key_list = await chrome.storage.local.getKeys();
 
   for (const key of key_list) {
     if (key.includes("_session_")) {
-      const history_item = await chrome.storage.local.get(key)
+      const history_item = await chrome.storage.local.get(key);
       rtn_history.push(history_item[key]);
     }
   }
-
   return rtn_history;
 }
 
+//Get a single page from local storage
 export async function RHGetPage(key) {
   const history_item = await chrome.storage.local.get(key);
   return history_item[key];
@@ -75,6 +73,15 @@ export async function RHDeleteSession(session_key) {
   {
     console.log("deleting...");
     await chrome.storage.local.remove([session_key]);
-    document.getElementById(session_key).remove();
+    window.location.href = "/index.html#/overview";
   }
+}
+
+export async function RHDeletePage(index, key) {
+  //get the key
+  const item = await chrome.storage.local.get(key);
+  console.log(index);
+  const data_arr = item.data;
+  item.data = data_arr.toSplice(index, 1);
+  console.log(item);
 }
