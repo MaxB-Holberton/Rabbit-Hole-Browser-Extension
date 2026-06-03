@@ -1,7 +1,3 @@
-
-/*
- * Time functions for
- */
 function MiliToDatetime(milis) {
   return new Date(milis).toLocaleString();
 }
@@ -78,10 +74,13 @@ export async function RHDeleteSession(session_key) {
 }
 
 export async function RHDeletePage(index, key) {
-  //get the key
-  const item = await chrome.storage.local.get(key);
-  console.log(index);
-  const data_arr = item.data;
-  item.data = data_arr.toSplice(index, 1);
-  console.log(item);
+  if(confirm(`Delete this page?`))
+  {
+    await chrome.storage.local.get(key).then((data) => {
+      data[key].data.splice(index, 1);
+      return data;
+    }).then(async (data) => {
+      await chrome.storage.local.set(data);
+    });
+  }
 }

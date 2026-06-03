@@ -1,10 +1,6 @@
 import React from 'react';
 import { RHDeletePage } from "./history.js";
 
-/*
- * For the Page Details - these functions contain the buttons to edit the information
- */
-
 export function EditSessionPageList(data) {
 	//TODO: Edit btn to appear when edit page is
 	const pages = Array.isArray(data?.data) ? data.data : [];

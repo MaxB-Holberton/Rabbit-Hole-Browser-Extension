@@ -57,7 +57,7 @@ function SessionDetailsPage() {
 
   useEffect(() => {
     RHGetPage(params.session_id).then((data) => setPageData(data));
-  }, []);
+  });
 
   return (
     <>
@@ -97,7 +97,7 @@ function ViewNav() {
 
   useEffect(() => {
     RHGetSessionList().then(sessions => setSessions(sessions));
-  }, [sessions.length]);
+  });
 
   return (
     <section className="rabbitHole">
