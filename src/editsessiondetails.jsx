@@ -9,8 +9,6 @@ export function EditSessionActions(session) {
 		<IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { /* Save all details and return */ }} />
 		<IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session.session_key); }} />
 		</>
-	);
-}
 
 export function EditSessionPageList(data) {
 	const pages = Array.isArray(data?.data) ? data.data : [];
@@ -44,6 +42,7 @@ export function EditSessionPageList(data) {
 					onChange={UpdateVal}
 					value={input_vals[`${index2}`]}
 					readOnly={true}/>
+
 					<IconButton
 						id={`${index2}_edit`}
 						iconSrc="assets/edit_icon.svg"
