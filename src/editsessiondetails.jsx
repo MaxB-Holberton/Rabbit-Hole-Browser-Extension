@@ -3,10 +3,23 @@ import { useEffect, useState } from 'react';
 import { RHDeletePage, RHEditPage } from "./history.js";
 import { ShowSessionTags } from "./viewsessiondetails";
 
+
+
+function CreateTitleInput(index2, title) {
+	val = title;
+	return (
+		<input
+		id={`${index2}_span`}
+		onChange={evt => setInputVal(evt.target.value)}
+		value={val}
+		readOnly={true}/>
+	);
+}
+
 export function EditSessionPageList(data) {
-	//TODO: Edit btn to appear when edit page is
 	const pages = Array.isArray(data?.data) ? data.data : [];
-	const [show, setShow] = useState(false);
+	const [val, setInputVal] = useState();
+
 	return (
 		<div>
 			<b>Pages: </b>
@@ -16,9 +29,10 @@ export function EditSessionPageList(data) {
 			<ul>
 			{pages.map((item, index2) => (
 				<li id={index2} key={index2}>
-					<button id={`${index2}_edit`} onClick={() => { RHEditPage(index2, data.session_key, item.url); }}>Edit</button>
- 					<button id={`${index2}_delete`} onClick={async () => { RHDeletePage(index2, data.session_key) }}>Delete</button>
-					<a id={`${index2}_a`} href={item.url}><span id={`${index2}_span`}>{item.title}</span></a>
+ 					<a id={`${index2}_a`} href={item.url}>Link</a>
+ 					{CreateTitleInput(index2, item.title)}
+					<button id={`${index2}_edit`} onClick={() => { RHEditPage(index2, data.session_key); }}>Edit</button>
+					<button id={`${index2}_delete`} onClick={async () => { RHDeletePage(index2, data.session_key) }}>Delete</button>
 					<br/>
 					<div id={`${index2}_tagdiv`}>
 						<p>Category: <span>{item.category}</span></p>

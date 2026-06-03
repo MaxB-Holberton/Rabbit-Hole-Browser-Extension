@@ -85,28 +85,29 @@ export async function RHDeletePage(index, key) {
   }
 }
 
-export async function RHEditPage(index, key, url) {
-  console.log("butten pressed");
-  console.log(index);
-  console.log(key);
-  console.log(url);
+export async function RHEditPage(index, key) {
   const btn = document.getElementById(`${index}_edit`);
   const a = document.getElementById(`${index}_a`);
-  const span = document.getElementById(`${index}_span`);
+  const input = document.getElementById(`${index}_span`);
   if (btn.textContent === "Edit")
   {
     console.log("edit -> save");
-    btn.textContent = "Save";
-    span.contentEditable = true;
-    a.href = "";
+    btn.innerHTML = "Save";
+    input.readOnly = false;
+    a.style = "pointer-events: none";
     //Enable changes here
   }
-  if (btn.textContent === "Save")
+  else if (btn.textContent === "Save")
   {
     console.log("save -> edit");
-    btn.textContent = "Edit";
-    span.contentEditable = false;
-    a.href = url;
-    //Enable changes here
+    btn.innerHTML = "Edit";
+    input.readOnly = true;
+    a.style = "";
+    chrome.storage.local.get(key).then((data) => {
+      data[key].data[index].title = input.value;
+      return data;
+    }).then(async (data) => {
+      await chrome.storage.local.set(data);
+    });
   }
 }

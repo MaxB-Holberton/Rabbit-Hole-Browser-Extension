@@ -26562,25 +26562,26 @@
       });
     }
   }
-  async function RHEditPage(index, key, url) {
-    console.log("butten pressed");
-    console.log(index);
-    console.log(key);
-    console.log(url);
+  async function RHEditPage(index, key) {
     const btn = document.getElementById(`${index}_edit`);
     const a = document.getElementById(`${index}_a`);
-    const span = document.getElementById(`${index}_span`);
+    const input = document.getElementById(`${index}_span`);
     if (btn.textContent === "Edit") {
       console.log("edit -> save");
-      btn.textContent = "Save";
-      span.contentEditable = true;
-      a.href = "";
-    }
-    if (btn.textContent === "Save") {
+      btn.innerHTML = "Save";
+      input.readOnly = false;
+      a.style = "pointer-events: none";
+    } else if (btn.textContent === "Save") {
       console.log("save -> edit");
-      btn.textContent = "Edit";
-      span.contentEditable = false;
-      a.href = url;
+      btn.innerHTML = "Edit";
+      input.readOnly = true;
+      a.style = "";
+      chrome.storage.local.get(key).then((data) => {
+        data[key].data[index].title = input.value;
+        return data;
+      }).then(async (data) => {
+        await chrome.storage.local.set(data);
+      });
     }
   }
 
@@ -26631,9 +26632,21 @@
   var import_react2 = __toESM(require_react());
   var import_react3 = __toESM(require_react());
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  function CreateTitleInput(index2, title) {
+    val = title;
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+      "input",
+      {
+        id: `${index2}_span`,
+        onChange: (evt) => setInputVal(evt.target.value),
+        value: val,
+        readOnly: true
+      }
+    );
+  }
   function EditSessionPageList(data) {
     const pages = Array.isArray(data?.data) ? data.data : [];
-    const [show, setShow] = (0, import_react3.useState)(false);
+    const [val2, setInputVal2] = (0, import_react3.useState)();
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("b", { children: "Pages: " }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("br", {}),
@@ -26641,13 +26654,14 @@
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { id: "toggle_tags", onClick: () => {
       }, children: "Toggle Tags" }),
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("ul", { children: pages.map((item, index2) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("li", { id: index2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("a", { id: `${index2}_a`, href: item.url, children: "Link" }),
+        CreateTitleInput(index2, item.title),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { id: `${index2}_edit`, onClick: () => {
-          RHEditPage(index2, data.session_key, item.url);
+          RHEditPage(index2, data.session_key);
         }, children: "Edit" }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { id: `${index2}_delete`, onClick: async () => {
           RHDeletePage(index2, data.session_key);
         }, children: "Delete" }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("a", { id: `${index2}_a`, href: item.url, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { id: `${index2}_span`, children: item.title }) }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("br", {}),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { id: `${index2}_tagdiv`, children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
