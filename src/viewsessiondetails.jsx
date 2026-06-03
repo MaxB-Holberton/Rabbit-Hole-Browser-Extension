@@ -24,15 +24,6 @@ export function ShowSessionDetailBtns({ session }) {
 	);
 }
 
-export function ShowSessionActions(session) {
-	return (
-		<>
-			<IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { }} />
-			<IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session.session_key); }} />
-		</>
-	);
-}
-
 export function ShowSessionBtns() {
 	//Creates the buttons for interecting with the session
 	//These are generic buttons that do not have much detail required

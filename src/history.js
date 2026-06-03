@@ -62,7 +62,7 @@ export async function RHGetPage(key) {
   return history_item[key];
 }
 
-// Session Deleted
+// Delete a session
 export async function RHDeleteSession(session_key) {
   console.log(session_key);
   if(confirm("Are you sure you want to delete this rabbit hole?"))
@@ -73,6 +73,7 @@ export async function RHDeleteSession(session_key) {
   }
 }
 
+// Delete a page
 export async function RHDeletePage(index, key) {
   if(confirm(`Delete this page?`))
   {
@@ -87,21 +88,19 @@ export async function RHDeletePage(index, key) {
 
 export async function RHEditPage(index, key) {
   const btn = document.getElementById(`${index}_edit`);
-  const a = document.getElementById(`${index}_a`);
-  const input = document.getElementById(`${index}_span`);
-  if (btn.textContent === "Edit")
+  //const a = document.getElementById(`${index}_a`);
+  const input = document.getElementById(`${index}_input`);
+  if (input.readOnly === true)
   {
     console.log("edit -> save");
-    btn.innerHTML = "Save";
     input.readOnly = false;
-    a.style = "pointer-events: none";
+    //a.style = "pointer-events: none";
   }
-  else if (btn.textContent === "Save")
+  else if (input.readOnly === false)
   {
     console.log("save -> edit");
-    btn.innerHTML = "Edit";
     input.readOnly = true;
-    a.style = "";
+    //a.style = "";
     chrome.storage.local.get(key).then((data) => {
       data[key].data[index].title = input.value;
       return data;
