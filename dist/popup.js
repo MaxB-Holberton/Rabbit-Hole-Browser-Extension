@@ -33,8 +33,7 @@
           ...historyEntry,
           category,
           structuralTags,
-          concepts: [],
-          manualTags: []
+          concepts: []
         });
       } catch (error) {
         reject(error);
@@ -79,10 +78,35 @@
     return new_session;
   }
 
+  // src/tagStore.js
+  var MANUAL_TAGS_KEY = "manualTagsByPage";
+  async function getManualTags() {
+    const data = await chrome.storage.local.get(MANUAL_TAGS_KEY);
+    return data[MANUAL_TAGS_KEY] ?? {};
+  }
+  function getPageId(url) {
+    const u = new URL(url);
+    return `${u.hostname.replace("www.", "")}${u.pathname}`;
+  }
+
   // src/popup.js
+  async function enrichHistory(history) {
+    const manualTags = await getManualTags();
+    return history.map((entry) => {
+      const pageId = getPageId(entry.url);
+      return {
+        ...entry,
+        manualTags: manualTags[pageId] ?? []
+      };
+    });
+  }
+  async function refreshUI(history) {
+    const enriched = await enrichHistory(history);
+    console.log("UI DATA READY:", enriched);
+  }
   document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("RabbitHole_Record").addEventListener("click", async () => {
-      console.log("BUTTON PRESSED");
+      console.log("BUT:TON PRESSED");
       ToggleTimer();
       console.log("FUNCTION FINISHED");
     });
@@ -119,6 +143,7 @@
       }
       const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
       await chrome.storage.local.set(new_session);
+      await refreshUI(taggedHistory);
     } catch (error) {
       console.error("TOGGLETIMER ERROR:", error);
     }
