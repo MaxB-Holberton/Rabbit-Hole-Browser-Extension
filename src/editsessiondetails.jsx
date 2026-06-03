@@ -1,7 +1,10 @@
 import React from 'react';
+import { RHDeletePage } from "./history.js";
+import { IconButton } from "./iconbutton.jsx";
 import { useEffect, useState } from 'react';
 import { RHDeletePage, RHEditPage } from "./history.js";
 import { ShowSessionTags } from "./viewsessiondetails";
+import { IconButton } from "./iconbutton.jsx";
 
 export function EditSessionPageList(data) {
 	//TODO: Edit btn to appear when edit page is
@@ -9,6 +12,7 @@ export function EditSessionPageList(data) {
 	const [show, setShow] = useState(false);
 	return (
 		<div>
+			<b>Pages: </b><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={() => { }} />
 			<b>Pages: </b>
 			<br/>
 			<button id="add_page">Add Page</button>
@@ -16,6 +20,21 @@ export function EditSessionPageList(data) {
 			<ul>
 			{pages.map((item, index2) => (
 				<li id={index2} key={index2}>
+					<IconButton
+						id={`${index2}_edit`}
+						iconSrc="assets/edit_icon.svg"
+						label="Edit"
+						showLabel={false}
+						ariaLabel="Edit page"
+						onClick={() =>{} }
+					/>
+				 	<IconButton
+				 		iconSrc="assets/delete_icon.svg"
+				 		label="Delete"
+				 		showLabel={false}
+				 		ariaLabel="Delete page"
+				 		onClick={async () => { RHDeletePage(index2, data.session_key) }}
+				 	/>
 					<button id={`${index2}_edit`} onClick={() => { RHEditPage(index2, data.session_key, item.url); }}>Edit</button>
  					<button id={`${index2}_delete`} onClick={async () => { RHDeletePage(index2, data.session_key) }}>Delete</button>
 					<a id={`${index2}_a`} href={item.url}><span id={`${index2}_span`}>{item.title}</span></a>
@@ -38,8 +57,9 @@ export function EditSessionTags(data) {
 	return (
 		<div>
 			<b>Tags: </b>
+			<IconButton id="add_tags" iconSrc="assets/tag_icon.svg" label="Add Tags" onClick={() => { }} />
 			{tags.map((tag, index) => (
-				<span>{tag}, </span>
+				<span key={index}>{tag}, </span>
 			))}
 		</div>
 	);

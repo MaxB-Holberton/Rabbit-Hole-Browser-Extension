@@ -1,5 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { RHDeleteSession } from "./history.js";
+import { IconButton } from "./iconbutton.jsx";
 
 export function SectionRibbon(title_h3) {
 	//returns the Section Ribbon
@@ -10,11 +12,23 @@ export function SectionRibbon(title_h3) {
 	);
 }
 
-export function ShowSessionDetailBtns(session) {
+export function ShowSessionDetailBtns({ session }) {
+	const navigate = useNavigate();
+
 	return (
 		<>
-			<button onClick={() => { RHEditSession(session.session_key); }}>Edit Session</button>
-			<button onClick={() => { RHDeleteSession(session.session_key); }}>Delete Session</button>
+			<IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
+			<IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
+			<button type="button" onClick={() => navigate(-1)}>Back</button>
+		</>
+	);
+}
+
+export function ShowSessionActions(session) {
+	return (
+		<>
+			<IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { }} />
+			<IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session.session_key); }} />
 		</>
 	);
 }
@@ -27,7 +41,8 @@ export function ShowSessionBtns() {
 	 */
 	return (
 		<>
-			<button>Share</button>
+			<IconButton iconSrc="assets/share_icon.svg" label="Share" onClick={() => { }} />
+			<IconButton iconSrc="assets/tag_icon.svg" label="Tag" onClick={() => { }} />
 		</>
 	);
 }
@@ -59,7 +74,7 @@ export function ShowSessionTags(data) {
 		<div>
 			<b>Tags: </b>
 			{tags.map((tag, index) => (
-				<span>{tag}, </span>
+				<span key={index}>{tag}, </span>
 			))}
 		</div>
 	);
