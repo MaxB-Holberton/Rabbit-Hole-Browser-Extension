@@ -60,12 +60,33 @@
   }
   async function RHDeletePage(index, key) {
     if (confirm(`Delete this page?`)) {
-      await chrome.storage.local.get(key).then((data) => {
+      chrome.storage.local.get(key).then((data) => {
         data[key].data.splice(index, 1);
         return data;
       }).then(async (data) => {
         await chrome.storage.local.set(data);
       });
+    }
+  }
+  async function RHEditPage(index, key, url) {
+    console.log("butten pressed");
+    console.log(index);
+    console.log(key);
+    console.log(url);
+    const btn = document.getElementById(`${index}_edit`);
+    const a = document.getElementById(`${index}_a`);
+    const span = document.getElementById(`${index}_span`);
+    if (btn.textContent === "Edit") {
+      console.log("edit -> save");
+      btn.textContent = "Save";
+      span.contentEditable = true;
+      a.href = "";
+    }
+    if (btn.textContent === "Save") {
+      console.log("save -> edit");
+      btn.textContent = "Edit";
+      span.contentEditable = false;
+      a.href = url;
     }
   }
 })();

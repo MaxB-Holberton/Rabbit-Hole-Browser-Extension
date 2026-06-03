@@ -1084,7 +1084,7 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState4(initialState) {
+          function useState5(initialState) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState);
           }
@@ -1096,7 +1096,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect4(create, deps) {
+          function useEffect5(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1879,7 +1879,7 @@
           exports.useContext = useContext3;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect4;
+          exports.useEffect = useEffect5;
           exports.useId = useId;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useInsertionEffect = useInsertionEffect;
@@ -1887,7 +1887,7 @@
           exports.useMemo = useMemo3;
           exports.useReducer = useReducer;
           exports.useRef = useRef3;
-          exports.useState = useState4;
+          exports.useState = useState5;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -26554,12 +26554,33 @@
   }
   async function RHDeletePage(index, key) {
     if (confirm(`Delete this page?`)) {
-      await chrome.storage.local.get(key).then((data) => {
+      chrome.storage.local.get(key).then((data) => {
         data[key].data.splice(index, 1);
         return data;
       }).then(async (data) => {
         await chrome.storage.local.set(data);
       });
+    }
+  }
+  async function RHEditPage(index, key, url) {
+    console.log("butten pressed");
+    console.log(index);
+    console.log(key);
+    console.log(url);
+    const btn = document.getElementById(`${index}_edit`);
+    const a = document.getElementById(`${index}_a`);
+    const span = document.getElementById(`${index}_span`);
+    if (btn.textContent === "Edit") {
+      console.log("edit -> save");
+      btn.textContent = "Save";
+      span.contentEditable = true;
+      a.href = "";
+    }
+    if (btn.textContent === "Save") {
+      console.log("save -> edit");
+      btn.textContent = "Edit";
+      span.contentEditable = false;
+      a.href = url;
     }
   }
 
@@ -26638,6 +26659,7 @@
   }
 
   // src/editsessiondetails.jsx
+<<<<<<< HEAD
   var import_react3 = __toESM(require_react());
   var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   function EditSessionPageList(data) {
@@ -26672,6 +26694,43 @@
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("a", { id: `${index2}_a`, href: item.url, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { id: `${index2}_span`, children: item.title }) })
+=======
+  var import_react2 = __toESM(require_react());
+  var import_react3 = __toESM(require_react());
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  function EditSessionPageList(data) {
+    const pages = Array.isArray(data?.data) ? data.data : [];
+    const [show, setShow] = (0, import_react3.useState)(false);
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("b", { children: "Pages: " }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("br", {}),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { id: "add_page", children: "Add Page" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { id: "toggle_tags", onClick: () => {
+      }, children: "Toggle Tags" }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("ul", { children: pages.map((item, index2) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("li", { id: index2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { id: `${index2}_edit`, onClick: () => {
+          RHEditPage(index2, data.session_key, item.url);
+        }, children: "Edit" }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { id: `${index2}_delete`, onClick: async () => {
+          RHDeletePage(index2, data.session_key);
+        }, children: "Delete" }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("a", { id: `${index2}_a`, href: item.url, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { id: `${index2}_span`, children: item.title }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("br", {}),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { id: `${index2}_tagdiv`, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
+            "Category: ",
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: item.category })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
+            "structTag: ",
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: item.structuralTags })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { children: [
+            "ManualTags: ",
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: item.manualTags })
+          ] })
+        ] })
+>>>>>>> aa1b4d6 (additions to Session page (#10))
       ] }, index2)) })
     ] });
   }
@@ -26710,8 +26769,13 @@
     const [last_session, setLastSession] = (0, import_react5.useState)([]);
     (0, import_react5.useEffect)(() => {
       RHGetSessionList().then((sessions) => setLastSession(sessions[sessions.length - 1]));
+<<<<<<< HEAD
     }, []);
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Link, { to: `/session/${last_session.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { id: last_session.session_key, className: "rabbitHole", children: [
+=======
+    });
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Link, { to: `/session/${last_session.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { id: last_session.session_key, className: "rabbitHole", children: [
+>>>>>>> aa1b4d6 (additions to Session page (#10))
       ShowSessionMetadata(last_session),
       ShowSessionTags(last_session)
     ] }) });
@@ -26720,7 +26784,7 @@
     const [sessions, setSessionsList] = (0, import_react5.useState)([]);
     (0, import_react5.useEffect)(() => {
       RHGetSessionList().then((sessions2) => setSessionsList(sessions2));
-    }, []);
+    });
     return sessions.map((session, index) => {
       return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Link, { className: "div-links", to: `/session/${session.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "rabbitHole", children: [
         ShowSessionMetadata(session),
@@ -26848,7 +26912,11 @@
     throw new Error('Root element with id "root" was not found.');
   }
   (0, import_client.createRoot)(rootElement).render(
+<<<<<<< HEAD
     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_react4.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(AppShell, {}) }) })
+=======
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_react4.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(AppShell, {}) }) })
+>>>>>>> aa1b4d6 (additions to Session page (#10))
   );
 })();
 /*! Bundled license information:
