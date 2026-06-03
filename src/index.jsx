@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
-import { SectionRibbon, ShowSessionDetailBtns,
-  ShowSessionPageList, ShowSessionTags,
-  ShowSessionMetadata } from "./viewsessiondetails";
-import { EditSessionPageList, EditSessionTags, EditSessionMetadata} from "./editsessiondetails";
+import { SectionRibbon,
+  ShowSessionActions, ShowSessionDetailBtns, ShowSessionPageList, ShowSessionTags,
+  ShowSessionMetadata } from "./viewsessiondetails"
+import { EditSessionPageList, EditSessionTags, EditSessionMetadata} from "./editsessiondetails"
 
 /*
  * Display Functions to use within the routes

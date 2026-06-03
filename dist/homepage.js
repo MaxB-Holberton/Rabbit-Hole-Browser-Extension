@@ -26660,6 +26660,7 @@
 
   // src/editsessiondetails.jsx
 <<<<<<< HEAD
+<<<<<<< HEAD
   var import_react3 = __toESM(require_react());
   var import_jsx_runtime3 = __toESM(require_jsx_runtime());
   function EditSessionPageList(data) {
@@ -26695,11 +26696,45 @@
         ),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("a", { id: `${index2}_a`, href: item.url, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { id: `${index2}_span`, children: item.title }) })
 =======
+=======
+  var import_react3 = __toESM(require_react());
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+>>>>>>> 70f6f07 (add: button styling & assets)
   var import_react2 = __toESM(require_react());
   var import_react3 = __toESM(require_react());
   var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   function EditSessionPageList(data) {
     const pages = Array.isArray(data?.data) ? data.data : [];
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("b", { children: "Pages: " }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(IconButton, { id: "add_page", iconSrc: "assets/add_icon.svg", label: "Add Page", onClick: () => {
+      } }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("ul", { children: pages.map((item, index2) => /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("li", { id: index2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          IconButton,
+          {
+            id: `${index2}_edit`,
+            iconSrc: "assets/edit_icon.svg",
+            label: "Edit",
+            showLabel: false,
+            ariaLabel: "Edit page",
+            onClick: () => {
+            }
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          IconButton,
+          {
+            iconSrc: "assets/delete_icon.svg",
+            label: "Delete",
+            showLabel: false,
+            ariaLabel: "Delete page",
+            onClick: async () => {
+              RHDeletePage(index2, data.session_key);
+            }
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("a", { id: `${index2}_a`, href: item.url, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { id: `${index2}_span`, children: item.title }) })
     const [show, setShow] = (0, import_react3.useState)(false);
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("b", { children: "Pages: " }),
@@ -26768,11 +26803,18 @@
   function ShowLastSession() {
     const [last_session, setLastSession] = (0, import_react5.useState)([]);
     (0, import_react5.useEffect)(() => {
+    const [last_session, setLastSession] = (0, import_react5.useState)([]);
+    (0, import_react5.useEffect)(() => {
       RHGetSessionList().then((sessions) => setLastSession(sessions[sessions.length - 1]));
+<<<<<<< HEAD
 <<<<<<< HEAD
     }, []);
     return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Link, { to: `/session/${last_session.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { id: last_session.session_key, className: "rabbitHole", children: [
 =======
+=======
+    }, []);
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Link, { to: `/session/${last_session.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { id: last_session.session_key, className: "rabbitHole", children: [
+>>>>>>> 70f6f07 (add: button styling & assets)
     });
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Link, { to: `/session/${last_session.session_key}`, children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { id: last_session.session_key, className: "rabbitHole", children: [
 >>>>>>> aa1b4d6 (additions to Session page (#10))
@@ -26781,6 +26823,8 @@
     ] }) });
   }
   function ShowAllSessions() {
+    const [sessions, setSessionsList] = (0, import_react5.useState)([]);
+    (0, import_react5.useEffect)(() => {
     const [sessions, setSessionsList] = (0, import_react5.useState)([]);
     (0, import_react5.useEffect)(() => {
       RHGetSessionList().then((sessions2) => setSessionsList(sessions2));
@@ -26794,6 +26838,8 @@
   }
   function SessionDetailsPage() {
     const params = useParams();
+    const [page_data, setPageData] = (0, import_react5.useState)([]);
+    (0, import_react5.useEffect)(() => {
     const [page_data, setPageData] = (0, import_react5.useState)([]);
     (0, import_react5.useEffect)(() => {
       RHGetPage(params.session_id).then((data) => setPageData(data));
@@ -26841,6 +26887,8 @@
     ] }) });
   }
   function ViewNav() {
+    const [sessions, setSessions] = (0, import_react5.useState)([]);
+    (0, import_react5.useEffect)(() => {
     const [sessions, setSessions] = (0, import_react5.useState)([]);
     (0, import_react5.useEffect)(() => {
       RHGetSessionList().then((sessions2) => setSessions(sessions2));
@@ -26913,8 +26961,12 @@
   }
   (0, import_client.createRoot)(rootElement).render(
 <<<<<<< HEAD
+<<<<<<< HEAD
     /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_react4.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(AppShell, {}) }) })
 =======
+=======
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_react4.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(AppShell, {}) }) })
+>>>>>>> 70f6f07 (add: button styling & assets)
     /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_react4.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(AppShell, {}) }) })
 >>>>>>> aa1b4d6 (additions to Session page (#10))
   );
