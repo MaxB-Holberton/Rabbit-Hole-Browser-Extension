@@ -24,7 +24,7 @@
     const new_session = {};
     const new_session_metadata = {};
     new_session_metadata["title"] = "New Rabbit Hole Name";
-    new_session_metadata["tag_list"] = "taglist Here";
+    new_session_metadata["tag_list"] = ["newTag", "Testtag", "tagtheThird"];
     new_session_metadata["start_time_ms"] = start;
     new_session_metadata["end_time_ms"] = end;
     new_session_metadata["start_time_datetime"] = MiliToDatetime(start);
@@ -35,7 +35,7 @@
     new_session[rabbit_hole_name] = new_session_metadata;
     return new_session;
   }
-  async function GetRabbitHoleHistory() {
+  async function RHGetSessionList() {
     const rtn_history = [];
     const key_list = await chrome.storage.local.getKeys();
     for (const key of key_list) {
@@ -45,5 +45,27 @@
       }
     }
     return rtn_history;
+  }
+  async function RHGetPage(key) {
+    const history_item = await chrome.storage.local.get(key);
+    return history_item[key];
+  }
+  async function RHDeleteSession(session_key) {
+    console.log(session_key);
+    if (confirm("Are you sure you want to delete this rabbit hole?")) {
+      console.log("deleting...");
+      await chrome.storage.local.remove([session_key]);
+      window.location.href = "/index.html#/overview";
+    }
+  }
+  async function RHDeletePage(index, key) {
+    if (confirm(`Delete this page?`)) {
+      await chrome.storage.local.get(key).then((data) => {
+        data[key].data.splice(index, 1);
+        return data;
+      }).then(async (data) => {
+        await chrome.storage.local.set(data);
+      });
+    }
   }
 })();
