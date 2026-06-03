@@ -95,7 +95,6 @@ export async function RHEditPage(index, key) {
     btn.innerHTML = "Save";
     input.readOnly = false;
     a.style = "pointer-events: none";
-    //Enable changes here
   }
   else if (btn.textContent === "Save")
   {
