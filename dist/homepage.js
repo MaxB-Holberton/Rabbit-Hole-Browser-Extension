@@ -26553,11 +26553,14 @@
     }
   }
   async function RHDeletePage(index, key) {
-    const item = await chrome.storage.local.get(key);
-    console.log(index);
-    const data_arr = item.data;
-    item.data = data_arr.toSplice(index, 1);
-    console.log(item);
+    if (confirm(`Delete this page?`)) {
+      await chrome.storage.local.get(key).then((data) => {
+        data[key].data.splice(index, 1);
+        return data;
+      }).then(async (data) => {
+        await chrome.storage.local.set(data);
+      });
+    }
   }
 
   // src/viewsessiondetails.jsx
@@ -26651,7 +26654,7 @@
     const [page_data, setPageData] = (0, import_react4.useState)([]);
     (0, import_react4.useEffect)(() => {
       RHGetPage(params.session_id).then((data) => setPageData(data));
-    }, []);
+    });
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { id: "white", children: "Session!" }),
       SectionRibbon(`${page_data.title}`),
@@ -26676,7 +26679,7 @@
     const [sessions, setSessions] = (0, import_react4.useState)([]);
     (0, import_react4.useEffect)(() => {
       RHGetSessionList().then((sessions2) => setSessions(sessions2));
-    }, [sessions.length]);
+    });
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("section", { className: "rabbitHole", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "rabbitHole", id: "counter", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { children: "Topic:" }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("p", { children: [
