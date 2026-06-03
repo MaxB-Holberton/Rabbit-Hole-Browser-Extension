@@ -5,8 +5,8 @@ import { HashRouter, Link, Navigate, Route, Routes, useParams } from 'react-rout
 import { RHGetSessionList, RHGetPage } from "./history.js";
 import { SectionRibbon, ShowSessionDetailBtns,
   ShowSessionPageList, ShowSessionTags,
-  ShowSessionMetadata } from "./viewsessiondetails"
-import { EditSessionPageList, EditSessionTags, EditSessionMetadata} from "./editsessiondetails"
+  ShowSessionMetadata } from "./viewsessiondetails";
+import { EditSessionPageList, EditSessionTags, EditSessionMetadata} from "./editsessiondetails";
 
 /*
  * Display Functions to use within the routes
@@ -17,7 +17,8 @@ function ShowLastSession() {
 
   useEffect(() => {
     RHGetSessionList().then((sessions) => setLastSession(sessions[sessions.length - 1]));
-  }, []);
+  });
+
   return (
     <Link to={`/session/${last_session.session_key}`}>
       <div id={last_session.session_key} className="rabbitHole">
@@ -34,7 +35,7 @@ function ShowAllSessions() {
 
   useEffect(() => {
     RHGetSessionList().then((sessions) => setSessionsList(sessions));
-  }, []);
+  });
 
   return sessions.map((session, index) => {
     return (
