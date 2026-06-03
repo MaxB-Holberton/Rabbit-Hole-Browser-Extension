@@ -1,6 +1,4 @@
 import React from 'react';
-import { RHDeletePage } from "./history.js";
-import { IconButton } from "./iconbutton.jsx";
 import { useEffect, useState } from 'react';
 import { RHDeletePage, RHEditPage } from "./history.js";
 import { ShowSessionTags } from "./viewsessiondetails";
