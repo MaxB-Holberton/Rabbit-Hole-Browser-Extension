@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
-import { SectionRibbon, ShowSessionDetailBtns,
-  ShowSessionPageList, ShowSessionTags,
+import { SectionRibbon,
+  ShowSessionActions, ShowSessionDetailBtns, ShowSessionPageList, ShowSessionTags,
   ShowSessionMetadata } from "./viewsessiondetails"
 import { EditSessionPageList, EditSessionTags, EditSessionMetadata} from "./editsessiondetails"
 
@@ -69,9 +69,38 @@ function SessionDetailsPage() {
         <br/>
         {ShowSessionTags(page_data)}
         <br/>
+        {ShowSessionPageList(page_data)}
+        <br/>
+        <ShowSessionDetailBtns session={page_data} />
+      </div>
+    </section>
+    </>
+  );
+}
+
+function SessionEditPage() {
+  const params = useParams();
+  const [page_data, setPageData] = useState([]);
+
+  useEffect(() => {
+    RHGetPage(params.session_id).then((data) => setPageData(data));
+  });
+
+  return (
+    <>
+    <h2 id="white">Session!</h2>
+    {SectionRibbon(`${page_data.title}`)}
+    <section className="rabbitHole" id="previous">
+      <div className="rabbitHole">
+        {EditSessionMetadata(page_data)}
+        <br/>
+        {EditSessionTags(page_data)}
+        <br/>
         {EditSessionPageList(page_data)}
         <br/>
-        {ShowSessionDetailBtns(page_data)}
+        {ShowSessionActions(page_data)}
+        <br/>
+        <button type="button" onClick={() => window.history.back()}>Back</button>
       </div>
     </section>
     </>
@@ -170,6 +199,7 @@ function AppShell() {
           <Route path="/recent" element={<MostRecentView />} />
           <Route path="/previous" element={<PreviousView />} />
           <Route path="/session/:session_id" element={<SessionDetailsPage />} />
+          <Route path="/session/:session_id/edit" element={<SessionEditPage />} />
         </Routes>
       </main>
       <footer>

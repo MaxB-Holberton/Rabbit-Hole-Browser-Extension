@@ -3,6 +3,22 @@
   padding: 0;
   box-sizing: border-box;
   font-family: Verdana;
+  --primary-light: #3a1800;
+  --primary-dark: #000000;
+  --secondary-light: #ffffff;
+  --secondary-dark: #eaded6;
+  --tertiary-light: #ffa360;
+  --tertiary-dark: #e66100;
+  --start-light: #4de475;
+  --start-dark: #00a22b;
+  --stop-light: #ff9aa9;
+  --stop-dark: #e13d55;
+  --error-light: #9d2200;
+  --error-dark: #5d0000;
+  --info-light: #63baab;
+  --info-dark: #006b5e;
+  --brown-light: #422020;
+  --brown-dark: #2c1616;
 }
 
 .popupBody {
@@ -21,6 +37,48 @@
 }
 .popupBody button {
   font-family: 'Cause', Verdana;
+}
+
+button {
+  font-family: 'Cause', Verdana !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+button * {
+  font-family: inherit;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+button.iconButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--secondary-dark);
+  border-radius: 5px;
+  border: 1px solid var(--brown-light);
+  padding: 5px;
+  font-family: 'Cause';
+}
+
+button.iconButton .iconButtonIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+button.iconButton .iconButtonLabel {
+  line-height: 1;
 }
 html, body {
   min-height: 100%;
