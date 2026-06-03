@@ -1,23 +1,34 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { RHDeletePage, RHEditPage } from "./history.js";
-import { ShowSessionTags } from "./viewsessiondetails";
 import { IconButton } from "./iconbutton.jsx";
 
-function CreateTitleInput(index2, title) {
-	val = title;
+export function EditSessionActions(session) {
 	return (
-		<input
-		id={`${index2}_span`}
-		onChange={evt => setInputVal(evt.target.value)}
-		value={val}
-		readOnly={true}/>
-	);
-}
+		<>
+		<IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { /* Save all details and return */ }} />
+		<IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session.session_key); }} />
+		</>
 
 export function EditSessionPageList(data) {
 	const pages = Array.isArray(data?.data) ? data.data : [];
-	const [val, setInputVal] = useState();
+
+	const [input_vals, setInputVal] = useState({})
+
+	useEffect(() => {
+		for (let i = 0; i < pages.length; i++)
+		{
+			let key = `${i}`;
+			setInputVal(values => ({...values, [key]: pages[i].title}));
+		}
+	}, []);
+
+	// handles the input events
+	function UpdateVal(evt) {
+		const id = evt.target.name;
+		const val = evt.target.value;
+		setInputVal(vals => ({...vals, [id]: val}));
+	}
 
 	return (
 		<div>
@@ -25,17 +36,20 @@ export function EditSessionPageList(data) {
 			<ul>
 			{pages.map((item, index2) => (
 				<li id={index2} key={index2}>
- 					<a id={`${index2}_a`} href={item.url}>Link</a>
- 					{CreateTitleInput(index2, item.title)}
-					<button id={`${index2}_edit`} onClick={() => { RHEditPage(index2, data.session_key); }}>Edit</button>
-					<button id={`${index2}_delete`} onClick={async () => { RHDeletePage(index2, data.session_key) }}>Delete</button>
+					<input
+					id={`${index2}_input`}
+					name={`${index2}`}
+					onChange={UpdateVal}
+					value={input_vals[`${index2}`]}
+					readOnly={true}/>
+
 					<IconButton
 						id={`${index2}_edit`}
 						iconSrc="assets/edit_icon.svg"
 						label="Edit"
 						showLabel={false}
 						ariaLabel="Edit page"
-						onClick={() => { RHEditPage(index2, data.session_key, item.url) }}
+						onClick={ async () => { /*change this to be ObjChange(index2, ) */ RHEditPage(index2, data.session_key) }}
 					/>
 				 	<IconButton
 						id={`${index2}_delete`}
@@ -43,7 +57,7 @@ export function EditSessionPageList(data) {
 				 		label="Delete"
 				 		showLabel={false}
 				 		ariaLabel="Delete page"
-				 		onClick={async () => { RHDeletePage(index2, data.session_key) }}
+				 		onClick={async () => { /*ObjChange(index_2, 'delete') */ RHDeletePage(index2, data.session_key) }}
 				 	/>
 					<br/>
 					<div id={`${index2}_tagdiv`}>

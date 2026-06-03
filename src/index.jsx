@@ -3,10 +3,14 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
-import { SectionRibbon,
-  ShowSessionActions, ShowSessionDetailBtns, ShowSessionPageList, ShowSessionTags,
-  ShowSessionMetadata } from "./viewsessiondetails"
-import { EditSessionPageList, EditSessionTags, EditSessionMetadata} from "./editsessiondetails"
+
+import { SectionRibbon, ShowSessionDetailBtns,
+  ShowSessionPageList, ShowSessionTags,
+  ShowSessionMetadata } from "./viewsessiondetails";
+
+import { EditSessionActions, EditSessionPageList,
+  EditSessionTags, EditSessionMetadata} from "./editsessiondetails";
+
 /*
  * Display Functions to use within the routes
  */
@@ -49,7 +53,7 @@ function ShowAllSessions() {
 }
 
 /*
- * Routes function w/UseEffect UseState Hook
+ * Show the full details of a single session
  */
 function SessionDetailsPage() {
   const params = useParams();
@@ -98,7 +102,7 @@ function SessionEditPage() {
         <br/>
         {EditSessionPageList(page_data)}
         <br/>
-        {ShowSessionActions(page_data)}
+        {EditSessionActions(page_data)}
         <br/>
         <button type="button" onClick={() => window.history.back()}>Back</button>
       </div>
