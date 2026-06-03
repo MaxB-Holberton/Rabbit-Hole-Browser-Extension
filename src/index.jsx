@@ -7,7 +7,6 @@ import { SectionRibbon,
   ShowSessionActions, ShowSessionDetailBtns, ShowSessionPageList, ShowSessionTags,
   ShowSessionMetadata } from "./viewsessiondetails"
 import { EditSessionPageList, EditSessionTags, EditSessionMetadata} from "./editsessiondetails"
-
 /*
  * Display Functions to use within the routes
  */
