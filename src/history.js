@@ -72,9 +72,6 @@ export async function RHDeleteSession(session_key) {
     window.location.href = "/index.html#/overview";
   }
 }
-
-export async function RHSaveSession()
-
 // Delete a page
 export async function RHDeletePage(index, key) {
   if(confirm(`Delete this page?`))
