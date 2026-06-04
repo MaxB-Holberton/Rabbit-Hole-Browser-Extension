@@ -72,7 +72,6 @@ export async function RHDeleteSession(session_key) {
     window.location.href = "/index.html#/overview";
   }
 }
-
 // Delete a page
 export async function RHDeletePage(index, key) {
   if(confirm(`Delete this page?`))
@@ -88,17 +87,16 @@ export async function RHDeletePage(index, key) {
 
 export async function RHEditPage(index, key) {
   const btn = document.getElementById(`${index}_edit`);
-  //const a = document.getElementById(`${index}_a`);
   const input = document.getElementById(`${index}_input`);
   if (input.readOnly === true)
   {
-    console.log("edit -> save");
+    console.log("readonly: true -> false");
     input.readOnly = false;
     //a.style = "pointer-events: none";
   }
   else if (input.readOnly === false)
   {
-    console.log("save -> edit");
+    console.log("readonly: false -> true");
     input.readOnly = true;
     //a.style = "";
     chrome.storage.local.get(key).then((data) => {
