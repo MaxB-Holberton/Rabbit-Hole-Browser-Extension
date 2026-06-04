@@ -65,8 +65,7 @@ export async function RHGetPage(key) {
 // Delete a session
 export async function RHDeleteSession(session_key) {
   console.log(session_key);
-  if(confirm("Are you sure you want to delete this rabbit hole?"))
-  {
+  if (confirm("Are you sure you want to delete this rabbit hole?")) {
     console.log("deleting...");
     await chrome.storage.local.remove([session_key]);
     window.location.href = "/index.html#/overview";
@@ -74,8 +73,7 @@ export async function RHDeleteSession(session_key) {
 }
 // Delete a page
 export async function RHDeletePage(index, key) {
-  if(confirm(`Delete this page?`))
-  {
+  if (confirm(`Delete this page?`)) {
     chrome.storage.local.get(key).then((data) => {
       data[key].data.splice(index, 1);
       return data;
@@ -88,14 +86,12 @@ export async function RHDeletePage(index, key) {
 export async function RHEditPage(index, key) {
   const btn = document.getElementById(`${index}_edit`);
   const input = document.getElementById(`${index}_input`);
-  if (input.readOnly === true)
-  {
+  if (input.readOnly === true) {
     console.log("readonly: true -> false");
     input.readOnly = false;
     //a.style = "pointer-events: none";
   }
-  else if (input.readOnly === false)
-  {
+  else if (input.readOnly === false) {
     console.log("readonly: false -> true");
     input.readOnly = true;
     //a.style = "";
@@ -106,4 +102,19 @@ export async function RHEditPage(index, key) {
       await chrome.storage.local.set(data);
     });
   }
+}
+
+//Session tag deletion
+export async function RHRemoveSessionTag(session_key, tag) {
+  const data = await chrome.storage.local.get(session_key);
+  const session = data[session_key];
+
+  if (!session?.tag_list) return;
+
+  session.tag_list = session.tag_list.filter(t => t !== tag);
+
+  await chrome.storage.local.set({
+    [session_key]: session
+  });
+  return session;
 }
