@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { RHSaveSession, RHDeleteSession, RHGetPage } from "./history.js";
+import { RHDeleteSession, RHGetPage } from "./history.js";
 import { IconButton } from "./iconbutton.jsx";
 import { SectionRibbon } from "./viewsessiondetails";
 
