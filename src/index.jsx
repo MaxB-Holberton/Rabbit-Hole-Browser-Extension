@@ -8,8 +8,7 @@ import { SectionRibbon, ShowSessionDetailBtns,
   ShowSessionPageList, ShowSessionTags,
   ShowSessionMetadata } from "./viewsessiondetails";
 
-import { EditSessionActions, EditSessionPageList,
-  EditSessionTags, EditSessionMetadata} from "./editsessiondetails";
+import { SessionEditPage } from "./editsessionpage";
 
 /*
  * Display Functions to use within the routes
@@ -19,7 +18,11 @@ function ShowLastSession() {
   const [last_session, setLastSession] = useState([]);
 
   useEffect(() => {
-    RHGetSessionList().then((sessions) => setLastSession(sessions[sessions.length - 1]));
+    RHGetSessionList().then((sessions) => {
+      if (sessions.length > 0) {
+        setLastSession(sessions[sessions.length - 1]);
+      }
+    })
   });
 
   return (
@@ -82,6 +85,7 @@ function SessionDetailsPage() {
   );
 }
 
+/*
 function SessionEditPage() {
   const params = useParams();
   const [page_data, setPageData] = useState([]);
@@ -110,7 +114,7 @@ function SessionEditPage() {
     </>
   );
 }
-
+*/
 /*
  * Routes functions
  */
