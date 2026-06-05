@@ -16,24 +16,33 @@ export function SessionEditPage() {
 	const [page_data, setPageData] = useState([]);
 	const [pages_vals, setPageVal] = useState({});
 	const [tags_vals, setTagsVal] = useState({});
-	const [metadata_vals, setMetaDataVal] = useState({});
 
 	//Updates the pages title box
 	function UpdatePageInput(evt) {
-		const id = evt.target.name;
+		const name = evt.target.name;
 		const val = evt.target.value;
-		setPageVal(vals => ({...vals, [id]: val}));
+		setPageVal(vals => ({...vals, [name]: val}));
 	}
 
 	function UpdateMetadata(evt) {
-		const id = evt.target.name;
+		const name = evt.target.name;
 		const val = evt.target.value;
-		setMetaDataVal(vals => ({...vals, [id]: val}));
+		setPageData(vals => ({...vals, [name]: val}));
+	}
+
+	function DeletePage(index) {
+		const new_data = {...page_data};
+		new_data.data.splice(index, 1);
+		setPageVal(vals => (delete vals[index]));
+		setPageData(new_data);
 	}
 
 	useEffect(() => {
+		//Renders all the information from
 		RHGetPage(params.session_id).then((data) => setPageData(data));
-	});
+	},[]);
+
+	useEffect(() => {}, [page_data]);
 
 	return (
 		<>
@@ -45,9 +54,9 @@ export function SessionEditPage() {
 					<br/>
 					{EditSessionTags(page_data)}
 					<br/>
-					{EditSessionPageList(page_data, UpdatePageInput, setPageData)}
+					{EditSessionPageList(page_data, UpdatePageInput, DeletePage)}
 					<br/>
-					{EditSessionActions(page_data, pages_vals, tags_vals, metadata_vals)}
+					{EditSessionActions(page_data, pages_vals, tags_vals)}
 					<br/>
 					<button type="button" onClick={() => window.history.back()}>Back</button>
 				</div>
@@ -56,16 +65,16 @@ export function SessionEditPage() {
 	);
 }
 
-function EditSessionActions(page_data, pages_vals, tags_vals, metadata_vals) {
+function EditSessionActions(page_data, pages_vals, tags_vals) {
 	return (
 		<>
-			<IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { /* Save all details and return */ }} />
+			<IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { RHSaveSession(page_data, pages_vals, tags_vals) }} />
 			<IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(page_data.session_key); }} />
 		</>
 	);
 }
 
-function EditSessionPageList(page_data, UpdatePageInput, setPageData) {
+function EditSessionPageList(page_data, UpdatePageInput, DeletePage) {
 	const pages = Array.isArray(page_data?.data) ? page_data.data : [];
 	return (
 		<div>
@@ -78,7 +87,7 @@ function EditSessionPageList(page_data, UpdatePageInput, setPageData) {
 						name={`${index2}`}
 						onChange={UpdatePageInput}
 						defaultValue={item.title}
-						readOnly={true}
+						readOnly={false}
 					/>
 					<IconButton
 						id={`${index2}_edit`}
@@ -86,7 +95,7 @@ function EditSessionPageList(page_data, UpdatePageInput, setPageData) {
 						label="Edit"
 						showLabel={false}
 						ariaLabel="Edit page"
-						onClick={ async () => { /*just lock / unlock button for editing*/ }}
+						onClick={() => {}}
 					/>
 				 	<IconButton
 						id={`${index2}_delete`}
@@ -94,7 +103,7 @@ function EditSessionPageList(page_data, UpdatePageInput, setPageData) {
 				 		label="Delete"
 				 		showLabel={false}
 				 		ariaLabel="Delete page"
-				 		onClick={() => { /* remove the item from the page_data*/ }}
+				 		onClick={() => { DeletePage(index2) }}
 				 	/>
 					<br/>
 					<div id={`${index2}_tagdiv`}>
