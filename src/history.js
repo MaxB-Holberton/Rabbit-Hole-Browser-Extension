@@ -118,3 +118,29 @@ export async function RHRemoveSessionTag(session_key, tag) {
   });
   return session;
 }
+
+//Adding tags
+
+export async function RHAddSessionTag(session_key, tag) {
+  const data = await chrome.storage.local.get(session_key);
+  const session = data[session_key];
+  if (!session) return;
+
+  //check if it's null, trim for whitespace and then check if it's not empty
+  if (!tag) return;
+  tag = tag.trim();
+  if (!tag) return;
+
+  //Create tag list if it doesn't exist yet
+  if (!session.tag_list) {
+    session.tag_list = [];
+  }
+
+  if (!session.tag_list.includes(tag)) {
+    session.tag_list.push(tag);
+  }
+  await chrome.storage.local.set({
+    [session_key]: session
+  });
+  return session;
+}

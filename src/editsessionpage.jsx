@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { RHDeleteSession, RHGetPage, RHRemoveSessionTag } from "./history.js";
+import { RHDeleteSession, RHGetPage, RHRemoveSessionTag, RHAddSessionTag } from "./history.js";
 import { IconButton } from "./iconbutton.jsx";
 import { SectionRibbon } from "./viewsessiondetails";
 
@@ -39,6 +39,14 @@ export function SessionEditPage() {
     setPageData(updatedSession); // React state update
   }
 
+  async function handleAddTag(session_key, tag) {
+    await RHAddSessionTag(session_key, tag);
+
+    const updatedSession = await RHGetPage(session_key);
+
+    setPageData(updatedSession);
+  }
+
   useEffect(() => {
     RHGetPage(params.session_id).then((data) => setPageData(data));
   });
@@ -51,7 +59,7 @@ export function SessionEditPage() {
         <div className="rabbitHole">
           {EditSessionMetadata(page_data, UpdateMetadata)}
           <br />
-          {EditSessionTags(page_data, handleRemoveTag)}
+          {EditSessionTags(page_data, handleRemoveTag, handleAddTag, tags_vals, setTagsVal)}
           <br />
           {EditSessionPageList(page_data, UpdatePageInput, setPageData)}
           <br />
@@ -117,13 +125,62 @@ function EditSessionPageList(page_data, UpdatePageInput, setPageData) {
   );
 }
 
-function EditSessionTags(data, handleRemoveTag) {
+function EditSessionTags(data, handleRemoveTag, handleAddTag, tags_vals, setTagsVal) {
   //shows all the tags for each session itself
   const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
   return (
     <div>
       <b>Tags: </b>
-      <IconButton id="add_tags" iconSrc="assets/tag_icon.svg" label="Add Tags" onClick={() => { }} />
+      {!tags_vals.isAdding ? (
+        <IconButton
+          id="add_tags"
+          iconSrc="assets/tag_icon.svg"
+          label="Add Tags"
+          onClick={() =>
+            setTagsVal(v => ({
+              ...v,
+              isAdding: true
+            }))
+          }
+        />
+      ) : (
+        <>
+          <input
+            autoFocus
+            value={tags_vals.newTag || ""}
+            onChange={(e) =>
+              setTagsVal(v => ({
+                ...v,
+                newTag: e.target.value
+              }))
+            }
+            onKeyDown={async (e) => {
+              if (e.key === "Enter") {
+                const tag = tags_vals.newTag;
+
+                await handleAddTag(data.session_key, tag);
+
+                setTagsVal({
+                  isAdding: false,
+                  newTag: ""
+                });
+              }
+            }}
+          />
+
+          <button
+            onClick={() =>
+              setTagsVal({
+                isAdding: false,
+                newTag: ""
+              })
+            }
+          >
+            Cancel
+          </button>
+        </>
+      )}
+
       {tags.map((tag, index) => (
         <span key={index}>{tag}
           <IconButton
