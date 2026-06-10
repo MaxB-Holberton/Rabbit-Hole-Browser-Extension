@@ -61,17 +61,8 @@ export async function RHGetPage(key) {
   const history_item = await chrome.storage.local.get(key);
   return history_item[key];
 }
-
-// Delete a session
-export async function RHDeleteSession(session_key) {
-  console.log(session_key);
-  if (confirm("Are you sure you want to delete this rabbit hole?")) {
-    console.log("deleting...");
-    await chrome.storage.local.remove([session_key]);
-    window.location.href = "/index.html#/overview";
-  }
-}
 // Delete a page
+/*
 export async function RHDeletePage(index, key) {
   if (confirm(`Delete this page?`)) {
     chrome.storage.local.get(key).then((data) => {
@@ -103,6 +94,7 @@ export async function RHEditPage(index, key) {
     });
   }
 }
+<<<<<<< HEAD
 
 //Session tag deletion
 export async function RHRemoveSessionTag(session_key, tag) {
@@ -144,3 +136,6 @@ export async function RHAddSessionTag(session_key, tag) {
   });
   return session;
 }
+=======
+>>>>>>> dev
+*/

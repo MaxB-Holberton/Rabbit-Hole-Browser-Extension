@@ -10,7 +10,6 @@ import { SectionRibbon, ShowSessionDetailBtns,
 
 import { SessionEditPage } from "./editsessionpage";
 
-
 /*
  * Display Functions to use within the routes
  */

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RHDeleteSession } from "./history.js";
 import { IconButton } from "./iconbutton.jsx";
 
 export function SectionRibbon(title_h3) {
