@@ -88,6 +88,7 @@ export async function RHSaveSession(page_data, pages_vals, tags_vals) {
   //run loop for tags_vals
   new_session[session_key] = page_data;
   await chrome.storage.local.set(new_session);
+  alert('Session Saved')
 }
 
 // Delete a page
