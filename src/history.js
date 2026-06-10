@@ -72,7 +72,27 @@ export async function RHDeleteSession(session_key) {
     window.location.href = "/index.html#/overview";
   }
 }
+
+export async function RHSaveSession(page_data, pages_vals, tags_vals) {
+  const session_key = page_data.session_key;
+  const new_session = {};
+  const page_keys = Object.keys(pages_vals);
+  const tags_keys = Object.keys(tags_vals);
+  console.log(page_keys);
+  console.log(tags_keys);
+  //Copy this guy for everything we need need
+  page_keys.forEach((key) => {
+    page_data.data[key].title = pages_vals[key];
+  });
+  //run loop for pages_vals
+  //run loop for tags_vals
+  new_session[session_key] = page_data;
+  await chrome.storage.local.set(new_session);
+  alert('Session Saved')
+}
+
 // Delete a page
+/*
 export async function RHDeletePage(index, key) {
   if(confirm(`Delete this page?`))
   {
@@ -107,3 +127,4 @@ export async function RHEditPage(index, key) {
     });
   }
 }
+*/
