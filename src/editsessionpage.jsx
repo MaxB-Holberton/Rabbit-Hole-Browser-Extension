@@ -33,101 +33,75 @@ export function SessionEditPage() {
   const params = useParams();
 
   const [session_data, SetSessionData] = useState({});//Sets all the session data
+  const [page_data, SetPageData] = useState([]);
 
   const [metadata_vals, setMetaDataVal] = useState({});
-  const [session_tag, setSessionTagName] = useState({isAdding: false, newTag: ""});
-
-  //========== Update Session Tag Values ==========
-  function AddSessionTag(evt) {
-    const new_data = {...session_data};
-    new_data.tag_list.push(evt.target.value);
-    SetSessionData(vals => (new_data));
-  }
-
-  function RemoveSessionTag(index) {
-    const new_data = {...session_data};
-    new_data.tag_list.splice(index, 1);
-    SetSessionData(vals => (new_data));
-  }
-  //========== Update Session Tag Values ==========
+  const [session_tag, setSessionTagName] = useState({ isAdding: false });
 
   //========== Update Session metadata Values ==========
   function UpdateMetadata(evt) {
-      const id = evt.target.name;
-      const val = evt.target.value;
-      setMetaDataVal(vals => ({ ...vals, [id]: val }));
+    const id = evt.target.name;
+    const val = evt.target.value;
+    setMetaDataVal(vals => ({ ...vals, [id]: val }));
   }
   //========== Update Session metadata Values ==========
 
   useEffect(() => {
-    RHGetPage(params.session_id).then((data) => SetSessionData(data));
+    RHGetPage(params.session_id).then((data) => {
+      SetSessionData(data);
+      SetPageData(Array.isArray(data?.data) ? data.data : []);
+    });
   }, []);
 
-  useEffect(() => {}, [session_data, session_tag]);
-
-  /*========================================================
-  // Delete and reimplement
-  async function handleRemoveTag(session_key, tag) {
-      await RHRemoveSessionTag(session_key, tag);
-
-      const updatedSession = await RHGetPage(session_key);
-
-      SetSessionData(updatedSession); // React state update
-  }
-
-  async function handleAddTag(session_key, tag) {
-      await RHAddSessionTag(session_key, tag);
-
-      const updatedSession = await RHGetPage(session_key);
-
-      SetSessionData(updatedSession);
-  }
-  =======================================================*/
+  useEffect(() => {}, [session_data, page_data, session_tag]);
 
   return (
-      <>
-      <h2 id="white">Session!</h2>
-      {SectionRibbon(`${session_data.title}`)}
-      <section className="rabbitHole" id="previous">
-          <div className="rabbitHole">
-          {EditSessionMetadata(session_data, UpdateMetadata)}
-          <br />
-          {EditSessionTags(session_data, session_tag, AddSessionTag, RemoveSessionTag, setSessionTagName)}
-          <br />
-          {EditSessionPageList(session_data, SetSessionData)}
-          <br />
-          {EditSessionActions(session_data, metadata_vals)}
-          <br />
-          <button type="button" onClick={() => window.history.back()}>Back</button>
-          </div>
-      </section>
-      </>
+    <>
+    <h2 id="white">Session!</h2>
+    {SectionRibbon(`${session_data.title}`)}
+    <section className="rabbitHole" id="previous">
+      <div className="rabbitHole">
+        {EditSessionMetadata(session_data, UpdateMetadata)}
+        <br />
+        {EditSessionTags(session_data, session_tag, SetSessionData, setSessionTagName)}
+        <br />
+        {EditSessionPageList(page_data, SetPageData)}
+        <br />
+        {EditSessionActions(session_data, metadata_vals)}
+        <br />
+        <button type="button" onClick={() => window.history.back()}>Back</button>
+      </div>
+    </section>
+    </>
   );
 }
 
 function EditSessionActions(session_data, metadata_vals) {
-return (
+  return (
     <>
-    <IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { RHSaveSession(session_data, metadata_vals) }} />
-    <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
+      <IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { RHSaveSession(session_data, metadata_vals) }} />
+      <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
     </>
-);
+  );
 }
 
-function EditSessionPageList(session_data, SetSessionData) {
-  const pages = Array.isArray(session_data?.data) ? session_data.data : [];
-  const [set_page_tite, SetPageTitle] = useState();
+function EditSessionPageList(page_data, SetPageData) {
 
   function PageTitleOnChange(evt) {
     const idx = evt.target.name;
     const val = evt.target.value;
-    //const new_data = {...session_data};
-    session_data.data[idx].title = val;
-    SetSessionData(vals => (session_data));
+    const new_title_val = page_data.map((item, i) => {
+      if (i == idx) {
+        return {...item, title: val};
+      } else {
+        return item;
+      }
+    });
+    SetPageData(new_title_val);
   }
 
   function AddPage() {
-    const new_data = {...session_data};
+    const new_data = [...page_data];
     const new_page_obj = {};
     new_page_obj['category'] = "general";
     new_page_obj['concepts'] = [];
@@ -142,50 +116,62 @@ function EditSessionPageList(session_data, SetSessionData) {
 
     new_data.data.unshift(new_page_obj);
     console.log(new_data);
-    SetSessionData(vals => (new_data));
+    SetPageData(new_data);
   }
 
   function DeletePage(index) {
     const new_data = {...session_data};
     new_data.data.splice(index, 1);
-    SetSessionData(vals => (new_data));
+    SetSessionData(new_data);
   }
 
   return (
     <div>
-      <b>Pages: </b><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={AddPage} />
-      <ul>
-          {pages.map((item, idx) => (
-          <li key={idx}>
-              <input
-                id={`${idx}_input`}
-                name={`${idx}`}
-                onChange={PageTitleOnChange}
-                value={item.title}
-                disabled={false}
-              />
-              <IconButton
-                iconSrc="assets/delete_icon.svg"
-                label="Delete"
-                showLabel={false}
-                ariaLabel="Delete page"
-                onClick={() => { DeletePage(idx) }}
-              />
-              <br />
-              <div id={`${idx}_tagdiv`}>
-                <p>Category: <span>{item.category}</span></p>
-                <p>structTag: <span>{item.structuralTags}</span></p>
-                <p>ManualTags: <span>{item.manualTags}</span></p>
-              </div>
-          </li>
-          ))}
-      </ul>
+    <b>Pages: </b><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={AddPage} />
+    <ul>
+    {page_data.map((item, idx) => (
+      <li key={idx}>
+      <input
+      id={`${idx}_input`}
+      name={`${idx}`}
+      onChange={PageTitleOnChange}
+      value={item.title}
+      disabled={false}
+      />
+      <IconButton
+      iconSrc="assets/delete_icon.svg"
+      label="Delete"
+      showLabel={false}
+      ariaLabel="Delete page"
+      onClick={() => { DeletePage(idx) }}
+      />
+      <br />
+      <div id={`${idx}_tagdiv`}>
+        <p>Category: <span>{item.category}</span></p>
+        <p>structTag: <span>{item.structuralTags}</span></p>
+        <p>ManualTags: <span>{item.manualTags}</span></p>
+      </div>
+      </li>
+    ))}
+    </ul>
     </div>
   );
 }
 
-function EditSessionTags(data, session_tag, AddSessionTag, RemoveSessionTag, setSessionTagName) {
-  const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
+function EditSessionTags(session_data, session_tag, SetSessionData, setSessionTagName) {
+  const tags = Array.isArray(session_data?.tag_list) ? session_data.tag_list : [];
+
+  function AddSessionTag(evt) {
+    const new_data = {...session_data};
+    new_data.tag_list.push(evt.target.value);
+    SetSessionData(vals => (new_data));
+  }
+
+  function RemoveSessionTag(index) {
+    const new_data = {...session_data};
+    new_data.tag_list.splice(index, 1);
+    SetSessionData(vals => (new_data));
+  }
 
   function SessionTagName(evt) {
     const val = evt.target.value;
@@ -209,19 +195,19 @@ function EditSessionTags(data, session_tag, AddSessionTag, RemoveSessionTag, set
     ) : (
       <>
       <input
-        autoFocus
-        id={"New_Session_Tag_Input"}
-        defaultValue={""}
-        onChange={SessionTagName}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            ResetNewTags();
-            AddSessionTag(e);
-          }
-        }}
+      autoFocus
+      id={"New_Session_Tag_Input"}
+      defaultValue={""}
+      onChange={SessionTagName}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          ResetNewTags();
+          AddSessionTag(e);
+        }
+      }}
       />
       <button onClick={ResetNewTags}>
-        Cancel
+      Cancel
       </button>
       </>
     )}
@@ -229,12 +215,12 @@ function EditSessionTags(data, session_tag, AddSessionTag, RemoveSessionTag, set
     {tags.map((tag, index) => (
       <span key={index}>{tag}
       <IconButton
-        id={`remove_tag_${index}`}
-        iconSrc="assets/delete_icon.svg"
-        label="Delete Tag"
-        showLabel={false}
-        ariaLabel={`Delete ${tag}`}
-        onClick={() => { RemoveSessionTag(index) }}
+      id={`remove_tag_${index}`}
+      iconSrc="assets/delete_icon.svg"
+      label="Delete Tag"
+      showLabel={false}
+      ariaLabel={`Delete ${tag}`}
+      onClick={() => { RemoveSessionTag(index) }}
       />
       {" "}
       </span>
@@ -244,19 +230,19 @@ function EditSessionTags(data, session_tag, AddSessionTag, RemoveSessionTag, set
 }
 
 function EditSessionMetadata(data, UpdateMetadata) {
-//shows the metadata for each session
-return (
+  //shows the metadata for each session
+  return (
     <>
     <p>
-        <b>Topic:</b>
-        <input
-        name={`title`}
-        onChange={UpdateMetadata}
-        defaultValue={data.title}
-        />
+    <b>Topic:</b>
+    <input
+    name={`title`}
+    onChange={UpdateMetadata}
+    defaultValue={data.title}
+    />
     </p>
     <p><b>Date: {data.start_time_datetime}</b></p>
     <p><b>Duration: {data.duration_string}</b></p>
     </>
-);
+  );
 }
