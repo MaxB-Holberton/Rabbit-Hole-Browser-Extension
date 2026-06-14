@@ -24,6 +24,27 @@ async function refreshUI(history) {
   console.log("UI DATA READY:", enriched);
   // render(enriched); YOUR DOM RENDERING GOES IN HERE
 }
+// rabbit gif changes based on session state
+function setIndexButtonIcon(isRecording) {
+  const indexIcon = document.getElementById("RabbitHole_Index_Icon");
+
+  if (!indexIcon) {
+    return;
+  }
+
+  indexIcon.src = isRecording ? "assets/dig_transparent.gif" : "assets/spiraleyerabbit_40ms.gif";
+}
+
+// start & stop icons change based on button state
+function setRecordButtonIcon(isRecording) {
+  const recordIcon = document.getElementById("RabbitHole_Record_Icon");
+
+  if (!recordIcon) {
+    return;
+  }
+
+  recordIcon.src = isRecording ? "assets/stop_icon.svg" : "assets/start_icon.svg";
+}
 
 //===============
 // USER TAGGING |
@@ -46,6 +67,12 @@ async function onAddTag(historyEntry, tag, currentHistory) {
  * Controls the javascript documentation on the popup page
  */
 document.addEventListener('DOMContentLoaded', function () {
+  chrome.storage.session.get(["rabbit_hole_startTime"]).then(({ rabbit_hole_startTime }) => {
+    const isRecording = Boolean(rabbit_hole_startTime);
+
+    setRecordButtonIcon(isRecording);
+    setIndexButtonIcon(isRecording);
+  });
 
   document.getElementById("RabbitHole_Record").addEventListener('click', async () => {
     /* start/stop the timer for when a rabbit hole is created */
@@ -77,12 +104,16 @@ async function ToggleTimer() {
       console.log("Starting timer");
 
       await chrome.storage.session.set({ rabbit_hole_startTime: Date.now() });
+      setRecordButtonIcon(true);
+      setIndexButtonIcon(true);
       return;
     }
     // Any button changes for RabbitHole_Record should happen here
     // If possible - lock the button while this is running until it is finished
 
     await chrome.storage.session.remove(["rabbit_hole_startTime"]);
+    setRecordButtonIcon(false);
+    setIndexButtonIcon(false);
     const end_time = Date.now();
 
     const history = await chrome.history.search({

@@ -24,6 +24,16 @@
 .popupBody {
   background-color: white;
   padding: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.popupActions {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .popupBody h1 {
   font-size: 25px;
@@ -72,13 +82,30 @@ button.iconButton {
 }
 
 button.iconButton .iconButtonIcon {
-  width: 16px;
-  height: 16px;
+  width: 30px;
+  height: 30px;
   flex: 0 0 16px;
 }
 
 button.iconButton .iconButtonLabel {
   line-height: 1;
+}
+
+.popupActions #RabbitHole_Index {
+  margin-left: auto;
+  padding: 7px 9px;
+}
+
+.popupActions #RabbitHole_Index .iconButtonIcon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+}
+
+.popupActions #RabbitHole_Record .iconButtonIcon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
 }
 html, body {
   min-height: 100%;
