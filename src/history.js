@@ -61,41 +61,10 @@ export async function RHGetPage(key) {
   const history_item = await chrome.storage.local.get(key);
   return history_item[key];
 }
-
-// Delete a session
-export async function RHDeleteSession(session_key) {
-  console.log(session_key);
-  if(confirm("Are you sure you want to delete this rabbit hole?"))
-  {
-    console.log("deleting...");
-    await chrome.storage.local.remove([session_key]);
-    window.location.href = "/index.html#/overview";
-  }
-}
-
-export async function RHSaveSession(page_data, pages_vals, tags_vals) {
-  const session_key = page_data.session_key;
-  const new_session = {};
-  const page_keys = Object.keys(pages_vals);
-  const tags_keys = Object.keys(tags_vals);
-  console.log(page_keys);
-  console.log(tags_keys);
-  //Copy this guy for everything we need need
-  page_keys.forEach((key) => {
-    page_data.data[key].title = pages_vals[key];
-  });
-  //run loop for pages_vals
-  //run loop for tags_vals
-  new_session[session_key] = page_data;
-  await chrome.storage.local.set(new_session);
-  alert('Session Saved')
-}
-
 // Delete a page
 /*
 export async function RHDeletePage(index, key) {
-  if(confirm(`Delete this page?`))
-  {
+  if (confirm(`Delete this page?`)) {
     chrome.storage.local.get(key).then((data) => {
       data[key].data.splice(index, 1);
       return data;
@@ -108,14 +77,12 @@ export async function RHDeletePage(index, key) {
 export async function RHEditPage(index, key) {
   const btn = document.getElementById(`${index}_edit`);
   const input = document.getElementById(`${index}_input`);
-  if (input.readOnly === true)
-  {
+  if (input.readOnly === true) {
     console.log("readonly: true -> false");
     input.readOnly = false;
     //a.style = "pointer-events: none";
   }
-  else if (input.readOnly === false)
-  {
+  else if (input.readOnly === false) {
     console.log("readonly: false -> true");
     input.readOnly = true;
     //a.style = "";
@@ -127,4 +94,48 @@ export async function RHEditPage(index, key) {
     });
   }
 }
+<<<<<<< HEAD
+
+//Session tag deletion
+export async function RHRemoveSessionTag(session_key, tag) {
+  const data = await chrome.storage.local.get(session_key);
+  const session = data[session_key];
+
+  if (!session?.tag_list) return;
+
+  session.tag_list = session.tag_list.filter(t => t !== tag);
+
+  await chrome.storage.local.set({
+    [session_key]: session
+  });
+  return session;
+}
+
+//Adding tags
+
+export async function RHAddSessionTag(session_key, tag) {
+  const data = await chrome.storage.local.get(session_key);
+  const session = data[session_key];
+  if (!session) return;
+
+  //check if it's null, trim for whitespace and then check if it's not empty
+  if (!tag) return;
+  tag = tag.trim();
+  if (!tag) return;
+
+  //Create tag list if it doesn't exist yet
+  if (!session.tag_list) {
+    session.tag_list = [];
+  }
+
+  if (!session.tag_list.includes(tag)) {
+    session.tag_list.push(tag);
+  }
+  await chrome.storage.local.set({
+    [session_key]: session
+  });
+  return session;
+}
+=======
+>>>>>>> dev
 */

@@ -11,7 +11,9 @@ function determineCategory(title, url) {
     text.includes("javascript") ||
     text.includes("python") ||
     text.includes("react") ||
-    text.includes("docker")
+    text.includes("docker") ||
+    text.includes("w3schools") ||
+    text.includes("geeksforgeeks")
   ) { return "coding"; }
 
   // GAMING
