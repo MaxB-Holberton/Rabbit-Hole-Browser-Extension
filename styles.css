@@ -193,3 +193,23 @@ footer {
   color: #000000;
   text-decoration: none;
 }
+
+#previousBannerSection, #recentBannerSection, #overviewBannerSection {
+  background-color: white;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: flex-end;
+  height: 160px;
+}
+
+#previousBanner, #recentBanner, #overviewBanner {
+  height: 100%;
+  width: auto;
+  max-width: 90%;
+  object-fit: contain;
+}
+
+#previousPageContent, #recentPageContent, #overviewPageContent {
+  background-color: white;
+  margin-top: auto;
+}

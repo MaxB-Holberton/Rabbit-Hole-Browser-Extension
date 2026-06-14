@@ -167,6 +167,11 @@ function OverviewView() {
     <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
     </div>
     </section>
+    <div id="overviewPageContent">
+      <section id="overviewBannerSection">
+      <img src="assets/overview_banner_white.svg" alt="Rabbit Hole Explorer Overview Banner" id="overviewBanner" />
+    </section>
+    </div>
     </>
   );
 }
@@ -179,6 +184,11 @@ function MostRecentView() {
     <section className="rabbitHole">
     {ShowLastSession()}
     </section>
+    <div id="recentPageContent">
+      <section id="recentBannerSection">
+      <img src="assets/recent_banner_white.svg" alt="Rabbit Hole Explorer Recent Banner" id="recentBanner" />
+    </section>
+    </div>
     </>
   );
 }
@@ -187,10 +197,18 @@ function PreviousView() {
   return (
     <>
     <h2 id="white">My Rabbit Holes</h2>
-    {SectionRibbon('Previous Rabbit Holes')}
+
+    <div id="previousHeaderRow">
+      {SectionRibbon('Previous Rabbit Holes')}
+    </div>
     <section className="rabbitHole" id="previous">
     {ShowAllSessions()}
+        </section>
+            <div id="previousPageContent">
+    <section id="previousBannerSection">
+      <img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
     </section>
+</div>
     </>
   );
 }
