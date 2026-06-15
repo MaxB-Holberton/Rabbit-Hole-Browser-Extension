@@ -25,7 +25,7 @@ async function RHSaveSession(page_data, metadata_vals) {
 
   new_session[session_key] = page_data;
   await chrome.storage.local.set(new_session);
-  alert('Session Saved')
+  alert('Session Saved');
 }
 
 
@@ -100,7 +100,7 @@ function EditSessionPageList(page_data, SetPageData) {
     SetPageData(new_title_val);
   }
 
-  function AddPage() {
+  function AddPage(page_data) {
     const new_data = [...page_data];
     const new_page_obj = {};
     new_page_obj['category'] = "general";
@@ -114,20 +114,19 @@ function EditSessionPageList(page_data, SetPageData) {
     new_page_obj['url'] = "newUrl";
     new_page_obj['visitCount'] = 1;
 
-    new_data.data.unshift(new_page_obj);
-    console.log(new_data);
+    new_data.unshift(new_page_obj);
     SetPageData(new_data);
   }
 
   function DeletePage(index) {
     const new_data = {...session_data};
     new_data.data.splice(index, 1);
-    SetSessionData(new_data);
+    SetPageData(new_data);
   }
 
   return (
     <div>
-    <b>Pages: </b><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={AddPage} />
+    <b>Pages: </b><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={() => AddPage(page_data)} />
     <ul>
     {page_data.map((item, idx) => (
       <li key={idx}>
