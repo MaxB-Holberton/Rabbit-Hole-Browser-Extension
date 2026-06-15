@@ -7,7 +7,6 @@ import { SectionRibbon } from "./viewsessiondetails";
 
 // Delete a session
 export async function RHDeleteSession(session_key) {
-  console.log(session_key);
   if (confirm("Are you sure you want to delete this rabbit hole?")) {
     console.log("deleting...");
     await chrome.storage.local.remove([session_key]);
@@ -16,7 +15,6 @@ export async function RHDeleteSession(session_key) {
 }
 
 async function RHSaveSession(session_data, page_data) {
-
   session_data.data = page_data;
   session_key = session_data.session_key
 
@@ -73,13 +71,24 @@ function EditSessionActions(session_data, page_data) {
 }
 
 function EditSessionPageList(page_data, SetPageData) {
-
   function PageTitleOnChange(evt) {
     const idx = evt.target.name;
     const val = evt.target.value;
     const new_title_val = page_data.map((item, i) => {
       if (i == idx) {
         return {...item, title: val};
+      } else {
+        return item;
+      }
+    });
+    SetPageData(new_title_val);
+  }
+  function PageUrlOnChange(evt) {
+    const idx = evt.target.name;
+    const val = evt.target.value;
+    const new_title_val = page_data.map((item, i) => {
+      if (i == idx) {
+        return {...item, url: val};
       } else {
         return item;
       }
@@ -118,10 +127,15 @@ function EditSessionPageList(page_data, SetPageData) {
     {page_data.map((item, idx) => (
       <li key={idx}>
       <input
-      id={`${idx}_input`}
       name={`${idx}`}
       onChange={PageTitleOnChange}
       value={item.title}
+      disabled={false}
+      />
+      <input
+      name={`${idx}`}
+      onChange={PageUrlOnChange}
+      value={item.url}
       disabled={false}
       />
       <IconButton
@@ -225,12 +239,12 @@ function EditSessionMetadata(data, SetSessionData) {
   return (
     <>
     <p>
-    <b>Topic:</b>
-    <input
-    name={`title`}
-    onChange={UpdateTitle}
-    defaultValue={data.title}
-    />
+      <b>Topic:</b>
+      <input
+      name={`title`}
+      onChange={UpdateTitle}
+      defaultValue={data.title}
+      />
     </p>
     <p><b>Date: {data.start_time_datetime}</b></p>
     <p><b>Duration: {data.duration_string}</b></p>
