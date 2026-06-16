@@ -29,8 +29,6 @@ export function SessionEditPage() {
   const [session_data, SetSessionData] = useState({});//Sets the initial session data
   const [page_data, SetPageData] = useState([]);
 
-  const [metadata_vals, setMetaDataVal] = useState({});
-
   useEffect(() => {
     RHGetPage(params.session_id).then((data) => {
       SetSessionData(data);
@@ -46,26 +44,20 @@ export function SessionEditPage() {
     {SectionRibbon(`${session_data.title}`)}
     <section className="rabbitHole" id="previous">
       <div className="rabbitHole">
-        {EditSessionMetadata(session_data, SetSessionData)}
-        <br />
-        {EditSessionTags(session_data, SetSessionData)}
-        <br />
-        {EditSessionPageList(page_data, SetPageData)}
-        <br />
-        {EditSessionActions(session_data, page_data)}
-        <br />
-        <button type="button" onClick={() => window.history.back()}>Back</button>
+        <form>
+          {EditSessionMetadata(session_data, SetSessionData)}
+          <br />
+          {EditSessionTags(session_data, SetSessionData)}
+          <br />
+          {EditSessionPageList(page_data, SetPageData)}
+          <br />
+          <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { RHSaveSession(session_data, page_data) }} />
+          <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
+          <button type="button" onClick={() => window.history.back()}>Back</button>
+        </form>
+
       </div>
     </section>
-    </>
-  );
-}
-
-function EditSessionActions(session_data, page_data) {
-  return (
-    <>
-      <IconButton iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { RHSaveSession(session_data, page_data) }} />
-      <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
     </>
   );
 }
@@ -105,9 +97,9 @@ function EditSessionPageList(page_data, SetPageData) {
     new_page_obj['lastVisitTime'] = Date.now();
     new_page_obj['manualTags'] = [];
     new_page_obj['structuralTags'] = [];
-    new_page_obj['title'] = 'newTitle';
+    new_page_obj['title'] = '';
     new_page_obj['typedCount'] = 0;
-    new_page_obj['url'] = "newUrl";
+    new_page_obj['url'] = '';
     new_page_obj['visitCount'] = 1;
 
     new_data.unshift(new_page_obj);
@@ -126,25 +118,34 @@ function EditSessionPageList(page_data, SetPageData) {
     <ul>
     {page_data.map((item, idx) => (
       <li key={idx}>
-      <input
-      name={`${idx}`}
-      onChange={PageTitleOnChange}
-      value={item.title}
-      disabled={false}
-      />
-      <input
-      name={`${idx}`}
-      onChange={PageUrlOnChange}
-      value={item.url}
-      disabled={false}
-      />
-      <IconButton
-      iconSrc="assets/delete_icon.svg"
-      label="Delete"
-      showLabel={false}
-      ariaLabel="Delete page"
-      onClick={() => { DeletePage(idx) }}
-      />
+        <input
+          name={`${idx}`}
+          onChange={PageTitleOnChange}
+          value={item.title}
+          disabled={false}
+        />
+        <input
+          name={`${idx}`}
+          onChange={PageUrlOnChange}
+          value={item.url}
+          type={`url`}
+          onInvalid={() => alert(`${item.title}: Invalid URL`)}
+          disabled={false}
+        />
+        <IconButton
+        iconSrc="assets/edit_icon.svg"
+        label="Edit"
+        showLabel={false}
+        ariaLabel="Edit page"
+        onClick={() => {  }}
+        />
+        <IconButton
+          iconSrc="assets/delete_icon.svg"
+          label="Delete"
+          showLabel={false}
+          ariaLabel="Delete page"
+          onClick={() => { DeletePage(idx) }}
+        />
       <br />
       <div id={`${idx}_tagdiv`}>
         <p>Category: <span>{item.category}</span></p>
