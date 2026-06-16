@@ -5,23 +5,24 @@ import { RHGetPage } from "./history.js";
 import { IconButton } from "./iconbutton.jsx";
 import { SectionRibbon } from "./viewsessiondetails";
 
+async function RHSaveSession(evt, session_data, page_data) {
+  evt.preventDefault();
+  session_data.data = page_data;
+  session_key = session_data.session_key
+
+  await chrome.storage.local.set({ [session_key]: session_data });
+  alert('Session Saved');
+  window.location.href = `/index.html#/session/${session_data.session_key}`;
+}
+
 // Delete a session
-export async function RHDeleteSession(session_key) {
+async function RHDeleteSession(session_key) {
   if (confirm("Are you sure you want to delete this rabbit hole?")) {
     console.log("deleting...");
     await chrome.storage.local.remove([session_key]);
     window.location.href = "/index.html#/overview";
   }
 }
-
-async function RHSaveSession(session_data, page_data) {
-  session_data.data = page_data;
-  session_key = session_data.session_key
-
-  await chrome.storage.local.set({ [session_key]: session_data });
-  alert('Session Saved');
-}
-
 
 export function SessionEditPage() {
   const params = useParams();
@@ -44,16 +45,16 @@ export function SessionEditPage() {
     {SectionRibbon(`${session_data.title}`)}
     <section className="rabbitHole" id="previous">
       <div className="rabbitHole">
-        <form>
+        <form action='' onSubmit={(evt) => { RHSaveSession(evt, session_data, page_data) }}>
           {EditSessionMetadata(session_data, SetSessionData)}
           <br />
           {EditSessionTags(session_data, SetSessionData)}
           <br />
           {EditSessionPageList(page_data, SetPageData)}
           <br />
-          <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session" onClick={() => { RHSaveSession(session_data, page_data) }} />
+          <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session"/>
           <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
-          <button type="button" onClick={() => window.history.back()}>Back</button>
+          <button type="button" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`}>Back</button>
         </form>
 
       </div>
@@ -122,7 +123,8 @@ function EditSessionPageList(page_data, SetPageData) {
           name={`${idx}`}
           onChange={PageTitleOnChange}
           value={item.title}
-          disabled={false}
+          placeholder={`Title of page`}
+          required={true}
         />
         <input
           name={`${idx}`}
@@ -130,14 +132,8 @@ function EditSessionPageList(page_data, SetPageData) {
           value={item.url}
           type={`url`}
           onInvalid={() => alert(`${item.title}: Invalid URL`)}
-          disabled={false}
-        />
-        <IconButton
-        iconSrc="assets/edit_icon.svg"
-        label="Edit"
-        showLabel={false}
-        ariaLabel="Edit page"
-        onClick={() => {  }}
+          placeholder={`url of page`}
+          required={true}
         />
         <IconButton
           iconSrc="assets/delete_icon.svg"
