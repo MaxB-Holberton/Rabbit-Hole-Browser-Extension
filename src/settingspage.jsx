@@ -16,6 +16,7 @@ function SettingsOptionsList() {
 export function BlacklistEditPage() {
 	/*
 	 * TODO: Get blacklist edit array from local storage
+	 *
 	 */
 }
 
@@ -38,4 +39,3 @@ export function SettingsPage() {
 		</>
 	);
 }
-
