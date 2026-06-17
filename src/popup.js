@@ -143,7 +143,4 @@ async function ToggleTimer() {
   } catch (error) {
     console.error("TOGGLETIMER ERROR:", error);
   }
-
 }
-
-

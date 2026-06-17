@@ -24,45 +24,6 @@ async function RHDeleteSession(session_key) {
   }
 }
 
-export function SessionEditPage() {
-  const params = useParams();
-
-  const [session_data, SetSessionData] = useState({});//Sets the initial session data
-  const [page_data, SetPageData] = useState([]);
-
-  useEffect(() => {
-    RHGetPage(params.session_id).then((data) => {
-      SetSessionData(data);
-      SetPageData(Array.isArray(data?.data) ? data.data : []);
-    });
-  }, []);
-
-  useEffect(() => {}, [session_data, page_data]);
-
-  return (
-    <>
-    <h2 id="white">Session!</h2>
-    {SectionRibbon(`${session_data.title}`)}
-    <section className="rabbitHole" id="previous">
-      <div className="rabbitHole">
-        <form action='' onSubmit={(evt) => { RHSaveSession(evt, session_data, page_data) }}>
-          {EditSessionMetadata(session_data, SetSessionData)}
-          <br />
-          {EditSessionTags(session_data, SetSessionData)}
-          <br />
-          {EditSessionPageList(page_data, SetPageData)}
-          <br />
-          <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session"/>
-          <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
-          <button type="button" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`}>Back</button>
-        </form>
-
-      </div>
-    </section>
-    </>
-  );
-}
-
 function EditSessionPageList(page_data, SetPageData) {
   function PageTitleOnChange(evt) {
     const idx = evt.target.name;
@@ -76,6 +37,7 @@ function EditSessionPageList(page_data, SetPageData) {
     });
     SetPageData(new_title_val);
   }
+
   function PageUrlOnChange(evt) {
     const idx = evt.target.name;
     const val = evt.target.value;
@@ -119,34 +81,34 @@ function EditSessionPageList(page_data, SetPageData) {
     <ul>
     {page_data.map((item, idx) => (
       <li key={idx}>
-        <input
-          name={`${idx}`}
-          onChange={PageTitleOnChange}
-          value={item.title}
-          placeholder={`Title of page`}
-          required={true}
-        />
-        <input
-          name={`${idx}`}
-          onChange={PageUrlOnChange}
-          value={item.url}
-          type={`url`}
-          onInvalid={() => alert(`${item.title}: Invalid URL`)}
-          placeholder={`url of page`}
-          required={true}
-        />
-        <IconButton
-          iconSrc="assets/delete_icon.svg"
-          label="Delete"
-          showLabel={false}
-          ariaLabel="Delete page"
-          onClick={() => { DeletePage(idx) }}
-        />
+      <input
+      name={`${idx}`}
+      onChange={PageTitleOnChange}
+      value={item.title}
+      placeholder={`Title of page`}
+      required={true}
+      />
+      <input
+      name={`${idx}`}
+      onChange={PageUrlOnChange}
+      value={item.url}
+      type={`url`}
+      onInvalid={() => alert(`${item.title}: Invalid URL`)}
+      placeholder={`url of page`}
+      required={true}
+      />
+      <IconButton
+      iconSrc="assets/delete_icon.svg"
+      label="Delete"
+      showLabel={false}
+      ariaLabel="Delete page"
+      onClick={() => { DeletePage(idx) }}
+      />
       <br />
       <div id={`${idx}_tagdiv`}>
-        <p>Category: <span>{item.category}</span></p>
-        <p>structTag: <span>{item.structuralTags}</span></p>
-        <p>ManualTags: <span>{item.manualTags}</span></p>
+      <p>Category: <span>{item.category}</span></p>
+      <p>structTag: <span>{item.structuralTags}</span></p>
+      <p>ManualTags: <span>{item.manualTags}</span></p>
       </div>
       </li>
     ))}
@@ -205,9 +167,7 @@ function EditSessionTags(session_data, SetSessionData) {
         }
       }}
       />
-      <button onClick={ResetNewTags}>
-      Cancel
-      </button>
+      <button onClick={ResetNewTags}>Cancel</button>
       </>
     )}
 
@@ -236,15 +196,54 @@ function EditSessionMetadata(data, SetSessionData) {
   return (
     <>
     <p>
-      <b>Topic:</b>
-      <input
-      name={`title`}
-      onChange={UpdateTitle}
-      defaultValue={data.title}
-      />
+    <b>Topic:</b>
+    <input
+    name={`title`}
+    onChange={UpdateTitle}
+    defaultValue={data.title}
+    />
     </p>
     <p><b>Date: {data.start_time_datetime}</b></p>
     <p><b>Duration: {data.duration_string}</b></p>
+    </>
+  );
+}
+
+export function SessionEditPage() {
+  const params = useParams();
+
+  const [session_data, SetSessionData] = useState({});//Sets the initial session data
+  const [page_data, SetPageData] = useState([]);
+
+  useEffect(() => {
+    RHGetPage(params.session_id).then((data) => {
+      SetSessionData(data);
+      SetPageData(Array.isArray(data?.data) ? data.data : []);
+    });
+  }, []);
+
+  useEffect(() => {}, [session_data, page_data]);
+
+  return (
+    <>
+    <h2 id="white">Session!</h2>
+    {SectionRibbon(`${session_data.title}`)}
+    <section className="rabbitHole" id="previous">
+      <div className="rabbitHole">
+        <form action='' onSubmit={(evt) => { RHSaveSession(evt, session_data, page_data) }}>
+          {EditSessionMetadata(session_data, SetSessionData)}
+          <br />
+          {EditSessionTags(session_data, SetSessionData)}
+          <br />
+          {EditSessionPageList(page_data, SetPageData)}
+          <br />
+          <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session"/>
+          <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
+          <button type="button" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`}>Back</button>
+        </form>
+
+      </div>
+    </section>
     </>
   );
 }

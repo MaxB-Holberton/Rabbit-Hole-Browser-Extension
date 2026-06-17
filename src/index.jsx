@@ -1,123 +1,14 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
-
-import { SectionRibbon, ShowSessionDetailBtns,
-  ShowSessionPageList, ShowSessionTags,
-  ShowSessionMetadata } from "./viewsessiondetails";
+import { SectionRibbon, SessionDetailsPage,
+  ShowLastSession, ShowAllSessions } from "./viewsessiondetails";
 
 import { SessionEditPage } from "./editsessionpage";
+import { SettingsPage, BlacklistEditPage } from "./settingspage";
 
-/*
- * Display Functions to use within the routes
- */
-
-function ShowLastSession() {
-  const [last_session, setLastSession] = useState([]);
-
-  useEffect(() => {
-    RHGetSessionList().then((sessions) => {
-      if (sessions.length > 0) {
-        setLastSession(sessions[sessions.length - 1]);
-      }
-    })
-  });
-
-  return (
-    <Link to={`/session/${last_session.session_key}`}>
-      <div id={last_session.session_key} className="rabbitHole">
-        {ShowSessionMetadata(last_session)}
-        {ShowSessionTags(last_session)}
-      </div>
-    </Link>
-  );
-}
-
-
-function ShowAllSessions() {
-  const [sessions, setSessionsList] = useState([]);
-
-  useEffect(() => {
-    RHGetSessionList().then((sessions) => setSessionsList(sessions));
-  });
-
-  return sessions.map((session, index) => {
-    return (
-      <Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
-        <div className="rabbitHole">
-            {ShowSessionMetadata(session)}
-            {ShowSessionTags(session)}
-        </div>
-      </Link>
-    );
-  });
-}
-
-/*
- * Show the full details of a single session
- */
-function SessionDetailsPage() {
-  const params = useParams();
-  const [page_data, setPageData] = useState([]);
-
-  useEffect(() => {
-    RHGetPage(params.session_id).then((data) => setPageData(data));
-  });
-
-  return (
-    <>
-    <h2 id="white">Session!</h2>
-    {SectionRibbon(`${page_data.title}`)}
-    <section className="rabbitHole" id="previous">
-      <div className="rabbitHole">
-        {ShowSessionMetadata(page_data)}
-        <br/>
-        {ShowSessionTags(page_data)}
-        <br/>
-        {ShowSessionPageList(page_data)}
-        <br/>
-        <ShowSessionDetailBtns session={page_data} />
-      </div>
-    </section>
-    </>
-  );
-}
-
-/*
-function SessionEditPage() {
-  const params = useParams();
-  const [page_data, setPageData] = useState([]);
-
-  useEffect(() => {
-    RHGetPage(params.session_id).then((data) => setPageData(data));
-  });
-
-  return (
-    <>
-    <h2 id="white">Session!</h2>
-    {SectionRibbon(`${page_data.title}`)}
-    <section className="rabbitHole" id="previous">
-      <div className="rabbitHole">
-        {EditSessionMetadata(page_data)}
-        <br/>
-        {EditSessionTags(page_data)}
-        <br/>
-        {EditSessionPageList(page_data)}
-        <br/>
-        {EditSessionActions(page_data)}
-        <br/>
-        <button type="button" onClick={() => window.history.back()}>Back</button>
-      </div>
-    </section>
-    </>
-  );
-}
-*/
-/*
- * Routes functions
- */
 function Header() {
   return (
     <header>
@@ -143,7 +34,7 @@ function ViewNav() {
         <p>You have {sessions.length} rabbit holes!</p>
         <p>
         <Link to="/overview">Overview</Link> | <Link to="/recent">Most Recent</Link> |{' '}
-        <Link to="/previous">Previous</Link>
+        <Link to="/previous">Previous</Link> | <Link to="/settings">Settings</Link>
         </p>
       </div>
     </section>
@@ -179,16 +70,16 @@ function OverviewView() {
 function MostRecentView() {
   return (
     <>
-    <h2 id="white">My Rabbit Holes</h2>
-    {SectionRibbon('Most Recent Rabbit Hole')}
-    <section className="rabbitHole">
-    {ShowLastSession()}
-    </section>
-    <div id="recentPageContent">
-      <section id="recentBannerSection">
-      <img src="assets/recent_banner_white.svg" alt="Rabbit Hole Explorer Recent Banner" id="recentBanner" />
-    </section>
-    </div>
+      <h2 id="white">My Rabbit Holes</h2>
+      {SectionRibbon('Most Recent Rabbit Hole')}
+      <section className="rabbitHole">
+        {ShowLastSession()}
+      </section>
+      <div id="recentPageContent">
+        <section id="recentBannerSection">
+          <img src="assets/recent_banner_white.svg" alt="Rabbit Hole Explorer Recent Banner" id="recentBanner" />
+      </section>
+      </div>
     </>
   );
 }
@@ -196,19 +87,19 @@ function MostRecentView() {
 function PreviousView() {
   return (
     <>
-    <h2 id="white">My Rabbit Holes</h2>
+      <h2 id="white">My Rabbit Holes</h2>
 
-    <div id="previousHeaderRow">
-      {SectionRibbon('Previous Rabbit Holes')}
-    </div>
-    <section className="rabbitHole" id="previous">
-    {ShowAllSessions()}
-        </section>
-            <div id="previousPageContent">
-    <section id="previousBannerSection">
-      <img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
-    </section>
-</div>
+      <div id="previousHeaderRow">
+        {SectionRibbon('Previous Rabbit Holes')}
+      </div>
+      <section className="rabbitHole" id="previous">
+        {ShowAllSessions()}
+      </section>
+      <div id="previousPageContent">
+          <section id="previousBannerSection">
+            <img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
+          </section>
+      </div>
     </>
   );
 }
@@ -224,6 +115,8 @@ function AppShell() {
           <Route path="/overview" element={<OverviewView />} />
           <Route path="/recent" element={<MostRecentView />} />
           <Route path="/previous" element={<PreviousView />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings/blacklist" element={<BlacklistEditPage/>} />
           <Route path="/session/:session_id" element={<SessionDetailsPage />} />
           <Route path="/session/:session_id/edit" element={<SessionEditPage />} />
         </Routes>

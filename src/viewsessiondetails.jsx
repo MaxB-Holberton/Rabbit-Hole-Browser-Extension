@@ -1,6 +1,78 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
+
+export function SessionDetailsPage() {
+	const params = useParams();
+	const [page_data, setPageData] = useState([]);
+
+	useEffect(() => {
+		RHGetPage(params.session_id).then((data) => setPageData(data));
+	});
+
+	return (
+		<>
+			<h2 id="white">Session!</h2>
+			{SectionRibbon(`${page_data.title}`)}
+			<section className="rabbitHole" id="previous">
+			<div className="rabbitHole">
+			{ShowSessionMetadata(page_data)}
+			<br/>
+			{ShowSessionTags(page_data)}
+			<br/>
+			{ShowSessionPageList(page_data)}
+			<br/>
+			<ShowSessionDetailBtns session={page_data} />
+			</div>
+			</section>
+		</>
+	);
+}
+
+export function ShowLastSession() {
+	const [last_session, setLastSession] = useState([]);
+
+	useEffect(() => {
+		RHGetSessionList().then((sessions) => {
+			if (sessions.length > 0) {
+				setLastSession(sessions[sessions.length - 1]);
+			}
+		})
+	});
+
+	return (
+		<Link to={`/session/${last_session.session_key}`}>
+			<div id={last_session.session_key} className="rabbitHole">
+			{ShowSessionMetadata(last_session)}
+			{ShowSessionTags(last_session)}
+			</div>
+		</Link>
+	);
+}
+
+
+export function ShowAllSessions() {
+	const [sessions, setSessionsList] = useState([]);
+
+	useEffect(() => {
+		RHGetSessionList().then((sessions) => setSessionsList(sessions));
+	});
+
+	return sessions.map((session, index) => {
+		return (
+			<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
+				<div className="rabbitHole">
+				{ShowSessionMetadata(session)}
+				{ShowSessionTags(session)}
+				</div>
+			</Link>
+		);
+	});
+}
+
 
 export function SectionRibbon(title_h3) {
 	//returns the Section Ribbon
@@ -11,37 +83,22 @@ export function SectionRibbon(title_h3) {
 	);
 }
 
-export function ShowSessionDetailBtns({ session }) {
+function ShowSessionDetailBtns({ session }) {
 	const navigate = useNavigate();
 
 	return (
 		<>
 			<IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
 			<IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
-			<button type="button" onClick={() => navigate(-1)}>Back</button>
+			<button type="button" onClick={() => navigate(`/previous`)}>Back</button>
 		</>
 	);
 }
 
-export function ShowSessionBtns() {
-	//Creates the buttons for interecting with the session
-	//These are generic buttons that do not have much detail required
-	/*
-	 * dev note - maybe make the link a button in here for accessing the details Page
-	 */
-	return (
-		<>
-			<IconButton iconSrc="assets/share_icon.svg" label="Share" onClick={() => { }} />
-			<IconButton iconSrc="assets/tag_icon.svg" label="Tag" onClick={() => { }} />
-		</>
-	);
-}
 
-export function ShowSessionPageList(data) {
-	//Shows all the visited pages from the last session
-	//Will integrate with the page tags for more details
-	//will need the ability to add/remove items
-	//will need the ability to add/remove tags both manual and ai
+function ShowSessionPageList(data) {
+	// Shows the pages from the session
+	//TODO: create pagination and add it here
 	const pages = Array.isArray(data?.data) ? data.data : [];
 	return (
 		<div>
@@ -57,8 +114,8 @@ export function ShowSessionPageList(data) {
 	);
 }
 
-export function ShowSessionTags(data) {
-	//shows all the tags for each session itself
+function ShowSessionTags(data) {
+	//shows the session tags
 	const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
 	return (
 		<div>
@@ -70,7 +127,7 @@ export function ShowSessionTags(data) {
 	);
 }
 
-export function ShowSessionMetadata(data) {
+function ShowSessionMetadata(data) {
 	//shows the metadata for each session
 	return (
 		<>
