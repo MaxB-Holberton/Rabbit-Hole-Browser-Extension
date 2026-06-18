@@ -110,7 +110,43 @@ button.iconButton .iconButtonLabel {
 html, body {
   min-height: 100%;
 }
+/* session status text */
+#SessionStatusText.status-ready, #SessionStatusText.status-recording, #SessionStatusText.status-finished, #SessionStatusText.status-error {
+  font-weight: bold;
+  font-family: inherit;
+  font-size: 1.5rem;
+}
 
+#SessionStatusText.status-ready {
+  color: var(--info-dark);
+}
+
+#SessionStatusText.status-recording {
+  color: var(--stop-dark);
+}
+
+#SessionStatusText.status-finished {
+  color: var(--start-dark);
+}
+
+#SessionStatusText.status-error {
+  color: var(--error-dark);
+}
+/* time elapsed text */
+#TimeElapsedVal, #PagesTrackedVal {
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 10px;
+}
+
+#TimeElapsedVal {
+  color: var(--info-dark);
+}
+
+#PagesTrackedVal {
+    color: var(--tertiary-dark);
+}
 :root {
   --header-height: clamp(64px, 15vh, 140px);
 }
