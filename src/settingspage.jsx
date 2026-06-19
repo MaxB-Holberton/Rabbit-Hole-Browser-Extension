@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { RHGetPage } from "./history.js";
 import { Link } from 'react-router-dom';
 import { SectionRibbon } from "./viewsessiondetails";
+import { IconButton } from "./iconbutton.jsx";
 
 function SettingsOptionsList() {
 	return (
@@ -17,26 +18,62 @@ function SettingsOptionsList() {
 }
 
 export function BlacklistEditPage() {
-	const [current_blacklist, ActiveBlacklist] = useState([]);
-	const [unselected_items, InActiveBlacklist] = useState([]);
-	const [all_blacklist_items, AllBlacklistItems] = useState([]);
+	const [rabbithole_blacklist, UpdateBlacklist] = useState([
+		{
+			name: "facebook",
+			active: false,
+		}
+	]);
+	const [blacklist_item, NewInputOnChange] = useState([]);
 
+	useEffect(() => {},[rabbithole_blacklist]);
 	useEffect(() => {
-		RHGetPage("Rabbithole_active_blacklist").then(data => ActiveBlacklist(data));
-		RHGetPage("Rabbithole_all_blacklist_items").then(data => AllBlacklistItems(data));
-	});
+		RHGetPage("Rabbithole_blacklist_data").then(data => {
+			if (data !== undefined) {
+				UpdateBlacklist(data)
+			}
+		})
+	}, []);
 
 	/*
 	 * TODO: 2 lists (Inactive) | (Active)
 	 * Make both lists scrollable
 	 * Have btn to add/remove from active
 	 */
+	function AddBlacklistItem() {
+		//check if it contains (https://www.)
+
+		new_data = [...rabbithole_blacklist];
+
+		new_site = {};
+		new_site['name'] = blacklist_item;
+		new_site['active'] = false;
+		new_data.unshift(new_site);
+		NewInputOnChange("");
+		UpdateBlacklist(new_data);
+	}
 
 	return (
 		<>
 			<div className="rabbitHole">
-				<p>{current_blacklist}</p>
-				<p>{all_blacklist_items}</p>
+				<IconButton id="add_blacklist_item" iconSrc="assets/add_icon.svg" label="Add Blacklist Item" onClick={AddBlacklistItem} />
+				<input
+					name={`pages`}
+					onChange={evt => NewInputOnChange(evt.target.value)}
+					value={blacklist_item}
+					placeholder={`facebook`}
+					required={true}
+				/>
+				<ul>
+					{rabbithole_blacklist.map((item, idx) => (
+						!item.active && (
+							<li key={idx}>
+								<p>{item.name}</p>
+								<p>{item.active + ""}</p>
+							</li>
+						)
+					))}
+				</ul>
 			</div>
 		</>
 	);
