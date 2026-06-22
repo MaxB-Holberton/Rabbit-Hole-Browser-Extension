@@ -1,5 +1,5 @@
 import makeTag from "./maketag.js";
-import { RabbitHoleMetadata } from "./history.js";
+import { RabbitHoleMetadata, GetBlacklist } from "./history.js";
 import { getManualTags, addManualTag, getPageId } from "./tagStore";
 
 //====================
@@ -87,6 +87,51 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+async function StripBlacklistedItems(start_time) {
+
+  const history = await chrome.history.search({
+    text: "",
+    startTime: start_time,
+  });
+
+  console.log(history);
+  const blacklist = await GetBlacklist();
+  if (blacklist === undefined)
+  {
+    return history;
+  }
+  console.log(blacklist);
+
+  const active_items = blacklist.map((check, i) => {
+    if (check.active)
+    {
+      return check.name;
+    }
+    return;
+  });
+
+  const stripped_data = [];
+
+  for (const item of history) {
+    const url = new URL(item.url);
+    const url_host = url.hostname.toString().replace("www.", "").toLowerCase();
+    console.log(url_host);
+    for (let i = 0; i < active_items.length; i++)
+    {
+      if(url_host.includes(active_items[i].toLowerCase()))
+      {
+        console.log("Match");
+        return;
+      }
+    }
+    console.log("No Match");
+    stripped_data.unshift(item);
+  };
+  console.log(stripped_data);
+
+  return stripped_data;
+}
+
 //===================
 // SESSION CREATION |
 //===================
@@ -116,10 +161,7 @@ async function ToggleTimer() {
     setIndexButtonIcon(false);
     const end_time = Date.now();
 
-    const history = await chrome.history.search({
-      text: "",
-      startTime: start_time,
-    });
+    const history = await StripBlacklistedItems(start_time);
 
     console.log("HISTORY:", history);
     const taggedHistory = [];

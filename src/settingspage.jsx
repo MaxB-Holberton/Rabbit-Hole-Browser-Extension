@@ -1,9 +1,15 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { RHGetPage } from "./history.js";
+import { GetBlacklist, SetBlacklist } from "./history.js";
 import { Link } from 'react-router-dom';
 import { SectionRibbon } from "./viewsessiondetails";
 import { IconButton } from "./iconbutton.jsx";
+
+async function SaveBlacklist(rabbithole_blacklist) {
+	SetBlacklist(rabbithole_blacklist)
+	alert('Blacklist Saved');
+	window.location.href = `/index.html#/settings`;
+}
 
 function SettingsOptionsList() {
 	return (
@@ -29,28 +35,23 @@ export function BlacklistEditPage() {
 		}
 
 	]);
-	const [blacklist_item, NewInputOnChange] = useState([]);
-
+	const [blacklist_item, NewInputOnChange] = useState("");
 	useEffect(() => {}, [rabbithole_blacklist]);
 	useEffect(() => {
-		RHGetPage("Rabbithole_blacklist_data").then(data => {
+		GetBlacklist().then(data => {
 			if (data !== undefined) {
 				UpdateBlacklist(data)
 			}
 		})
 	}, []);
 
-	/*
-	 * TODO: 2 lists (Inactive) | (Active)
-	 * Make both lists scrollable
-	 * Have btn to add/remove from active
-	 */
 	function AddBlacklistItem() {
-		//check if it contains (https://www.)
-
 		new_data = [...rabbithole_blacklist];
-
 		new_site = {};
+		if (blacklist_item === "")
+		{
+			return;
+		}
 		new_site['name'] = blacklist_item;
 		new_site['active'] = false;
 		new_data.unshift(new_site);
@@ -84,6 +85,14 @@ export function BlacklistEditPage() {
 		UpdateBlacklist(new_data);
 	}
 
+	function DeleteItem(evt) {
+		const new_data = [...rabbithole_blacklist];
+		const i = evt.target.name;
+
+		new_data.splice(parseInt(i), 1);
+		UpdateBlacklist(new_data);
+	}
+
 	return (
 		<>
 			<div className="rabbitHole">
@@ -101,6 +110,7 @@ export function BlacklistEditPage() {
 							<li key={idx}>
 								<p>{item.name}</p>
 								<p>{item.active + ""}</p>
+								<button name={`${idx}`} onClick={DeleteItem}>{`X`}</button>
 								<button name={`${idx}`} onClick={MakeItemActive}>{`>`}</button>
 							</li>
 						)
@@ -109,15 +119,16 @@ export function BlacklistEditPage() {
 
 				<ul>
 				{rabbithole_blacklist.map((item, idx) => (
-					!!item.active && (
+					item.active && (
 						<li key={idx}>
-						<p>{item.name}</p>
-						<p>{item.active + ""}</p>
-						<button name={`${idx}`} onClick={MakeItemInActive}>{`<`}</button>
+							<p>{item.name}</p>
+							<p>{item.active + ""}</p>
+							<button name={`${idx}`} onClick={MakeItemInActive}>{`<`}</button>
 						</li>
 					)
 				))}
 				</ul>
+				<IconButton iconSrc="assets/save_icon.svg" onClick={() => {SaveBlacklist(rabbithole_blacklist)}} label="Save Blacklist"/>
 			</div>
 		</>
 	);

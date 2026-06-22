@@ -61,3 +61,13 @@ export async function RHGetPage(key) {
   const history_item = await chrome.storage.local.get(key);
   return history_item[key];
 }
+
+const blacklist_key = "rabbithole_blacklist_data";
+export async function GetBlacklist() {
+  return await RHGetPage(blacklist_key);
+}
+
+export async function SetBlacklist(blacklist_data) {
+  await chrome.storage.local.set({ [blacklist_key]: blacklist_data });
+  return;
+}
