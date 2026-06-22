@@ -88,42 +88,50 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 async function StripBlacklistedItems(start_time) {
-
+  const stripped_data = [];
+  const active_items = [];
   const history = await chrome.history.search({
     text: "",
     startTime: start_time,
   });
 
-  console.log(history);
-  const blacklist = await GetBlacklist();
-  if (blacklist === undefined)
+  if (history.length === 0) {
+    return ([]);//return a 0 length array
+  }
+
+  const blacklist_data = await GetBlacklist();
+  if (blacklist_data === undefined)
   {
     return history;
   }
-  console.log(blacklist);
 
-  const active_items = blacklist.map((check, i) => {
-    if (check.active)
+  for (const active_item of blacklist_data) {
+    if (active_item.active)
     {
-      return check.name;
+      active_items.unshift(active_item.name);
+      continue;
     }
-    return;
-  });
-
-  const stripped_data = [];
+  }
 
   for (const item of history) {
     const url = new URL(item.url);
     const url_host = url.hostname.toString().replace("www.", "").toLowerCase();
     console.log(url_host);
-    for (let i = 0; i < active_items.length; i++)
-    {
-      if(url_host.includes(active_items[i].toLowerCase()))
-      {
+    let match_lock = false;
+    for (blacklist of active_items) {
+      //for each item in the list of active blacklist items.
+      if (url_host.includes(blacklist.toLowerCase())) {
+        //on match ->  3
         console.log("Match");
-        return;
+        match_lock = true;
+        break;
       }
     }
+    if(match_lock)
+    {
+      continue;
+    }
+    //no match -> write to the data
     console.log("No Match");
     stripped_data.unshift(item);
   };
@@ -163,17 +171,18 @@ async function ToggleTimer() {
 
     const history = await StripBlacklistedItems(start_time);
 
+    if (history.length === 0) {
+      console.log("No history found, skipping session save");
+      return;
+    }
+
     console.log("HISTORY:", history);
     const taggedHistory = [];
     for (const entry of history) {
       const taggedEntry = await makeTag(entry);
       taggedHistory.push(taggedEntry);
     }
-    //Empty list check
-    if (taggedHistory.length === 0) {
-      console.log("No history found, skipping session save");
-      return;
-    }
+
     const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
     await chrome.storage.local.set(new_session);
 
