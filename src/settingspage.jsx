@@ -22,11 +22,16 @@ export function BlacklistEditPage() {
 		{
 			name: "facebook",
 			active: false,
+		},
+		{
+			name: "twitter",
+			active: false,
 		}
+
 	]);
 	const [blacklist_item, NewInputOnChange] = useState([]);
 
-	useEffect(() => {},[rabbithole_blacklist]);
+	useEffect(() => {}, [rabbithole_blacklist]);
 	useEffect(() => {
 		RHGetPage("Rabbithole_blacklist_data").then(data => {
 			if (data !== undefined) {
@@ -53,6 +58,32 @@ export function BlacklistEditPage() {
 		UpdateBlacklist(new_data);
 	}
 
+	function MakeItemActive(evt) {
+		const i = evt.target.name;
+		const new_data = rabbithole_blacklist.map((item, idx) => {
+			if (idx == i) {
+				return {...item, active: true};
+			}
+			else {
+				return item;
+			}
+		});
+		UpdateBlacklist(new_data);
+	}
+
+	function MakeItemInActive(evt) {
+		const i = evt.target.name;
+		const new_data = rabbithole_blacklist.map((item, idx) => {
+			if (idx == i) {
+				return {...item, active: false};
+			}
+			else {
+				return item;
+			}
+		});
+		UpdateBlacklist(new_data);
+	}
+
 	return (
 		<>
 			<div className="rabbitHole">
@@ -70,9 +101,22 @@ export function BlacklistEditPage() {
 							<li key={idx}>
 								<p>{item.name}</p>
 								<p>{item.active + ""}</p>
+								<button name={`${idx}`} onClick={MakeItemActive}>{`>`}</button>
 							</li>
 						)
 					))}
+				</ul>
+
+				<ul>
+				{rabbithole_blacklist.map((item, idx) => (
+					!!item.active && (
+						<li key={idx}>
+						<p>{item.name}</p>
+						<p>{item.active + ""}</p>
+						<button name={`${idx}`} onClick={MakeItemInActive}>{`<`}</button>
+						</li>
+					)
+				))}
 				</ul>
 			</div>
 		</>
