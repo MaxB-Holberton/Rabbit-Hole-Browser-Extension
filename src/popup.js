@@ -1,5 +1,5 @@
 import makeTag from "./maketag.js";
-import { RabbitHoleMetadata } from "./history.js";
+import { RabbitHoleMetadata, GetBlacklist } from "./history.js";
 import { getManualTags, addManualTag, getPageId } from "./tagStore";
 
 const STALE_THRESHHOLD = 10 * 60 * 1000; //ten minutes
@@ -238,6 +238,59 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener("beforeunload", () => stopPagesTrackedClock(false));
 });
 
+async function StripBlacklistedItems(start_time) {
+  const stripped_data = [];
+  const active_items = [];
+  const history = await chrome.history.search({
+    text: "",
+    startTime: start_time,
+  });
+
+  if (history.length === 0) {
+    return ([]);//return a 0 length array
+  }
+
+  const blacklist_data = await GetBlacklist();
+  if (blacklist_data === undefined)
+  {
+    return history;
+  }
+
+  for (const active_item of blacklist_data) {
+    if (active_item.active)
+    {
+      active_items.unshift(active_item.name);
+      continue;
+    }
+  }
+
+  for (const item of history) {
+    const url = new URL(item.url);
+    const url_host = url.hostname.toString().replace("www.", "").toLowerCase();
+    console.log(url_host);
+    let match_lock = false;
+    for (blacklist of active_items) {
+      //for each item in the list of active blacklist items.
+      if (url_host.includes(blacklist.toLowerCase())) {
+        //on match ->  3
+        console.log("Match");
+        match_lock = true;
+        break;
+      }
+    }
+    if(match_lock)
+    {
+      continue;
+    }
+    //no match -> write to the data
+    console.log("No Match");
+    stripped_data.unshift(item);
+  };
+  console.log(stripped_data);
+
+  return stripped_data;
+}
+
 //===================
 // SESSION CREATION |
 //===================
@@ -302,26 +355,22 @@ async function ToggleTimer() {
     stopPagesTrackedClock(true);
     const end_time = Date.now();
 
-    const history = await chrome.history.search({
-      text: "",
-      startTime: start_time,
-    });
+    const history = await StripBlacklistedItems(start_time);
 
-
-    console.log("HISTORY:", history);
-    const taggedHistory = [];
-    for (const entry of history) {
-      const taggedEntry = await makeTag(entry);
-      taggedHistory.push(taggedEntry);
-    }
-    //Empty list check
-    if (taggedHistory.length === 0) {
+    if (history.length === 0) {
       console.log("No history found, skipping session save");
       await chrome.storage.local.set({ rabbit_hole_status: "ready" });
       setSessionStatus("Ready");
       stopElapsedClock(true);
       stopPagesTrackedClock(true);
       return;
+    }
+
+    console.log("HISTORY:", history);
+    const taggedHistory = [];
+    for (const entry of history) {
+      const taggedEntry = await makeTag(entry);
+      taggedHistory.push(taggedEntry);
     }
 
     const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
