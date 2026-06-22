@@ -30,12 +30,13 @@ function ViewNav() {
   return (
     <section className="rabbitHole">
       <div className="rabbitHole" id="counter">
-        <p>Topic:</p>
         <p>You have {sessions.length} rabbit holes!</p>
-        <p>
-        <Link to="/overview">Overview</Link> | <Link to="/recent">Most Recent</Link> |{' '}
-        <Link to="/previous">Previous</Link> | <Link to="/settings">Settings</Link>
-        </p>
+        <div className="headerLinksRow" aria-label="View navigation">
+          <Link to="/overview" className="headerLink" id="overviewHeaderLink" aria-label="">Overview</Link>
+          <Link to="/recent" className="headerLink" id="recentHeaderLink">Most Recent</Link>
+          <Link to="/previous" className="headerLink" id="previousHeaderLink">Previous</Link>
+          <Link to="/settings" className="headerLink" id="settingsHeaderLink">Settings</Link>
+        </div>
       </div>
     </section>
   );
@@ -48,13 +49,13 @@ function OverviewView() {
     {SectionRibbon('Overview')}
     <section className="rabbitHole">
     <div className="rabbitHole">
-    <p>Ready to explore your rabbit holes?</p>
-    <p><b>Use the links above to switch views.</b></p>
+    <p id="questionBold">Ready to explore your rabbit holes?</p>
+    <p>Use the links above to switch views.</p>
     </div>
     </section>
     <section className="rabbitHole">
     <div className="rabbitHole">
-    <p><b>How does Rabbit Hole Explorer work?</b></p>
+    <p id="questionBold">How does Rabbit Hole Explorer work?</p>
     <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
     </div>
     </section>
@@ -122,7 +123,7 @@ function AppShell() {
         </Routes>
       </main>
       <footer>
-        <p id="footerP">2026 Rabbit Hole Explorer. Andrew Kasapidis, Uliana Deshin, Max Brook, Pavith Raj.</p>
+        <p id="footerP">Copyright © 2026 Andrew Kasapidis, Uliana Deshin, Max Brook, Pavith Raj. All rights reserved.</p>
       </footer>
     </>
   );

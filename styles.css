@@ -110,7 +110,43 @@ button.iconButton .iconButtonLabel {
 html, body {
   min-height: 100%;
 }
+/* session status text */
+#SessionStatusText.status-ready, #SessionStatusText.status-recording, #SessionStatusText.status-finished, #SessionStatusText.status-error {
+  font-weight: bold;
+  font-family: inherit;
+  font-size: 1.5rem;
+}
 
+#SessionStatusText.status-ready {
+  color: var(--info-dark);
+}
+
+#SessionStatusText.status-recording {
+  color: var(--stop-dark);
+}
+
+#SessionStatusText.status-finished {
+  color: var(--start-dark);
+}
+
+#SessionStatusText.status-error {
+  color: var(--error-dark);
+}
+/* time elapsed text */
+#TimeElapsedVal, #PagesTrackedVal {
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 10px;
+}
+
+#TimeElapsedVal {
+  color: var(--info-dark);
+}
+
+#PagesTrackedVal {
+    color: var(--tertiary-dark);
+}
 :root {
   --header-height: clamp(64px, 15vh, 140px);
 }
@@ -155,8 +191,31 @@ nav {
   height: var(--header-height);
   background-color: white;
 }
+
+.headerLink {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-family: 'Cause', Verdana;
+  font-size: 1.8rem;
+
+}
+
+.headerLinksRow {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
 body {
   background-color: black;
+}
+body p {
+  font-family: 'Cause', Verdana;
 }
 #root {
   display: flex;
@@ -169,6 +228,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  font-family: 'Cause', Verdana;
 }
 
 h1#white, h2#white, h3#white {
@@ -186,6 +246,14 @@ div.rabbitHole {
   width: 100%;
   border-radius: 10px;
   padding: 8px 12px;
+  font-family: 'Cause', Verdana;
+}
+.rabbitHole p {
+  font-size: 1rem;
+}
+#questionBold {
+  font-weight: bold;
+  font-size: 1.7rem;
 }
 div#counter {
   display: flex;
@@ -201,7 +269,31 @@ div#counter {
 
 div#counter p {
   width: 100%;
-  text-align: left;
+  text-align: center;
+  font-family: 'Cause', Verdana;
+  font-size: 1.9rem;
+}
+
+div#counter .headerLink {
+  font-size: 1.4rem;
+  white-space: nowrap;
+  border-radius: 5px;
+  padding: 10px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.headerLink:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+.headerLink:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.headerLink:visited {
+  color: var(--secondary-light);
 }
 div#recent button {
   text-align: center;
@@ -210,6 +302,18 @@ div#recent button {
 
 div#counter button:first-of-type {
   margin-right: 8px;
+}
+#overviewHeaderLink {
+  background-color: var(--start-dark);
+}
+#recentHeaderLink {
+  background-color: var(--tertiary-dark);
+}
+#previousHeaderLink {
+  background-color: var(--error-light);
+}
+#settingsHeaderLink {
+  background-color: var(--info-dark);
 }
 footer {
   background-color: white;
