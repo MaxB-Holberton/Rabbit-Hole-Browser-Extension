@@ -5,6 +5,79 @@ import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
 
+
+/*
+ * function to download the file as a JSON
+ */
+async function DownloadJsonFile(session_key) {
+	const data = await RHGetPage(session_key);
+	const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+	const link = document.createElement("a");
+	link.href = URL.createObjectURL(blob);
+	link.download = `${session_key}.json`;
+	link.click();
+	URL.revokeObjectURL(link.href);
+
+}
+
+/*
+ *
+ */
+function ShowSessionPageList(data) {
+	// Shows the pages from the session
+	//TODO: create pagination and add it here
+	const pages = Array.isArray(data?.data) ? data.data : [];
+	return (
+		<div>
+		<b>Pages: </b>
+		<ul>
+		{pages.map((item, index2) => (
+			<li key={index2}>
+			<a href={item.url}>{item.title}</a>
+			</li>
+		))}
+		</ul>
+		</div>
+	);
+}
+
+function ShowSessionTags(data) {
+	//shows the session tags
+	const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
+	return (
+		<div>
+			<b>Tags: </b>
+			{tags.map((tag, index) => (
+				<span key={index}>{tag}, </span>
+			))}
+		</div>
+	);
+}
+
+function ShowSessionMetadata(data) {
+	//shows the metadata for each session
+	return (
+		<>
+			<p><b>Topic: {data.title}</b></p>
+			<p><b>Date: {data.start_time_datetime}</b></p>
+			<p><b>Duration: {data.duration_string}</b></p>
+		</>
+	);
+}
+
+function ShowSessionDetailBtns({ session }) {
+	const navigate = useNavigate();
+
+	return (
+		<>
+			<IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
+			<IconButton iconSrc="assets/save_icon.svg" label="Download Session" onClick={async () => { DownloadJsonFile(session.session_key); }} />
+			<IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
+			<button type="button" onClick={() => navigate(`/previous`)}>Back</button>
+		</>
+	);
+}
+
 export function SessionDetailsPage() {
 	const params = useParams();
 	const [page_data, setPageData] = useState([]);
@@ -80,60 +153,5 @@ export function SectionRibbon(title_h3) {
 		<div>
 			<h3 id="white">{title_h3}</h3>
 		</div>
-	);
-}
-
-function ShowSessionDetailBtns({ session }) {
-	const navigate = useNavigate();
-
-	return (
-		<>
-			<IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
-			<IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
-			<button type="button" onClick={() => navigate(`/previous`)}>Back</button>
-		</>
-	);
-}
-
-
-function ShowSessionPageList(data) {
-	// Shows the pages from the session
-	//TODO: create pagination and add it here
-	const pages = Array.isArray(data?.data) ? data.data : [];
-	return (
-		<div>
-			<b>Pages: </b>
-			<ul>
-			{pages.map((item, index2) => (
-				<li key={index2}>
-				<a href={item.url}>{item.title}</a>
-				</li>
-			))}
-			</ul>
-		</div>
-	);
-}
-
-function ShowSessionTags(data) {
-	//shows the session tags
-	const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
-	return (
-		<div>
-			<b>Tags: </b>
-			{tags.map((tag, index) => (
-				<span key={index}>{tag}, </span>
-			))}
-		</div>
-	);
-}
-
-function ShowSessionMetadata(data) {
-	//shows the metadata for each session
-	return (
-		<>
-			<p><b>Topic: {data.title}</b></p>
-			<p><b>Date: {data.start_time_datetime}</b></p>
-			<p><b>Duration: {data.duration_string}</b></p>
-		</>
 	);
 }

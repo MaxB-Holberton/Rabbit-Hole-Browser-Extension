@@ -20,7 +20,7 @@ async function RHDeleteSession(session_key) {
   if (confirm("Are you sure you want to delete this rabbit hole?")) {
     console.log("deleting...");
     await chrome.storage.local.remove([session_key]);
-    window.location.href = "/index.html#/overview";
+    window.location.href = "/index.html#/previous";
   }
 }
 

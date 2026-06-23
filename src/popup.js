@@ -50,7 +50,6 @@ function setRecordButtonIcon(isRecording) {
 
 //session status text helper
 // normalizes string of status then map so classes added & correct CSS
-
 function setSessionStatus(status) {
   const statusNode = document.getElementById("SessionStatusText");
   if (!statusNode) return;
@@ -66,7 +65,6 @@ function setSessionStatus(status) {
   const nextStatus = statusMap[normalized] || statusMap.ready;
   statusNode.textContent = nextStatus.label;
   statusNode.className = nextStatus.className;
-
 }
 
 // TIME ELAPSED FUNCTIONS ⭒˚｡⋆ヽ(・∀・)ﾉ
@@ -126,7 +124,7 @@ function setPagesTrackedText(count) {
 async function updatePagesTracked(startTime) {
   const history = await chrome.history.search({
     text: "",
-    startTime
+    startTime: startTime
   });
   const count = history.length;
   setPagesTrackedText(count);
@@ -166,76 +164,59 @@ async function onAddTag(historyEntry, tag, currentHistory) {
   await refreshUI(currentHistory);
 }
 
-//=============
-// DOM EVENTS |
-//=============
+//===================
+// SESSION CREATION |
+//===================
 
-/*
- * Controls the javascript documentation on the popup page
-Changes textcontent & icon button based on session state
- */
-document.addEventListener('DOMContentLoaded', function () {
-  chrome.storage.local.get(["rabbit_hole_startTime", "rabbit_hole_status", "rabbit_hole_lastActive"],
-    async ({ rabbit_hole_startTime, rabbit_hole_status, rabbit_hole_lastActive }) => {
+//CLEANUP CREW FOR STALE SESSIONS
+async function finalizeStaleSession({ startTime }) {
+  try {
+    await ProcessSessionData(start_time)
+  } catch (err) {
+    console.error(err);
+    await chrome.storage.local.set({ rabbit_hole_status: "error" });
+  }
+}
 
-      const isRecording = Boolean(rabbit_hole_startTime);
+async function ToggleTimer() {
+  try {
+    console.log("ToggleTimer FIRED");
+    //check to see if there is a stored startTime
+    const data = await chrome.storage.local.get(["rabbit_hole_startTime"]);
+    const start_time = data.rabbit_hole_startTime;
 
-      //STALE DETECTION
+    //If there is not stored start time, store the start time and update UI to show session is running
+    if (!start_time) {
+      console.log("Starting timer");
+
       const now = Date.now();
-      const isStale =
-        rabbit_hole_lastActive &&
-        now - rabbit_hole_lastActive > STALE_THRESHHOLD;
-
-      //AUTO FINALIZE IF STALE SESSION
-      if (isRecording && isStale) {
-        console.log("Stale session detected -> Auto Finalizing");
-
-        await finalizeStaleSession({
-          startTime: rabbit_hole_startTime
-        });
-
-        setSessionStatus("Finished");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
-        return;
-      }
-
-      //STANDARD UI FLOW
-      setRecordButtonIcon(isRecording);
-      setIndexButtonIcon(isRecording);
-
-      if (isRecording) {
-        setSessionStatus("Recording");
-        startElapsedClock(rabbit_hole_startTime);
-        startPagesTrackedClock(rabbit_hole_startTime);
-        return;
-      } else if (rabbit_hole_status === "error") {
-        setSessionStatus("Error Saving");
-      } else if (rabbit_hole_status === "finished") {
-        setSessionStatus("Finished");
-      } else {
-        setSessionStatus("Ready");
-      }
-      stopElapsedClock(true);
-      stopPagesTrackedClock(true);
+      await chrome.storage.local.set({ rabbit_hole_startTime: now, rabbit_hole_status: "recording" });
+      setSessionStatus("Recording");
+      setRecordButtonIcon(true);
+      setIndexButtonIcon(true);
+      startElapsedClock(now);
+      startPagesTrackedClock(now);
       return;
-    });
+    }
+    //There is a start time, meaning that a session is running.
+    //stop the session, update UI and store the session to local data.
+    await chrome.storage.local.remove(["rabbit_hole_startTime"]);
+    setRecordButtonIcon(false);
+    setIndexButtonIcon(false);
+    stopElapsedClock(true);
+    stopPagesTrackedClock(true);
 
-  document.getElementById("RabbitHole_Record").addEventListener('click', async () => {
-    /* start/stop the timer for when a rabbit hole is created */
-    console.log("BUT:TON PRESSED");
-    ToggleTimer();
-    console.log("FUNCTION FINISHED");
-  });
+    await ProcessSessionData(start_time)
+    setSessionStatus("Finished");
 
-  document.getElementById("RabbitHole_Index").addEventListener('click', () => {
-    /**/
-    chrome.tabs.create({ 'url': chrome.runtime.getURL('index.html') });
-  });
-
-  window.addEventListener("beforeunload", () => stopElapsedClock(false));
-  window.addEventListener("beforeunload", () => stopPagesTrackedClock(false));
-});
+  } catch (error) {
+    console.error("TOGGLETIMER ERROR:", error);
+    await chrome.storage.local.set({ rabbit_hole_status: "error" });
+    setSessionStatus("Error Saving");
+    stopElapsedClock(true);
+    stopPagesTrackedClock(true);
+  }
+}
 
 async function StripBlacklistedItems(history)
 {
@@ -290,107 +271,106 @@ async function StripBlacklistedItems(history)
       continue;
     }
     stripped_data.unshift(item);
-  };
+  }
 
   return stripped_data;
 }
 
 async function ProcessSessionData(start_time)
 {
-    const end_time = Date.now();
-    const taggedHistory = [];
-    const history = await chrome.history.search({
-      text: "",
-      start_time
-    });
+  const end_time = Date.now();
+  const taggedHistory = [];
+  const history = await chrome.history.search({
+    text: "",
+    startTime: start_time,
+  });
 
-    if (history.length === 0)
-    {
-      return {};
-    }
-
-    const stripped_history = await StripBlacklistedItems(history);
-
-    for (const entry of stripped_history) {
-      const taggedEntry = await makeTag(entry);
-      taggedHistory.push(taggedEntry);
-    }
-
-    return RabbitHoleMetadata(taggedHistory, start_time, end_time);
-}
-
-//===================
-// SESSION CREATION |
-//===================
-
-//CLEANUP CREW FOR STALE SESSIONS
-async function finalizeStaleSession({ startTime }) {
-  const session = await ProcessSessionData(startTime);
-
-  if(Object.keys(session).length === 0)
+  if (history.length === 0)
   {
-    console.log("0 items in session, returning...")
+    //nothing to write so just return
     return;
   }
 
-  try {
-    await chrome.storage.local.set(session);
-    await chrome.storage.local.set({ rabbit_hole_status: "finished" });
-  } catch (err) {
-    console.error(err);
-    await chrome.storage.local.set({ rabbit_hole_status: "error" });
+  const stripped_history = await StripBlacklistedItems(history);
+
+  for (const entry of stripped_history) {
+    const taggedEntry = await makeTag(entry);
+    taggedHistory.push(taggedEntry);
   }
+  await refreshUI(taggedHistory);
+
+  const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
+
+  await chrome.storage.local.set(new_session);
+  await chrome.storage.local.set({ rabbit_hole_status: "finished" });
 }
 
-async function ToggleTimer() {
-  try {
-    console.log("ToggleTimer FIRED");
-    //check to see if there is a stored startTime
-    const data = await chrome.storage.local.get(["rabbit_hole_startTime"]);
-    const start_time = data.rabbit_hole_startTime;
+//=============
+// DOM EVENTS |
+//=============
 
-    //If there is not stored start time, store the start time and update UI to show session is running
-    if (!start_time) {
-      console.log("Starting timer");
+/*
+ * Controls the javascript documentation on the popup page
+ * Changes textcontent & icon button based on session state
+ */
+document.addEventListener('DOMContentLoaded', function () {
+  chrome.storage.local.get(["rabbit_hole_startTime", "rabbit_hole_status"],
+    async ({ rabbit_hole_startTime, rabbit_hole_status }) => {
+      const isRecording = Boolean(rabbit_hole_startTime);
 
+      //STALE DETECTION
       const now = Date.now();
-      await chrome.storage.local.set({ rabbit_hole_startTime: now, rabbit_hole_status: "recording", rabbit_hole_lastActive: now });
-      setSessionStatus("Recording");
-      setRecordButtonIcon(true);
-      setIndexButtonIcon(true);
-      startElapsedClock(now);
-      startPagesTrackedClock(now);
+      const isStale =
+      rabbit_hole_startTime &&
+      now - rabbit_hole_startTime > STALE_THRESHHOLD;
+
+      //AUTO FINALIZE IF STALE SESSION
+      if (isRecording && isStale) {
+        console.log("Stale session detected -> Auto Finalizing");
+
+        await finalizeStaleSession({
+          startTime: rabbit_hole_startTime
+        });
+
+        setSessionStatus("Finished");
+        stopElapsedClock(true);
+        stopPagesTrackedClock(true);
+        return;
+      }
+
+      //STANDARD UI FLOW
+      setRecordButtonIcon(isRecording);
+      setIndexButtonIcon(isRecording);
+
+      if (isRecording) {
+        setSessionStatus("Recording");
+        startElapsedClock(rabbit_hole_startTime);
+        startPagesTrackedClock(rabbit_hole_startTime);
+        return;
+      } else if (rabbit_hole_status === "error") {
+        setSessionStatus("Error Saving");
+      } else if (rabbit_hole_status === "finished") {
+        setSessionStatus("Finished");
+      } else {
+        setSessionStatus("Ready");
+      }
+      stopElapsedClock(true);
+      stopPagesTrackedClock(true);
       return;
-    }
-    //There is a start time, meaning that a session is running.
-    //stop the session, update UI and store the session to local data.
-    await chrome.storage.local.remove(["rabbit_hole_startTime", "rabbit_hole_status", "rabbit_hole_lastActive"]);
-    setRecordButtonIcon(false);
-    setIndexButtonIcon(false);
-    stopElapsedClock(true);
-    stopPagesTrackedClock(true);
+    });
 
-    const new_session = await ProcessSessionData(start_time);
+  document.getElementById("RabbitHole_Record").addEventListener('click', async () => {
+    /* start/stop the timer for when a rabbit hole is created */
+    console.log("BUTTON PRESSED");
+    ToggleTimer();
+    console.log("FUNCTION FINISHED");
+  });
 
-    try {
-      await chrome.storage.local.set(new_session);
-      await chrome.storage.local.set({ rabbit_hole_status: "finished" });
-      setSessionStatus("Finished");
-    } catch (saveError) {
-      console.error("Session save error:", saveError);
-      await chrome.storage.local.set({ rabbit_hole_status: "error" });
-      setSessionStatus("Error Saving");
-      return;
-    }
+  document.getElementById("RabbitHole_Index").addEventListener('click', () => {
+    /**/
+    chrome.tabs.create({ 'url': chrome.runtime.getURL('index.html') });
+  });
 
-    // Initial render that's totally optional
-    await refreshUI(taggedHistory);
-
-  } catch (error) {
-    console.error("TOGGLETIMER ERROR:", error);
-    await chrome.storage.local.set({ rabbit_hole_status: "error" });
-    setSessionStatus("Error Saving");
-    stopElapsedClock(true);
-    stopPagesTrackedClock(true);
-  }
-}
+  window.addEventListener("beforeunload", () => stopElapsedClock(false));
+  window.addEventListener("beforeunload", () => stopPagesTrackedClock(false));
+});
