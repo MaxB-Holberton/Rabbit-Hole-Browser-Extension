@@ -84,6 +84,7 @@ function formatElapsed(ms) {
   }
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
+
 // sets timer text for 'Time Elapsed'
 function setElapsedText(text) {
   const elapsedThing = document.getElementById("TimeElapsedVal");
@@ -207,19 +208,17 @@ document.addEventListener('DOMContentLoaded', function () {
         setSessionStatus("Recording");
         startElapsedClock(rabbit_hole_startTime);
         startPagesTrackedClock(rabbit_hole_startTime);
+        return;
       } else if (rabbit_hole_status === "error") {
         setSessionStatus("Error Saving");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
       } else if (rabbit_hole_status === "finished") {
         setSessionStatus("Finished");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
       } else {
         setSessionStatus("Ready");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
       }
+      stopElapsedClock(true);
+      stopPagesTrackedClock(true);
+      return;
     });
 
   document.getElementById("RabbitHole_Record").addEventListener('click', async () => {
@@ -238,42 +237,50 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener("beforeunload", () => stopPagesTrackedClock(false));
 });
 
-async function StripBlacklistedItems(start_time) {
+async function StripBlacklistedItems(history)
+{
   const stripped_data = [];
   const active_items = [];
-  const history = await chrome.history.search({
-    text: "",
-    startTime: start_time,
-  });
+  const blacklist_data = await GetBlacklist();
+  let active_count = 0;
 
-  if (history.length === 0) {
+  if (history.length === 0)
+  {
     return ([]);//return a 0 length array
   }
 
-  const blacklist_data = await GetBlacklist();
   if (blacklist_data === undefined)
   {
     return history;
   }
 
-  for (const active_item of blacklist_data) {
+  for (const active_item of blacklist_data)
+  {
     if (active_item.active)
     {
+      active_count += 1;
       active_items.unshift(active_item.name);
       continue;
     }
   }
 
-  for (const item of history) {
+  if (active_count === 0)
+  {
+    //No blacklist is enabled,
+    //no point running through the lists
+    return history;
+  }
+
+  for (const item of history)
+  {
     const url = new URL(item.url);
     const url_host = url.hostname.toString().replace("www.", "").toLowerCase();
-    console.log(url_host);
     let match_lock = false;
-    for (blacklist of active_items) {
+    for (blacklist of active_items)
+    {
       //for each item in the list of active blacklist items.
-      if (url_host.includes(blacklist.toLowerCase())) {
-        //on match ->  3
-        console.log("Match");
+      if (url_host.includes(blacklist.toLowerCase()))
+      {
         match_lock = true;
         break;
       }
@@ -282,40 +289,49 @@ async function StripBlacklistedItems(start_time) {
     {
       continue;
     }
-    //no match -> write to the data
-    console.log("No Match");
     stripped_data.unshift(item);
   };
-  console.log(stripped_data);
 
   return stripped_data;
+}
+
+async function ProcessSessionData(start_time)
+{
+    const end_time = Date.now();
+    const taggedHistory = [];
+    const history = await chrome.history.search({
+      text: "",
+      start_time
+    });
+
+    if (history.length === 0)
+    {
+      return {};
+    }
+
+    const stripped_history = await StripBlacklistedItems(history);
+
+    for (const entry of stripped_history) {
+      const taggedEntry = await makeTag(entry);
+      taggedHistory.push(taggedEntry);
+    }
+
+    return RabbitHoleMetadata(taggedHistory, start_time, end_time);
 }
 
 //===================
 // SESSION CREATION |
 //===================
 
-
 //CLEANUP CREW FOR STALE SESSIONS
 async function finalizeStaleSession({ startTime }) {
-  const end_time = Date.now();
+  const session = await ProcessSessionData(startTime);
 
-  const history = await chrome.history.search({
-    text: "",
-    startTime
-  });
-
-  const taggedHistory = [];
-  for (const entry of history) {
-    taggedHistory.push(await makeTag(entry));
-  }
-
-  if (taggedHistory.length === 0) {
-    await chrome.storage.local.set({ rabbit_hole_status: "ready" });
+  if(Object.keys(session).length === 0)
+  {
+    console.log("0 items in session, returning...")
     return;
   }
-
-  const session = RabbitHoleMetadata(taggedHistory, startTime, end_time);
 
   try {
     await chrome.storage.local.set(session);
@@ -329,12 +345,11 @@ async function finalizeStaleSession({ startTime }) {
 async function ToggleTimer() {
   try {
     console.log("ToggleTimer FIRED");
-
+    //check to see if there is a stored startTime
     const data = await chrome.storage.local.get(["rabbit_hole_startTime"]);
     const start_time = data.rabbit_hole_startTime;
 
-    console.log("Session data:", data);
-
+    //If there is not stored start time, store the start time and update UI to show session is running
     if (!start_time) {
       console.log("Starting timer");
 
@@ -347,33 +362,15 @@ async function ToggleTimer() {
       startPagesTrackedClock(now);
       return;
     }
-    // Any button changes for RabbitHole_Record should happen here
+    //There is a start time, meaning that a session is running.
+    //stop the session, update UI and store the session to local data.
     await chrome.storage.local.remove(["rabbit_hole_startTime", "rabbit_hole_status", "rabbit_hole_lastActive"]);
     setRecordButtonIcon(false);
     setIndexButtonIcon(false);
     stopElapsedClock(true);
     stopPagesTrackedClock(true);
-    const end_time = Date.now();
 
-    const history = await StripBlacklistedItems(start_time);
-
-    if (history.length === 0) {
-      console.log("No history found, skipping session save");
-      await chrome.storage.local.set({ rabbit_hole_status: "ready" });
-      setSessionStatus("Ready");
-      stopElapsedClock(true);
-      stopPagesTrackedClock(true);
-      return;
-    }
-
-    console.log("HISTORY:", history);
-    const taggedHistory = [];
-    for (const entry of history) {
-      const taggedEntry = await makeTag(entry);
-      taggedHistory.push(taggedEntry);
-    }
-
-    const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
+    const new_session = await ProcessSessionData(start_time);
 
     try {
       await chrome.storage.local.set(new_session);
@@ -383,14 +380,11 @@ async function ToggleTimer() {
       console.error("Session save error:", saveError);
       await chrome.storage.local.set({ rabbit_hole_status: "error" });
       setSessionStatus("Error Saving");
-      stopElapsedClock(true);
-      stopPagesTrackedClock(true);
       return;
     }
 
     // Initial render that's totally optional
     await refreshUI(taggedHistory);
-
 
   } catch (error) {
     console.error("TOGGLETIMER ERROR:", error);

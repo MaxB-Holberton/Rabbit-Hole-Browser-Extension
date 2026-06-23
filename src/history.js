@@ -29,7 +29,7 @@ export function RabbitHoleMetadata(hist, start, end) {
   const new_session_metadata = {};
   // create the metadata
   new_session_metadata['title'] = 'New Rabbit Hole Name';
-  new_session_metadata['tag_list'] = ['newTag', 'Testtag', 'tagtheThird'];
+  new_session_metadata['tag_list'] = ['newSession'];
   new_session_metadata['start_time_ms'] = start;
   new_session_metadata['end_time_ms'] = end;
   new_session_metadata['start_time_datetime'] = MiliToDatetime(start);
