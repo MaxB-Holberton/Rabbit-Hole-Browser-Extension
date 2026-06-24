@@ -20,7 +20,7 @@ async function RHDeleteSession(session_key) {
   if (confirm("Are you sure you want to delete this rabbit hole?")) {
     console.log("deleting...");
     await chrome.storage.local.remove([session_key]);
-    window.location.href = "/index.html#/overview";
+    window.location.href = "/index.html#/previous";
   }
 }
 
@@ -195,16 +195,16 @@ function EditSessionMetadata(data, SetSessionData) {
   }
   return (
     <>
-    <p>
-    <b>Topic:</b>
-    <input
-    name={`title`}
-    onChange={UpdateTitle}
-    defaultValue={data.title}
-    />
-    </p>
-    <p><b>Date: {data.start_time_datetime}</b></p>
-    <p><b>Duration: {data.duration_string}</b></p>
+      <p>
+        <b>Topic:</b>
+        <input
+          name={`title`}
+          onChange={UpdateTitle}
+          defaultValue={data.title}
+        />
+      </p>
+      <p><b>Date: {data.start_time_datetime}</b></p>
+      <p><b>Duration: {data.duration_string}</b></p>
     </>
   );
 }

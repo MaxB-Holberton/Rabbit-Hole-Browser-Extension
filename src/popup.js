@@ -50,7 +50,6 @@ function setRecordButtonIcon(isRecording) {
 
 //session status text helper
 // normalizes string of status then map so classes added & correct CSS
-
 function setSessionStatus(status) {
   const statusNode = document.getElementById("SessionStatusText");
   if (!statusNode) return;
@@ -66,7 +65,6 @@ function setSessionStatus(status) {
   const nextStatus = statusMap[normalized] || statusMap.ready;
   statusNode.textContent = nextStatus.label;
   statusNode.className = nextStatus.className;
-
 }
 
 // TIME ELAPSED FUNCTIONS ⭒˚｡⋆ヽ(・∀・)ﾉ
@@ -84,6 +82,7 @@ function formatElapsed(ms) {
   }
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
+
 // sets timer text for 'Time Elapsed'
 function setElapsedText(text) {
   const elapsedThing = document.getElementById("TimeElapsedVal");
@@ -125,7 +124,7 @@ function setPagesTrackedText(count) {
 async function updatePagesTracked(startTime) {
   const history = await chrome.history.search({
     text: "",
-    startTime
+    startTime: startTime
   });
   const count = history.length;
   setPagesTrackedText(count);
@@ -165,25 +164,165 @@ async function onAddTag(historyEntry, tag, currentHistory) {
   await refreshUI(currentHistory);
 }
 
+//===================
+// SESSION CREATION |
+//===================
+
+//CLEANUP CREW FOR STALE SESSIONS
+async function finalizeStaleSession({ startTime }) {
+  try {
+    await ProcessSessionData(start_time)
+  } catch (err) {
+    console.error(err);
+    await chrome.storage.local.set({ rabbit_hole_status: "error" });
+  }
+}
+
+async function ToggleTimer() {
+  try {
+    console.log("ToggleTimer FIRED");
+    //check to see if there is a stored startTime
+    const data = await chrome.storage.local.get(["rabbit_hole_startTime"]);
+    const start_time = data.rabbit_hole_startTime;
+
+    //If there is not stored start time, store the start time and update UI to show session is running
+    if (!start_time) {
+      console.log("Starting timer");
+
+      const now = Date.now();
+      await chrome.storage.local.set({ rabbit_hole_startTime: now, rabbit_hole_status: "recording" });
+      setSessionStatus("Recording");
+      setRecordButtonIcon(true);
+      setIndexButtonIcon(true);
+      startElapsedClock(now);
+      startPagesTrackedClock(now);
+      return;
+    }
+    //There is a start time, meaning that a session is running.
+    //stop the session, update UI and store the session to local data.
+    await chrome.storage.local.remove(["rabbit_hole_startTime"]);
+    setRecordButtonIcon(false);
+    setIndexButtonIcon(false);
+    stopElapsedClock(true);
+    stopPagesTrackedClock(true);
+
+    await ProcessSessionData(start_time)
+    setSessionStatus("Finished");
+
+  } catch (error) {
+    console.error("TOGGLETIMER ERROR:", error);
+    await chrome.storage.local.set({ rabbit_hole_status: "error" });
+    setSessionStatus("Error Saving");
+    stopElapsedClock(true);
+    stopPagesTrackedClock(true);
+  }
+}
+
+async function StripBlacklistedItems(history)
+{
+  const stripped_data = [];
+  const active_items = [];
+  const blacklist_data = await GetBlacklist();
+  let active_count = 0;
+
+  if (history.length === 0)
+  {
+    return ([]);//return a 0 length array
+  }
+
+  if (blacklist_data === undefined)
+  {
+    return history;
+  }
+
+  for (const active_item of blacklist_data)
+  {
+    if (active_item.active)
+    {
+      active_count += 1;
+      active_items.unshift(active_item.name);
+      continue;
+    }
+  }
+
+  if (active_count === 0)
+  {
+    //No blacklist is enabled,
+    //no point running through the lists
+    return history;
+  }
+
+  for (const item of history)
+  {
+    const url = new URL(item.url);
+    const url_host = url.hostname.toString().replace("www.", "").toLowerCase();
+    let match_lock = false;
+    for (blacklist of active_items)
+    {
+      //for each item in the list of active blacklist items.
+      if (url_host.includes(blacklist.toLowerCase()))
+      {
+        match_lock = true;
+        break;
+      }
+    }
+    if(match_lock)
+    {
+      continue;
+    }
+    stripped_data.unshift(item);
+  }
+
+  return stripped_data;
+}
+
+async function ProcessSessionData(start_time)
+{
+  const end_time = Date.now();
+  const taggedHistory = [];
+  const history = await chrome.history.search({
+    text: "",
+    startTime: start_time,
+  });
+
+  if (history.length === 0)
+  {
+    //nothing to write so just return
+    return;
+  }
+
+  const stripped_history = await StripBlacklistedItems(history);
+
+  for (const entry of stripped_history) {
+    const taggedEntry = await makeTag(entry);
+    taggedHistory.push(taggedEntry);
+  }
+  await refreshUI(taggedHistory);
+
+  const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
+
+  await chrome.storage.local.set(new_session);
+  await chrome.storage.local.set({ rabbit_hole_status: "finished" });
+}
+
 //=============
 // DOM EVENTS |
 //=============
 
 /*
  * Controls the javascript documentation on the popup page
-Changes textcontent & icon button based on session state
+ * Changes textcontent & icon button based on session state
  */
 document.addEventListener('DOMContentLoaded', function () {
-  chrome.storage.local.get(["rabbit_hole_startTime", "rabbit_hole_status", "rabbit_hole_lastActive"],
-    async ({ rabbit_hole_startTime, rabbit_hole_status, rabbit_hole_lastActive }) => {
-
+  chrome.storage.local.get(["rabbit_hole_startTime", "rabbit_hole_status"],
+    async ({ rabbit_hole_startTime, rabbit_hole_status }) => {
       const isRecording = Boolean(rabbit_hole_startTime);
 
       //STALE DETECTION
       const now = Date.now();
       const isStale =
-        rabbit_hole_lastActive &&
-        now - rabbit_hole_lastActive > STALE_THRESHHOLD;
+      rabbit_hole_startTime &&
+      now - rabbit_hole_startTime > STALE_THRESHHOLD;
 
       //AUTO FINALIZE IF STALE SESSION
       if (isRecording && isStale) {
@@ -207,24 +346,22 @@ document.addEventListener('DOMContentLoaded', function () {
         setSessionStatus("Recording");
         startElapsedClock(rabbit_hole_startTime);
         startPagesTrackedClock(rabbit_hole_startTime);
+        return;
       } else if (rabbit_hole_status === "error") {
         setSessionStatus("Error Saving");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
       } else if (rabbit_hole_status === "finished") {
         setSessionStatus("Finished");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
       } else {
         setSessionStatus("Ready");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
       }
+      stopElapsedClock(true);
+      stopPagesTrackedClock(true);
+      return;
     });
 
   document.getElementById("RabbitHole_Record").addEventListener('click', async () => {
     /* start/stop the timer for when a rabbit hole is created */
-    console.log("BUT:TON PRESSED");
+    console.log("BUTTON PRESSED");
     ToggleTimer();
     console.log("FUNCTION FINISHED");
   });
@@ -237,166 +374,3 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener("beforeunload", () => stopElapsedClock(false));
   window.addEventListener("beforeunload", () => stopPagesTrackedClock(false));
 });
-
-async function StripBlacklistedItems(start_time) {
-  const stripped_data = [];
-  const active_items = [];
-  const history = await chrome.history.search({
-    text: "",
-    startTime: start_time,
-  });
-
-  if (history.length === 0) {
-    return ([]);//return a 0 length array
-  }
-
-  const blacklist_data = await GetBlacklist();
-  if (blacklist_data === undefined)
-  {
-    return history;
-  }
-
-  for (const active_item of blacklist_data) {
-    if (active_item.active)
-    {
-      active_items.unshift(active_item.name);
-      continue;
-    }
-  }
-
-  for (const item of history) {
-    const url = new URL(item.url);
-    const url_host = url.hostname.toString().replace("www.", "").toLowerCase();
-    console.log(url_host);
-    let match_lock = false;
-    for (blacklist of active_items) {
-      //for each item in the list of active blacklist items.
-      if (url_host.includes(blacklist.toLowerCase())) {
-        //on match ->  3
-        console.log("Match");
-        match_lock = true;
-        break;
-      }
-    }
-    if(match_lock)
-    {
-      continue;
-    }
-    //no match -> write to the data
-    console.log("No Match");
-    stripped_data.unshift(item);
-  };
-  console.log(stripped_data);
-
-  return stripped_data;
-}
-
-//===================
-// SESSION CREATION |
-//===================
-
-
-//CLEANUP CREW FOR STALE SESSIONS
-async function finalizeStaleSession({ startTime }) {
-  const end_time = Date.now();
-
-  const history = await chrome.history.search({
-    text: "",
-    startTime
-  });
-
-  const taggedHistory = [];
-  for (const entry of history) {
-    taggedHistory.push(await makeTag(entry));
-  }
-
-  if (taggedHistory.length === 0) {
-    await chrome.storage.local.set({ rabbit_hole_status: "ready" });
-    return;
-  }
-
-  const session = RabbitHoleMetadata(taggedHistory, startTime, end_time);
-
-  try {
-    await chrome.storage.local.set(session);
-    await chrome.storage.local.set({ rabbit_hole_status: "finished" });
-  } catch (err) {
-    console.error(err);
-    await chrome.storage.local.set({ rabbit_hole_status: "error" });
-  }
-}
-
-async function ToggleTimer() {
-  try {
-    console.log("ToggleTimer FIRED");
-
-    const data = await chrome.storage.local.get(["rabbit_hole_startTime"]);
-    const start_time = data.rabbit_hole_startTime;
-
-    console.log("Session data:", data);
-
-    if (!start_time) {
-      console.log("Starting timer");
-
-      const now = Date.now();
-      await chrome.storage.local.set({ rabbit_hole_startTime: now, rabbit_hole_status: "recording", rabbit_hole_lastActive: now });
-      setSessionStatus("Recording");
-      setRecordButtonIcon(true);
-      setIndexButtonIcon(true);
-      startElapsedClock(now);
-      startPagesTrackedClock(now);
-      return;
-    }
-    // Any button changes for RabbitHole_Record should happen here
-    await chrome.storage.local.remove(["rabbit_hole_startTime", "rabbit_hole_status", "rabbit_hole_lastActive"]);
-    setRecordButtonIcon(false);
-    setIndexButtonIcon(false);
-    stopElapsedClock(true);
-    stopPagesTrackedClock(true);
-    const end_time = Date.now();
-
-    const history = await StripBlacklistedItems(start_time);
-
-    if (history.length === 0) {
-      console.log("No history found, skipping session save");
-      await chrome.storage.local.set({ rabbit_hole_status: "ready" });
-      setSessionStatus("Ready");
-      stopElapsedClock(true);
-      stopPagesTrackedClock(true);
-      return;
-    }
-
-    console.log("HISTORY:", history);
-    const taggedHistory = [];
-    for (const entry of history) {
-      const taggedEntry = await makeTag(entry);
-      taggedHistory.push(taggedEntry);
-    }
-
-    const new_session = RabbitHoleMetadata(taggedHistory, start_time, end_time);
-
-    try {
-      await chrome.storage.local.set(new_session);
-      await chrome.storage.local.set({ rabbit_hole_status: "finished" });
-      setSessionStatus("Finished");
-    } catch (saveError) {
-      console.error("Session save error:", saveError);
-      await chrome.storage.local.set({ rabbit_hole_status: "error" });
-      setSessionStatus("Error Saving");
-      stopElapsedClock(true);
-      stopPagesTrackedClock(true);
-      return;
-    }
-
-    // Initial render that's totally optional
-    await refreshUI(taggedHistory);
-
-
-  } catch (error) {
-    console.error("TOGGLETIMER ERROR:", error);
-    await chrome.storage.local.set({ rabbit_hole_status: "error" });
-    setSessionStatus("Error Saving");
-    stopElapsedClock(true);
-    stopPagesTrackedClock(true);
-  }
-}

@@ -24,17 +24,13 @@ function SettingsOptionsList() {
 }
 
 export function BlacklistEditPage() {
-	const [rabbithole_blacklist, UpdateBlacklist] = useState([
-		{
-			name: "facebook",
-			active: false,
-		},
-		{
-			name: "twitter",
-			active: false,
-		}
+	const [rabbithole_blacklist, UpdateBlacklist] = useState(
+		[
+			{ name: "facebook", active: false },
+			{ name: "twitter", active: false }
+		]
 
-	]);
+	);
 	const [blacklist_item, NewInputOnChange] = useState("");
 	useEffect(() => {}, [rabbithole_blacklist]);
 	useEffect(() => {
@@ -128,7 +124,7 @@ export function BlacklistEditPage() {
 					)
 				))}
 				</ul>
-				<IconButton iconSrc="assets/save_icon.svg" onClick={() => {SaveBlacklist(rabbithole_blacklist)}} label="Save Blacklist"/>
+				<IconButton iconSrc="assets/save_icon.svg" onClick={() => { SaveBlacklist(rabbithole_blacklist) }} label="Save Blacklist"/>
 			</div>
 		</>
 	);
