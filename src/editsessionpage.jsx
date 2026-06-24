@@ -195,16 +195,16 @@ function EditSessionMetadata(data, SetSessionData) {
   }
   return (
     <>
-    <p>
-    <b>Topic:</b>
-    <input
-    name={`title`}
-    onChange={UpdateTitle}
-    defaultValue={data.title}
-    />
-    </p>
-    <p><b>Date: {data.start_time_datetime}</b></p>
-    <p><b>Duration: {data.duration_string}</b></p>
+      <p>
+        <b>Topic:</b>
+        <input
+          name={`title`}
+          onChange={UpdateTitle}
+          defaultValue={data.title}
+        />
+      </p>
+      <p><b>Date: {data.start_time_datetime}</b></p>
+      <p><b>Duration: {data.duration_string}</b></p>
     </>
   );
 }

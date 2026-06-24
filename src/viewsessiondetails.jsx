@@ -5,7 +5,6 @@ import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
 
-
 /*
  * function to download the file as a JSON
  */
@@ -17,7 +16,20 @@ async function DownloadJsonFile(session_key) {
 	link.download = `${session_key}.json`;
 	link.click();
 	URL.revokeObjectURL(link.href);
+}
 
+async function DownloadTxtFile(session_key) {
+	const data = await RHGetPage(session_key);
+	let new_data;
+	for (item of data.data) {
+		new_data += `${item.title} \t ${item.url}\n`;
+	}
+	const blob = new Blob([new_data], {type: "text/plain"});
+	const link = document.createElement("a");
+	link.href = URL.createObjectURL(blob);
+	link.download = `${session_key}.txt`;
+	link.click();
+	URL.revokeObjectURL(link.href);
 }
 
 /*
@@ -71,7 +83,8 @@ function ShowSessionDetailBtns({ session }) {
 	return (
 		<>
 			<IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
-			<IconButton iconSrc="assets/save_icon.svg" label="Download Session" onClick={async () => { DownloadJsonFile(session.session_key); }} />
+			<IconButton iconSrc="assets/save_icon.svg" label="JSON" onClick={async () => { DownloadJsonFile(session.session_key); }} />
+			<IconButton iconSrc="assets/save_icon.svg" label="TXT" onClick={async () => { DownloadTxtFile(session.session_key); }} />
 			<IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
 			<button type="button" onClick={() => navigate(`/previous`)}>Back</button>
 		</>
@@ -126,7 +139,6 @@ export function ShowLastSession() {
 	);
 }
 
-
 export function ShowAllSessions() {
 	const [sessions, setSessionsList] = useState([]);
 
@@ -146,6 +158,46 @@ export function ShowAllSessions() {
 	});
 }
 
+export function SessionsFilterAndShow() {
+	const [sessions, setSessionsList] = useState([]);
+
+	useEffect(() => {
+		RHGetSessionList().then((sessions) => setSessionsList(sessions));
+	});
+	return (
+		<>
+			<span>
+				<h3>Items per page: </h3>
+				<select>
+					<option>10</option>
+					<option>20</option>
+					<option>30</option>
+				</select>
+			</span>
+			{sessions.map((session, index) => {
+				return (
+					<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
+					<div className="rabbitHole">
+						{ShowSessionMetadata(session)}
+						{ShowSessionTags(session)}
+					</div>
+					</Link>
+				);
+			})}
+		</>
+	);
+
+	return sessions.map((session, index) => {
+		return (
+			<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
+			<div className="rabbitHole">
+			{ShowSessionMetadata(session)}
+			{ShowSessionTags(session)}
+			</div>
+			</Link>
+		);
+	});
+}
 
 export function SectionRibbon(title_h3) {
 	//returns the Section Ribbon

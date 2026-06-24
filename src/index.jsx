@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
 import { SectionRibbon, SessionDetailsPage,
-  ShowLastSession, ShowAllSessions } from "./viewsessiondetails";
+  ShowLastSession, ShowAllSessions, SessionsFilterAndShow } from "./viewsessiondetails";
 
 import { SessionEditPage } from "./editsessionpage";
 import { SettingsPage, BlacklistEditPage } from "./settingspage";
@@ -94,7 +94,7 @@ function PreviousView() {
         {SectionRibbon('Previous Rabbit Holes')}
       </div>
       <section className="rabbitHole" id="previous">
-        {ShowAllSessions()}
+        {SessionsFilterAndShow()}
       </section>
       <div id="previousPageContent">
           <section id="previousBannerSection">

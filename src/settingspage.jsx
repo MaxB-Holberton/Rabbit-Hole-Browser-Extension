@@ -124,7 +124,7 @@ export function BlacklistEditPage() {
 					)
 				))}
 				</ul>
-				<IconButton iconSrc="assets/save_icon.svg" onClick={() => {SaveBlacklist(rabbithole_blacklist)}} label="Save Blacklist"/>
+				<IconButton iconSrc="assets/save_icon.svg" onClick={() => { SaveBlacklist(rabbithole_blacklist) }} label="Save Blacklist"/>
 			</div>
 		</>
 	);
