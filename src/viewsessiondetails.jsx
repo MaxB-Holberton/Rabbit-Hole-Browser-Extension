@@ -22,7 +22,7 @@ async function DownloadTxtFile(session_key) {
 	const data = await RHGetPage(session_key);
 	let new_data;
 	for (item of data.data) {
-		new_data += `${item.title} \t ${item.url}\n`;
+		new_data += `${item.title}\t${item.url}\n`;
 	}
 	const blob = new Blob([new_data], {type: "text/plain"});
 	const link = document.createElement("a");
@@ -150,8 +150,8 @@ export function ShowAllSessions() {
 		return (
 			<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
 				<div className="rabbitHole">
-				{ShowSessionMetadata(session)}
-				{ShowSessionTags(session)}
+					{ShowSessionMetadata(session)}
+					{ShowSessionTags(session)}
 				</div>
 			</Link>
 		);
@@ -159,44 +159,95 @@ export function ShowAllSessions() {
 }
 
 export function SessionsFilterAndShow() {
+	//Default_session stores the original call from storageArea
+	//any filter updates should use that
+	const [default_sessions, setDefaultList] = useState([]);
 	const [sessions, setSessionsList] = useState([]);
 
+	const [sort_options, setSortedItems] = useState([]);
+	const [filter_options, setFilteredItems] = useState([]);
+
 	useEffect(() => {
-		RHGetSessionList().then((sessions) => setSessionsList(sessions));
-	});
+		RHGetSessionList().then((sessions) => {
+			setSessionsList(sessions);
+			setDefaultList(default_sessions);
+		});
+	}, []);
+
+	useEffect(() => {}, [sessions]);
+
+	function ApplySorted(evt) {
+		//Get the sorted paramters and use them
+		//Date: Old - New || Date: New -  Old
+	}
+
+	function ApplyFilters() {
+		//Apply the filters
+		//then apply the sorted options
+		//ApplySorted
+	}
+
+	function SortItemInputChanged(evt) {
+		const name = evt.target.name;
+		const val = evt.target.val;
+	}
+
+	function FilterItemInputChanged(evt) {
+		const name = evt.target.name;
+		const val = evt.target.value;
+		setFilteredItems(vals => ({...vals, [name]: val}));
+		console.log(`${name} | ${val}`);
+	}
+
+	const session_display_arr = [10, 20, 30, 'All'];
+
 	return (
 		<>
 			<span>
-				<h3>Items per page: </h3>
-				<select>
-					<option>10</option>
-					<option>20</option>
-					<option>30</option>
+				<label for="num">Sessions per page: </label>
+				<select defaultValue="All" name="num">
+					{session_display_arr.map((val) => {
+						return (<option value={val}>{`${val}`}</option>)
+					})}
+				</select>
+				<label for="sort">Sort by: </label>
+				<select defaultValue="Old" name="sort">
+					<option value="Old">Date: Old - New</option>
+					<option value="New">Date: New - Old</option>
+					<option value="Short">Time: Shortest - Longest</option>
+					<option value="Long">Time: Longest - Shortest</option>
 				</select>
 			</span>
+			<span>
+				<label for="tags">Search Tags: </label>
+				<input
+					name="tags"
+					type="search"
+					onChange={FilterItemInputChanged}
+				/>
+				<label for="date">Date Search: </label>
+				<input
+					name="date"
+					type="date"
+					onChange={FilterItemInputChanged}
+				/>
+				<button>Search</button>
+				<button>Clear</button>
+			</span>
+			 <section className="rabbitHole" id="previous">
 			{sessions.map((session, index) => {
 				return (
 					<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
-					<div className="rabbitHole">
-						{ShowSessionMetadata(session)}
-						{ShowSessionTags(session)}
-					</div>
+						<div className="rabbitHole">
+							{ShowSessionMetadata(session)}
+							{ShowSessionTags(session)}
+						</div>
 					</Link>
 				);
 			})}
+			</section>
 		</>
 	);
-
-	return sessions.map((session, index) => {
-		return (
-			<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
-			<div className="rabbitHole">
-			{ShowSessionMetadata(session)}
-			{ShowSessionTags(session)}
-			</div>
-			</Link>
-		);
-	});
 }
 
 export function SectionRibbon(title_h3) {

@@ -93,9 +93,7 @@ function PreviousView() {
       <div id="previousHeaderRow">
         {SectionRibbon('Previous Rabbit Holes')}
       </div>
-      <section className="rabbitHole" id="previous">
         {SessionsFilterAndShow()}
-      </section>
       <div id="previousPageContent">
           <section id="previousBannerSection">
             <img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
