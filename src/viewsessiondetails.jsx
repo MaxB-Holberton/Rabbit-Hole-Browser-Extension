@@ -164,32 +164,52 @@ export function SessionsFilterAndShow() {
 	const [default_sessions, setDefaultList] = useState([]);
 	const [sessions, setSessionsList] = useState([]);
 
-	const [sort_options, setSortedItems] = useState([]);
+	const [sort_options, setSortedItems] = useState({num: "All", sort: "Old"});
 	const [filter_options, setFilteredItems] = useState([]);
 
-	useEffect(() => {
-		RHGetSessionList().then((sessions) => {
-			setSessionsList(sessions);
-			setDefaultList(default_sessions);
-		});
-	}, []);
+	const session_display_arr = [10, 20 , 30, 'All'];
 
-	useEffect(() => {}, [sessions]);
-
-	function ApplySorted(evt) {
-		//Get the sorted paramters and use them
-		//Date: Old - New || Date: New -  Old
+	function ApplySorted(data_to_sort) {
+		const session_num = sort_options.num;
+		const session_sort = sort_options.sort;
+		const new_session = [...data_to_sort];
+		if (session_sort === 'Old') {
+			setSessionsList(new_session);
+			return;
+		}
+		if (session_sort === 'New') {
+			new_session.reverse();
+			setSessionsList(new_session);
+			return;
+		}
+		new_session.sort((a, b) => (a.end_time_ms - a.start_time_ms) - (b.end_time_ms - b.start_time_ms));
+		if (session_sort === 'Short') {
+			setSessionsList(new_session);
+			return;
+		}
+		if (session_sort === 'Long') {
+			new_session.reverse();
+		}
+		setSessionsList(new_session);
 	}
 
 	function ApplyFilters() {
 		//Apply the filters
 		//then apply the sorted options
-		//ApplySorted
+		ApplySorted();
+	}
+
+	function ClearFilters() {
+		const new_session = [...default_sessions];
+		setSessionsList(new_session);
+		ApplySorted();
 	}
 
 	function SortItemInputChanged(evt) {
 		const name = evt.target.name;
-		const val = evt.target.val;
+		const val = evt.target.value;
+		setSortedItems(vals => ({...vals, [name]: val}));
+		console.log(`${name} | ${val}`);
 	}
 
 	function FilterItemInputChanged(evt) {
@@ -199,19 +219,27 @@ export function SessionsFilterAndShow() {
 		console.log(`${name} | ${val}`);
 	}
 
-	const session_display_arr = [10, 20, 30, 'All'];
+	useEffect(() => {
+		RHGetSessionList().then((sessions) => {
+			setSessionsList(sessions);
+			setDefaultList(sessions);
+		});
+	}, []);
+
+	//useEffect(() => {}, [sessions]);
+	useEffect(() => {ApplySorted()}, [sort_options]);
 
 	return (
 		<>
 			<span>
 				<label for="num">Sessions per page: </label>
-				<select defaultValue="All" name="num">
-					{session_display_arr.map((val) => {
-						return (<option value={val}>{`${val}`}</option>)
+				<select defaultValue="All" name="num" onChange={SortItemInputChanged}>
+					{session_display_arr.map((val, idx) => {
+						return (<option key={idx} value={val}>{`${val}`}</option>)
 					})}
 				</select>
 				<label for="sort">Sort by: </label>
-				<select defaultValue="Old" name="sort">
+				<select defaultValue="Old" name="sort" onChange={SortItemInputChanged}>
 					<option value="Old">Date: Old - New</option>
 					<option value="New">Date: New - Old</option>
 					<option value="Short">Time: Shortest - Longest</option>
@@ -231,8 +259,8 @@ export function SessionsFilterAndShow() {
 					type="date"
 					onChange={FilterItemInputChanged}
 				/>
-				<button>Search</button>
-				<button>Clear</button>
+				<button onClick={() => {ApplyFilters()}}>Search</button>
+				<button onClick={() => {ClearFilters()}}>Clear</button>
 			</span>
 			 <section className="rabbitHole" id="previous">
 			{sessions.map((session, index) => {
