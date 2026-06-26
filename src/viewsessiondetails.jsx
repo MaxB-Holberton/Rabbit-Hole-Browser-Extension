@@ -159,12 +159,10 @@ export function ShowAllSessions() {
 }
 
 export function SessionsFilterAndShow() {
-	//Default_session stores the original call from storageArea
-	//any filter updates should use that
 	const [default_sessions, setDefaultList] = useState([]);
 	const [sessions, setSessionsList] = useState([]);
 
-	const [sort_options, setSortedItems] = useState({num: "All", sort: "Old"});
+	const [sort_options, setSortedItems] = useState({num: "All", sort: "Old", page_start: 0});
 	const [filter_options, setFilteredItems] = useState([]);
 
 	const session_display_arr = [10, 20 , 30, 'All'];
@@ -174,11 +172,12 @@ export function SessionsFilterAndShow() {
 		const session_sort = sort_options.sort;
 		const new_session = [...data_to_sort];
 		if (session_sort === 'Old') {
+			new_session.sort((a, b) => (a.start_time_ms - b.start_time_ms));
 			setSessionsList(new_session);
 			return;
 		}
 		if (session_sort === 'New') {
-			new_session.reverse();
+			new_session.sort((a, b) => (b.start_time_ms - a.start_time_ms));
 			setSessionsList(new_session);
 			return;
 		}
@@ -202,7 +201,7 @@ export function SessionsFilterAndShow() {
 	function ClearFilters() {
 		const new_session = [...default_sessions];
 		setSessionsList(new_session);
-		ApplySorted();
+		ApplySorted(new_session);
 	}
 
 	function SortItemInputChanged(evt) {
@@ -227,7 +226,7 @@ export function SessionsFilterAndShow() {
 	}, []);
 
 	//useEffect(() => {}, [sessions]);
-	useEffect(() => {ApplySorted()}, [sort_options]);
+	useEffect(() => {ApplySorted(sessions)}, [sort_options]);
 
 	return (
 		<>
