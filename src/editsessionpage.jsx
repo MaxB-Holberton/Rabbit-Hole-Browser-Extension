@@ -77,11 +77,19 @@ function EditSessionPageList(page_data, SetPageData) {
 
   return (
     <div>
-    <b>Pages: </b><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={AddPage} />
+    <p className="editP"><b>Pages: </b></p><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={AddPage} />
     <ul>
     {page_data.map((item, idx) => (
-      <li key={idx}>
+      <li
+      key={idx}
+      className="editSessionPageCard"
+      id={`editSessionPageCard_${idx}`}
+      >
+      <div className="editSessionPageTagBlock" id={`editSessionPageTagBlock_${idx}`}>
+      <div className="editSessionPageLinkRow" id={`editSessionPageLinkRow_${idx}`}>
       <input
+      className="editSessionPageInput editSessionPageTitleInput"
+      id={`editSessionPageTitleInput_${idx}`}
       name={`${idx}`}
       onChange={PageTitleOnChange}
       value={item.title}
@@ -89,6 +97,8 @@ function EditSessionPageList(page_data, SetPageData) {
       required={true}
       />
       <input
+      className="editSessionPageInput editSessionPageUrlInput"
+      id={`editSessionPageUrlInput_${idx}`}
       name={`${idx}`}
       onChange={PageUrlOnChange}
       value={item.url}
@@ -98,17 +108,21 @@ function EditSessionPageList(page_data, SetPageData) {
       required={true}
       />
       <IconButton
+      className="editSessionDeletePageButton editSessionPageDeleteButton"
+      id={`editSessionPageDeleteButton_${idx}`}
       iconSrc="assets/delete_icon.svg"
       label="Delete"
       showLabel={false}
       ariaLabel="Delete page"
       onClick={() => { DeletePage(idx) }}
       />
+      </div>
       <br />
-      <div id={`${idx}_tagdiv`}>
-      <p>Category: <span>{item.category}</span></p>
-      <p>structTag: <span>{item.structuralTags}</span></p>
-      <p>ManualTags: <span>{item.manualTags}</span></p>
+      <div id={`${idx}_tagdiv`} className="editSessionPageTags" >
+      <p className="editSessionPageTagLine editSessionPageCategoryLine"><span className="editSessionPageTagLabel editSessionPageCategoryLabel">Category:</span> <span className="editSessionPageTagValue editSessionPageCategoryValue">{item.category}</span></p>
+      <p className="editSessionPageTagLine editSessionPageStructTagLine"><span className="editSessionPageTagLabel editSessionPageStructTagLabel">structTag:</span> <span className="editSessionPageTagValue editSessionPageStructTagValue">{item.structuralTags}</span></p>
+      <p className="editSessionPageTagLine editSessionPageManualTagsLine"><span className="editSessionPageTagLabel editSessionPageManualTagsLabel">ManualTags:</span> <span className="editSessionPageTagValue editSessionPageManualTagsValue">{item.manualTags}</span></p>
+      </div>
       </div>
       </li>
     ))}
@@ -122,9 +136,16 @@ function EditSessionTags(session_data, SetSessionData) {
   useEffect(() => {}, [session_tag]);
   const tags = Array.isArray(session_data?.tag_list) ? session_data.tag_list : [];
 
-  function AddSessionTag(evt) {
+  function AddSessionTag(tagValue) {
+    const nextTag = (tagValue ?? "").trim();
+    if (nextTag === "") {
+      return;
+    }
+
     const new_data = {...session_data};
-    new_data.tag_list.push(evt.target.value);
+    const currentTags = Array.isArray(new_data.tag_list) ? [...new_data.tag_list] : [];
+    currentTags.push(nextTag);
+    new_data.tag_list = currentTags;
     SetSessionData(vals => (new_data));
   }
 
@@ -144,8 +165,8 @@ function EditSessionTags(session_data, SetSessionData) {
   }
 
   return (
-    <div>
-    <b>Tags: </b>
+    <div className="sessionEditTagsBlock">
+    <p className="editP"><b>Tags: </b></p>
     {!session_tag.isAdding ? (
       <IconButton
       id="add_tags"
@@ -158,22 +179,39 @@ function EditSessionTags(session_data, SetSessionData) {
       <input
       autoFocus
       id={"New_Session_Tag_Input"}
+      className="editTagInput"
       defaultValue={""}
       onChange={SessionTagName}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
+          e.preventDefault();
+          AddSessionTag(session_tag.newTag);
           ResetNewTags();
-          AddSessionTag(e);
         }
       }}
       />
-      <button onClick={ResetNewTags}>Cancel</button>
+      <IconButton
+      className="sessionEditAddTagButton"
+      iconSrc="assets/add_icon.svg"
+      label="Add Tag"
+      onClick={() => { AddSessionTag(session_tag.newTag); ResetNewTags(); }}
+      />
+      <IconButton
+      className="sessionEditCancelTagButton"
+      iconSrc="assets/delete_icon.svg"
+      label="Cancel"
+      onClick={ResetNewTags}
+      />
       </>
     )}
 
     {tags.map((tag, index) => (
-      <span key={index}>{tag}
+      <span key={index}
+      className="editTagText"
+      id={`editTagText_${index}`}
+      >{tag}
       <IconButton
+      className="editTagDeleteButton editSessionDeleteTagButton"
       id={`remove_tag_${index}`}
       iconSrc="assets/delete_icon.svg"
       label="Delete Tag"
@@ -194,18 +232,19 @@ function EditSessionMetadata(data, SetSessionData) {
     SetSessionData(vals => ({ ...vals, title: val }));
   }
   return (
-    <>
-      <p>
+    <div className="sessionMetadata">
+      <p className="editP">
         <b>Topic:</b>
         <input
           name={`title`}
           onChange={UpdateTitle}
           defaultValue={data.title}
+          className="editInputTitle"
         />
       </p>
-      <p><b>Date: {data.start_time_datetime}</b></p>
-      <p><b>Duration: {data.duration_string}</b></p>
-    </>
+      <p className="editP"><b>Date:</b> {data.start_time_datetime}</p>
+      <p className="editP"><b>Duration:</b> {data.duration_string}</p>
+    </div>
   );
 }
 
@@ -224,12 +263,41 @@ export function SessionEditPage() {
 
   useEffect(() => {}, [session_data, page_data]);
 
+  function ScrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function ScrollToBottom() {
+    document.getElementById("sessionEditPageEnd")?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }
+
   return (
     <>
-    <h2 id="white">Session!</h2>
-    {SectionRibbon(`${session_data.title}`)}
-    <section className="rabbitHole" id="previous">
-      <div className="rabbitHole">
+    <div className="sessionEditHeader">
+      <h2 className="sessionEditHeading">Session!</h2>
+      {SectionRibbon(`${session_data.title}`)}
+    </div>
+    <section className="rabbitHole sessionEditSection" id="previous">
+      <div className="sessionEditLayout">
+      <div className="rabbitHole sessionEditCard">
+        <IconButton
+        className="sessionEditSaveButton"
+        id="sessionEditSaveButtonTopRight"
+        iconSrc="assets/save_icon.svg"
+        label="Save Session"
+        showLabel={false}
+        ariaLabel="Save session"
+        onClick={(evt) => { RHSaveSession(evt, session_data, page_data); }}
+        />
+        <IconButton
+        className="sessionEditDeleteButton"
+        id="sessionEditDeleteButtonTopRight"
+        iconSrc="assets/delete_icon.svg"
+        label="Delete Session"
+        showLabel={false}
+        ariaLabel="Delete session"
+        onClick={() => { RHDeleteSession(session_data.session_key); }}
+        />
         <form action='' onSubmit={(evt) => { RHSaveSession(evt, session_data, page_data) }}>
           {EditSessionMetadata(session_data, SetSessionData)}
           <br />
@@ -238,12 +306,18 @@ export function SessionEditPage() {
           {EditSessionPageList(page_data, SetPageData)}
           <br />
           <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session"/>
-          <IconButton iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
-          <button type="button" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`}>Back</button>
+          <IconButton className="sessionEditDeleteActionButton" iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
+          <button className="sessionEditBackButton" type="button" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`}>Back</button>
         </form>
 
       </div>
+      <div className="sessionEditScrollRail" aria-label="Edit session page navigation">
+        <button className="sessionEditScrollButton sessionEditScrollButtonDown" type="button" onClick={ScrollToBottom}>Down to Bottom</button>
+        <button className="sessionEditScrollButton sessionEditScrollButtonTop" type="button" onClick={ScrollToTop}>Back to Top</button>
+      </div>
+      </div>
     </section>
+    <div id="sessionEditPageEnd" />
     </>
   );
 }

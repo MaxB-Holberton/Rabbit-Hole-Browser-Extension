@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  list-style-type: none;
   box-sizing: border-box;
   font-family: Verdana;
   --primary-light: #3a1800;
@@ -51,6 +52,12 @@
 
 button {
   font-family: 'Cause', Verdana !important;
+  background-color: var(--secondary-dark);
+  color: var(--primary-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 black;
+  padding: 6px 12px;
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
@@ -61,13 +68,13 @@ button * {
 button:hover {
   transform: translateY(-1px);
   filter: brightness(1.04);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 4px 4px 0 black;
 }
 
 button:active {
   transform: translateY(1px);
   filter: brightness(0.98);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 1px 0 black;
 }
 
 button.iconButton {
@@ -75,10 +82,12 @@ button.iconButton {
   align-items: center;
   gap: 6px;
   background-color: var(--secondary-dark);
-  border-radius: 5px;
-  border: 1px solid var(--brown-light);
+  border-radius: 2px;
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 black;
   padding: 5px;
   font-family: 'Cause';
+  margin: 1rem;
 }
 
 button.iconButton .iconButtonIcon {
@@ -91,6 +100,195 @@ button.iconButton .iconButtonLabel {
   line-height: 1;
 }
 
+button.iconButton.editSessionDeletePageButton,
+button.iconButton.editSessionDeleteTagButton {
+  padding: 2px;
+  gap: 0px;
+  margin: 0;
+}
+
+button.iconButton.editSessionDeletePageButton .iconButtonIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+button.iconButton.editSessionDeleteTagButton .iconButtonIcon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+}
+
+.editTagText {
+  font-size: 1rem;
+  padding: 1rem;
+  margin: 0px 14px;
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--tertiary-light);
+}
+
+button.iconButton.editTagDeleteButton {
+  padding: 2px;
+  margin-left: 6px;
+}
+
+button.iconButton.editTagDeleteButton .iconButtonIcon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+}
+
+.editSessionPageTagBlock {
+  position: relative;
+  background-color: var(--info-light);
+  border: 2px solid var(--info-dark);
+  padding: 1rem;
+  padding-top: 3rem;
+  margin: 1rem;
+}
+
+.editSessionPageLinkRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding-right: 2.75rem;
+}
+
+button.iconButton.editSessionPageDeleteButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.editSessionPageInput {
+  flex: 1 1 360px;
+  min-width: 280px;
+  width: 100%;
+  font-size: 1rem;
+  padding: 5px;
+}
+.editSessionPageTitleInput {
+  border: 3px solid var(--info-dark);
+}
+
+.editSessionPageTags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.editSessionPageTagLine {
+  margin: 0;
+}
+
+.editSessionPageCategoryLine,
+.editSessionPageStructTagLine,
+.editSessionPageManualTagsLine {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sessionEditSection {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: 'Cause', Verdana;
+  width: 100%;
+}
+
+.sessionEditSection * {
+  font-family: inherit;
+}
+
+.sessionEditLayout {
+  width: min(100%, 1100px);
+  display: grid;
+  grid-template-columns: minmax(0, 980px) max-content;
+  justify-content: center;
+  align-items: start;
+  gap: 1rem;
+}
+
+.sessionEditCard {
+  position: relative;
+  width: min(100%, 980px);
+  margin: 1rem 0;
+  padding-top: 3.5rem;
+}
+
+.sessionEditScrollRail {
+  position: sticky;
+  top: calc(var(--header-height) + 3vh + 1rem);
+  height: calc(100vh - var(--header-height) - 3vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 0;
+}
+
+.sessionEditScrollButton {
+  min-width: 9.5rem;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+}
+
+.sessionEditScrollButtonDown {
+  background-color: var(--tertiary-light);
+  box-shadow: 3px 3px 0 var(--tertiary-dark);
+}
+
+.sessionEditScrollButtonTop {
+  background-color: var(--secondary-dark);
+  box-shadow: 3px 3px 0 black;
+}
+.sessionEditTagsBlock {
+  background-color: var(--info-dark);
+  border: 3px solid black;
+  padding: 8px;
+}
+button.iconButton.sessionEditDeleteButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 1.5rem;
+  margin: 0;
+}
+
+button.iconButton.sessionEditSaveButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 4.9rem;
+  margin: 0;
+  background-color: var(--start-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--start-dark);
+}
+
+.editSessionPageUrlInput {
+  border: 3px solid var(--brown-light);
+}
+
+.editSessionPageCategoryLabel {
+  background-color: var(--stop-light);
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+
+.editSessionPageStructTagLabel {
+  background-color: var(--secondary-dark);
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+
+.editSessionPageManualTagsLabel {
+  background-color: var(--tertiary-light);
+  padding: 0.5rem;
+  border-radius: 2px;
+}
 .popupActions #RabbitHole_Index {
   margin-left: auto;
   padding: 7px 9px;
@@ -234,6 +432,11 @@ main {
 h1#white, h2#white, h3#white {
   color: white;
 }
+
+h2#white {
+  font-family: 'RabbitHoleExplorer', sans-serif;
+}
+
 section.rabbitHole {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -244,7 +447,7 @@ div.rabbitHole {
   background-color: white;
   height: auto;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 2px;
   padding: 8px 12px;
   font-family: 'Cause', Verdana;
 }
@@ -277,7 +480,7 @@ div#counter p {
 div#counter .headerLink {
   font-size: 1.4rem;
   white-space: nowrap;
-  border-radius: 5px;
+  border-radius: 2px;
   padding: 10px;
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
@@ -325,6 +528,41 @@ footer {
   text-decoration: none;
 }
 
+.previousSessionCard {
+  position: relative;
+  padding-top: 46px;
+  border: 3px solid black;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+.previousSessionCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+.previousSessionCard:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+button.iconButton.previousSessionDelete {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 4px;
+}
+
+button.iconButton.previousSessionDelete .iconButtonIcon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+button.iconButton.previousSessionDelete .iconButtonLabel {
+  display: none;
+}
+
+
+
 #previousBannerSection, #recentBannerSection, #overviewBannerSection {
   background-color: white;
   padding: 6px 16px;
@@ -343,4 +581,265 @@ footer {
 #previousPageContent, #recentPageContent, #overviewPageContent {
   background-color: white;
   margin-top: auto;
+}
+
+/* Edit session page restyle */
+h2.sessionEditHeading {
+  display: inline-block;
+  font-family: 'Cause', Verdana;
+  font-size: 50px;
+  color: var(--secondary-dark);
+  background-color: var(--primary-light);
+  border: 3px solid black;
+  padding: 12px 16px;
+  box-shadow: 5px 5px 0 var(--tertiary-dark);
+}
+
+.sessionEditHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sessionEditHeader h2.sessionEditHeading,
+.sessionEditHeader .sectionRibbon,
+.sessionEditHeader .sectionRibbon * {
+  font-family: 'RabbitHoleExplorer', sans-serif !important;
+}
+
+.sectionRibbon {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  font-family: 'Cause', Verdana;
+  font-size: 30px;
+  color: var(--primary-light);
+  background-color: var(--tertiary-dark);
+  border: 3px solid black;
+  padding: 8px 16px;
+  box-shadow: 5px 5px 0 var(--tertiary-light);
+}
+
+.sectionRibbon h3 {
+  color: var(--primary-light);
+  font-family: 'Cause', Verdana;
+  padding-left: 0;
+}
+
+.sessionMetadata {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  padding: 12px;
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+
+.rabbitHole .editP {
+  font-size: 1.5rem;
+}
+
+.rabbitHole .editInputTitle {
+  height: 2rem;
+  width: 30vw;
+  font-size: 1.3rem;
+  margin-left: 0.8rem;
+  overflow: contain;
+}
+.rabbitHole .editTagInput {
+  height: 2rem;
+  width: 10vw;
+  font-size: 1.3rem;
+  margin-left: 0.8rem;
+  overflow: contain;
+}
+div.rabbitHole.sessionEditCard {
+  border: 3px solid black;
+  border-radius: 0;
+  box-shadow: 6px 6px 0 black;
+}
+
+button.iconButton.sessionEditDeleteButton {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--stop-dark);
+  margin: 0;
+}
+
+.sessionEditTagsBlock {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  border-radius: 0;
+  padding: 12px;
+  box-shadow: 5px 5px 0 black;
+}
+
+.editTagText {
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px 3px 10px;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin: 5px;
+}
+
+button.iconButton.editSessionDeleteTagButton {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-left: 4px;
+  gap: 0;
+}
+
+button.iconButton.editSessionDeleteTagButton:hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+  filter: brightness(0.8);
+}
+button.iconButton.editSessionDeleteTagButton:active {
+  transform: translateY(1px);
+  filter: brightness(0);
+}
+
+button.iconButton#add_tags,
+button.iconButton#add_page {
+  background-color: var(--start-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--start-dark);
+  color: var(--primary-light);
+}
+
+.editSessionPageTagBlock {
+  background-color: var(--info-light);
+  border: 3px solid black;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 var(--info-dark);
+}
+
+button.iconButton.editSessionDeletePageButton {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--stop-dark);
+}
+
+button.iconButton.editSessionDeletePageButton .iconButtonIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.editSessionPageInput {
+  border-radius: 0;
+  font-family: 'Cause', Verdana;
+  box-shadow: 2px 2px 0 black;
+}
+
+.editSessionPageTitleInput {
+  border: 2px solid var(--info-dark);
+}
+
+.editSessionPageUrlInput {
+  border: 2px solid var(--brown-light);
+}
+
+.editSessionPageCategoryLabel,
+.editSessionPageStructTagLabel,
+.editSessionPageManualTagsLabel {
+  border: 2px solid black;
+  border-radius: 2px;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+.editSessionPageCategoryLabel {
+  box-shadow: 2px 2px 0 var(--stop-dark);
+}
+
+.editSessionPageStructTagLabel {
+  box-shadow: 2px 2px 0 var(--brown-light);
+}
+
+.editSessionPageManualTagsLabel {
+  box-shadow: 2px 2px 0 var(--tertiary-dark);
+}
+
+.editSessionPageCategoryValue {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px;
+  box-shadow: 2px 2px 0 black;
+  font-family: 'Cause', Verdana;
+  color: var(--primary-light);
+}
+
+.editSessionPageStructTagValue {
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px;
+  box-shadow: 2px 2px 0 black;
+  font-family: 'Cause', Verdana;
+  color: var(--primary-light);
+}
+
+.editSessionPageManualTagsValue {
+  background-color: var(--tertiary-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px;
+  box-shadow: 2px 2px 0 black;
+  font-family: 'Cause', Verdana;
+  color: var(--primary-light);
+}
+
+button.iconButton[type="submit"] {
+  background-color: var(--start-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--start-dark);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+button.iconButton[aria-label="Delete session"],
+button.iconButton.sessionEditDeleteActionButton {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--stop-dark);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+button.sessionEditBackButton {
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 6px 12px;
+  box-shadow: 3px 3px 0 black;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+@media (max-width: 1180px) {
+  .sessionEditLayout {
+    grid-template-columns: minmax(0, 980px);
+  }
+
+  .sessionEditScrollRail {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 0 1rem 1rem;
+  }
 }
