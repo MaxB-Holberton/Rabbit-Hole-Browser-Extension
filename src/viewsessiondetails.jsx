@@ -5,6 +5,24 @@ import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
 
+async function DeleteSessionFromPrevious(session_key, setSessionsList) {
+	if (!confirm("Are you sure you want to delete this rabbit hole?")) {
+		return;
+	}
+
+	await chrome.storage.local.remove([session_key]);
+	setSessionsList((currentSessions) => currentSessions.filter((session) => session.session_key !== session_key));
+}
+
+async function DeleteRecentSession(session_key, setLastSession) {
+	if (!confirm("Are you sure you want to delete this rabbit hole?")) {
+		return;
+	}
+
+	await chrome.storage.local.remove([session_key]);
+	setLastSession(null);
+}
+
 /*
  * function to download the file as a JSON
  */
@@ -93,7 +111,17 @@ function ShowSessionDetailBtns({ session }) {
 
 export function SessionDetailsPage() {
 	const params = useParams();
+	const navigate = useNavigate();
 	const [page_data, setPageData] = useState([]);
+
+	async function DeleteSessionFromDetails(session_key) {
+		if (!confirm("Are you sure you want to delete this rabbit hole?")) {
+			return;
+		}
+
+		await chrome.storage.local.remove([session_key]);
+		navigate('/previous');
+	}
 
 	useEffect(() => {
 		RHGetPage(params.session_id).then((data) => setPageData(data));
@@ -104,7 +132,13 @@ export function SessionDetailsPage() {
 			<h2 id="white">Session!</h2>
 			{SectionRibbon(`${page_data.title}`)}
 			<section className="rabbitHole" id="previous">
-			<div className="rabbitHole">
+			<div className="rabbitHole previousSessionCard">
+			<IconButton
+				className="previousSessionDelete"
+				iconSrc="assets/delete_icon.svg"
+				label="Delete Session"
+				onClick={() => { DeleteSessionFromDetails(page_data.session_key); }}
+			/>
 			{ShowSessionMetadata(page_data)}
 			<br/>
 			{ShowSessionTags(page_data)}
@@ -130,12 +164,18 @@ export function ShowLastSession() {
 	});
 
 	return (
-		<Link to={`/session/${last_session.session_key}`}>
-			<div id={last_session.session_key} className="rabbitHole">
-			{ShowSessionMetadata(last_session)}
-			{ShowSessionTags(last_session)}
-			</div>
-		</Link>
+		<div id={last_session.session_key} className="rabbitHole previousSessionCard">
+			<IconButton
+				className="previousSessionDelete"
+				iconSrc="assets/delete_icon.svg"
+				label="Delete Session"
+				onClick={() => { DeleteRecentSession(last_session.session_key, setLastSession); }}
+			/>
+			<Link className={"div-links"} to={`/session/${last_session.session_key}`}>
+				{ShowSessionMetadata(last_session)}
+				{ShowSessionTags(last_session)}
+			</Link>
+		</div>
 	);
 }
 
@@ -329,6 +369,20 @@ export function SessionsFilterAndShow() {
 			}
 			 <section className="rabbitHole" id="previous">
 			{sessions.map((session, index) => {
+				return (
+					<div className="rabbitHole previousSessionCard" key={index}>
+						<IconButton
+							className="previousSessionDelete"
+							iconSrc="assets/delete_icon.svg"
+							label="Delete Session"
+							onClick={() => { DeleteSessionFromPrevious(session.session_key, setSessionsList); }}
+						/>
+						<Link className={"div-links"} to={`/session/${session.session_key}`}>
+							{ShowSessionMetadata(session)}
+							{ShowSessionTags(session)}
+						</Link>
+					</div>
+				);
 				const pages_to_display = page_options.num;
 				const current_page = page_options.current_page;
 				const page_offset = page_options.page_offset;
@@ -354,7 +408,7 @@ export function SessionsFilterAndShow() {
 export function SectionRibbon(title_h3) {
 	//returns the Section Ribbon
 	return (
-		<div>
+		<div className="sectionRibbon">
 			<h3 id="white">{title_h3}</h3>
 		</div>
 	);
