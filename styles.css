@@ -331,10 +331,10 @@ footer {
 
 #previousBannerSection, #recentBannerSection, #overviewBannerSection {
   background-color: white;
-  padding: 8px 16px;
+  padding: 6px 16px;
   display: flex;
   justify-content: flex-end;
-  height: 160px;
+  height: 100px;
 }
 
 #previousBanner, #recentBanner, #overviewBanner {
