@@ -40,7 +40,7 @@ async function DownloadTxtFile(session_key) {
 	const data = await RHGetPage(session_key);
 	let new_data;
 	for (item of data.data) {
-		new_data += `${item.title} \t ${item.url}\n`;
+		new_data += `${item.title}\t${item.url}\n`;
 	}
 	const blob = new Blob([new_data], {type: "text/plain"});
 	const link = document.createElement("a");
@@ -54,14 +54,14 @@ async function DownloadTxtFile(session_key) {
  *
  */
 function ShowSessionPageList(data) {
-	// Shows the pages from the session
+	// Shows the total_pages from the session
 	//TODO: create pagination and add it here
-	const pages = Array.isArray(data?.data) ? data.data : [];
+	const total_pages = Array.isArray(data?.data) ? data.data : [];
 	return (
 		<div>
 		<b>Pages: </b>
 		<ul>
-		{pages.map((item, index2) => (
+		{total_pages.map((item, index2) => (
 			<li key={index2}>
 			<a href={item.url}>{item.title}</a>
 			</li>
@@ -190,8 +190,8 @@ export function ShowAllSessions() {
 		return (
 			<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
 				<div className="rabbitHole">
-				{ShowSessionMetadata(session)}
-				{ShowSessionTags(session)}
+					{ShowSessionMetadata(session)}
+					{ShowSessionTags(session)}
 				</div>
 			</Link>
 		);
@@ -199,21 +199,175 @@ export function ShowAllSessions() {
 }
 
 export function SessionsFilterAndShow() {
+	const [default_sessions, setDefaultList] = useState([]);
 	const [sessions, setSessionsList] = useState([]);
+	const [sort_options, setSortedItems] = useState({sort: "Old"});
+
+	//Hooks and array data for paging the data
+	const session_display_arr = [10, 20 , 30, 'All'];
+	const [page_options, setPagedItems] = useState({num: "All", page_offset: 0, current_page: 1});
+
+	//Hooks and array data for filtering the data
+	const [filter_options, setFilteredItems] = useState([]);
+
+	function ApplyFilters() {
+		//making the tags search casesensitive first
+		const new_filter = [];
+		for (session of default_sessions)
+		{
+			if (session.tag_list.indexOf(filter_options.tags) >= 0)
+			{
+				new_filter.push(session);
+			}
+		}
+		console.log(new_filter);
+		setSessionsList(ApplySorted(new_filter));
+	}
+
+	function ApplySorted(data) {
+		console.log("Sorting...");
+		const session_sort = sort_options.sort;
+		const data_to_sort = [...data];
+
+		if (session_sort === 'Old') {
+			data_to_sort.sort((a, b) => (a.start_time_ms - b.start_time_ms));
+		}
+		if (session_sort === 'New') {
+			data_to_sort.sort((a, b) => (b.start_time_ms - a.start_time_ms));
+		}
+		if (session_sort === 'Short') {
+			data_to_sort.sort((a, b) => (a.end_time_ms - a.start_time_ms) - (b.end_time_ms - b.start_time_ms));
+		}
+		if (session_sort === 'Long') {
+			data_to_sort.sort((a, b) => (b.end_time_ms - b.start_time_ms) - (a.end_time_ms - a.start_time_ms));
+		}
+		return (data_to_sort);
+	}
+
+	function ClearFilters() {
+		const new_session = [...default_sessions];
+		setSessionsList(ApplySorted(new_session));
+	}
+
+	function FilterItemInputChanged(evt) {
+		const name = evt.target.name;
+		const val = evt.target.value;
+		setFilteredItems(vals => ({...vals, [name]: val}));
+		console.log(`filtering: ${name} | ${val}`);
+	}
+
+	function SortItemInputChanged(evt) {
+		const name = evt.target.name;
+		const val = evt.target.value;
+		setSortedItems(vals => ({...vals, [name]: val}));
+		console.log(`${name} | ${val}`);
+	}
+
+	function PageItemInputChanged(evt) {
+		const name = evt.target.name;
+		const val = evt.target.value;
+		if (name === "num") {
+			setPagedItems(vals => ({...vals, [name]: val, page_offset: 0, current_page: 1}));
+			console.log(`Pageing ${name} | ${val}`);
+			return;
+		}
+		const pages_to_display = Number(page_options.num);
+		const no_of_sessions = sessions.length;
+		let total_pages = Math.floor(no_of_sessions / pages_to_display) + 1;//minimum 1 page
+		let last_page = (total_pages - 1) * pages_to_display;
+		let new_current_page = Number(page_options.current_page);
+		let new_page_offset = Number(page_options.page_offset);
+		if (name === "First") {
+			setPagedItems(vals => ({...vals, page_offset: 0, current_page: 1}));
+			console.log(`First Page: ${0} | ${1}`);
+			return;
+		}
+		if (name === "Last") {
+			setPagedItems(vals => ({...vals, page_offset: last_page, current_page: total_pages}));
+			console.log(`Last Page: ${last_page} | ${total_pages}`);
+			return;
+		}
+
+		if (name === "Prev") {
+			new_current_page -= 1;
+			if (new_current_page < 1) {
+				new_current_page = 1;
+			}
+			new_page_offset -= pages_to_display;
+			if (new_page_offset < 0) {
+				new_page_offset = 0;
+			}
+		}
+		else if (name === "Next") {
+			new_current_page += 1;
+			if (new_current_page > total_pages) {
+				new_current_page = total_pages;
+			}
+
+			new_page_offset += pages_to_display;
+			if (new_page_offset > no_of_sessions) {
+				new_page_offset -= pages_to_display;
+			}
+		}
+		setPagedItems(vals => ({...vals, page_offset: new_page_offset, current_page: new_current_page}));
+	}
 
 	useEffect(() => {
-		RHGetSessionList().then((sessions) => setSessionsList(sessions));
-	});
+		RHGetSessionList().then((sessions) => {
+			setSessionsList(sessions);
+			setDefaultList(sessions);
+		});
+	}, []);
+
+	useEffect(() => {setSessionsList(ApplySorted(sessions))}, [sort_options]);
+	useEffect(() => {}, [page_options])
+
 	return (
 		<>
 			<span>
-				<h3>Items per page: </h3>
-				<select>
-					<option>10</option>
-					<option>20</option>
-					<option>30</option>
+				<label for="num">Sessions per page: </label>
+				<select defaultValue="All" name="num" onChange={PageItemInputChanged}>
+					{session_display_arr.map((val, idx) => {
+						return (
+							<option key={idx} val={val}>{`${val}`}</option>
+						);
+					})}
+				</select>
+				<label for="sort">Sort by: </label>
+				<select defaultValue="Old" name="sort" onChange={SortItemInputChanged}>
+					<option value="Old">Date: Old - New</option>
+					<option value="New">Date: New - Old</option>
+					<option value="Short">Time: Shortest - Longest</option>
+					<option value="Long">Time: Longest - Shortest</option>
 				</select>
 			</span>
+			<span>
+				<label for="tags">Search Tags: </label>
+				<input
+					name="tags"
+					type="search"
+					onChange={FilterItemInputChanged}
+				/>
+				<label for="date">Date Search: </label>
+				<input
+					name="date"
+					type="date"
+					onChange={FilterItemInputChanged}
+				/>
+				<button onClick={() => {ApplyFilters()}}>Search</button>
+				<button onClick={() => {ClearFilters()}}>Clear</button>
+			</span>
+
+			{
+				page_options.num !== "All" &&
+				<span>
+					<button name="First" onClick={PageItemInputChanged}>First</button>
+					<button name="Prev" onClick={PageItemInputChanged}>Prev</button>
+					<button name="Next" onClick={PageItemInputChanged}>Next</button>
+					<button name="Last" onClick={PageItemInputChanged}>Last</button>
+				</span>
+			}
+			 <section className="rabbitHole" id="previous">
 			{sessions.map((session, index) => {
 				return (
 					<div className="rabbitHole previousSessionCard" key={index}>
@@ -229,20 +383,26 @@ export function SessionsFilterAndShow() {
 						</Link>
 					</div>
 				);
+				const pages_to_display = page_options.num;
+				const current_page = page_options.current_page;
+				const page_offset = page_options.page_offset;
+				if (index < page_offset) {
+					return (<></>);
+				}
+				if (pages_to_display === "All" || (index < current_page * pages_to_display)) {
+					return (
+						<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
+						<div className="rabbitHole">
+						{ShowSessionMetadata(session)}
+						{ShowSessionTags(session)}
+						</div>
+						</Link>
+					);
+				}
 			})}
+			</section>
 		</>
 	);
-
-	return sessions.map((session, index) => {
-		return (
-			<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
-			<div className="rabbitHole">
-			{ShowSessionMetadata(session)}
-			{ShowSessionTags(session)}
-			</div>
-			</Link>
-		);
-	});
 }
 
 export function SectionRibbon(title_h3) {
