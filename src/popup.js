@@ -171,7 +171,7 @@ async function onAddTag(historyEntry, tag, currentHistory) {
 //CLEANUP CREW FOR STALE SESSIONS
 async function finalizeStaleSession({ startTime }) {
   try {
-    await ProcessSessionData(start_time)
+    await ProcessSessionData(startTime)
   } catch (err) {
     console.error(err);
     await chrome.storage.local.set({ rabbit_hole_status: "error" });
@@ -200,7 +200,7 @@ async function ToggleTimer() {
     }
     //There is a start time, meaning that a session is running.
     //stop the session, update UI and store the session to local data.
-    await chrome.storage.local.remove(["rabbit_hole_startTime"]);
+    await chrome.storage.local.remove(["rabbit_hole_startTime", "rabbit_hole_lastActive"]);
     setRecordButtonIcon(false);
     setIndexButtonIcon(false);
     stopElapsedClock(true);
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const now = Date.now();
       const isStale =
       rabbit_hole_startTime &&
-      now - rabbit_hole_startTime > STALE_THRESHHOLD;
+      now - rabbit_hole_lastActive > STALE_THRESHHOLD;
 
       //AUTO FINALIZE IF STALE SESSION
       if (isRecording && isStale) {
@@ -374,3 +374,6 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener("beforeunload", () => stopElapsedClock(false));
   window.addEventListener("beforeunload", () => stopPagesTrackedClock(false));
 });
+
+//FOR UNIT TESTING, ADD YOUR COMPONENTS HERE
+export { formatElapsed, setSessionStatus, StripBlacklistedItems }
