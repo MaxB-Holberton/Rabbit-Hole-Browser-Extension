@@ -257,7 +257,7 @@ async function StripBlacklistedItems(history)
     const url = new URL(item.url);
     const url_host = url.hostname.toString().replace("www.", "").toLowerCase();
     let match_lock = false;
-    for (blacklist of active_items)
+    for (const blacklist of active_items)
     {
       //for each item in the list of active blacklist items.
       if (url_host.includes(blacklist.toLowerCase()))
