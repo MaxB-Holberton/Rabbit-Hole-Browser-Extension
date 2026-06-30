@@ -104,7 +104,7 @@ function ShowSessionDetailBtns({ session }) {
 			<IconButton iconSrc="assets/save_icon.svg" label="JSON" onClick={async () => { DownloadJsonFile(session.session_key); }} />
 			<IconButton iconSrc="assets/save_icon.svg" label="TXT" onClick={async () => { DownloadTxtFile(session.session_key); }} />
 			<IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
-			<button type="button" onClick={() => navigate(`/previous`)}>Back</button>
+			<IconButton iconSrc="assets/back_icon.svg" label="Back" onClick={() => { navigate(`/previous`); }} />
 		</>
 	);
 }
