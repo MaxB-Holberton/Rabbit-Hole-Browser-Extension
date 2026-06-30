@@ -14,9 +14,11 @@ async function SaveBlacklist(rabbithole_blacklist) {
 function SettingsOptionsList() {
 	return (
 		<>
-			<div className="rabbitHole">
+			<div className="sessionMetadata" id="settingsMetadataCard">
+				<p className="editP"><b>Settings:</b></p>
+				<img src="./assets/settings_icon.svg" className="pageIcon" id="settingIcon"></img>
 				<ul>
-					<li><Link to="/settings/blacklist">Edit Blacklist</Link></li>
+					<li id="settingsOptionBlacklistLink"><Link to="/settings/blacklist">Edit Blacklist</Link></li>
 				</ul>
 			</div>
 		</>
@@ -81,50 +83,57 @@ export function BlacklistEditPage() {
 		UpdateBlacklist(new_data);
 	}
 
-	function DeleteItem(evt) {
+	function DeleteItem(index) {
 		const new_data = [...rabbithole_blacklist];
-		const i = evt.target.name;
-
-		new_data.splice(parseInt(i), 1);
+		new_data.splice(index, 1);
 		UpdateBlacklist(new_data);
 	}
 
 	return (
 		<>
-			<div className="rabbitHole">
-				<IconButton id="add_blacklist_item" iconSrc="assets/add_icon.svg" label="Add Blacklist Item" onClick={AddBlacklistItem} />
+			<div className="rabbitHole" id="blacklistEditorCard">
+				<p id="blacklistDescrip">Add the name of any website that you want hidden from your rabbit hole. No need for the full url!</p>
 				<input
+					id="blacklistInput"
 					name={`pages`}
 					onChange={evt => NewInputOnChange(evt.target.value)}
 					value={blacklist_item}
-					placeholder={`facebook`}
+					placeholder={`Example: facebook`}
 					required={true}
 				/>
-				<ul>
+				<IconButton id="add_blacklist_item" iconSrc="assets/add_icon.svg" label="Add Blacklist Item" onClick={AddBlacklistItem} />
+				<ul id="blacklistItemsList">
 					{rabbithole_blacklist.map((item, idx) => (
-						!item.active && (
-							<li key={idx}>
-								<p>{item.name}</p>
-								<p>{item.active + ""}</p>
-								<button name={`${idx}`} onClick={DeleteItem}>{`X`}</button>
-								<button name={`${idx}`} onClick={MakeItemActive}>{`>`}</button>
-							</li>
-						)
+						<li className="blacklistItemRow" key={idx}>
+							<p className="blacklistItemName">{item.name}</p>
+							<label className="blacklistToggleSwitch" aria-label={`Toggle ${item.name}`}>
+								<input
+									type="checkbox"
+									name={`${idx}`}
+									checked={item.active}
+									onChange={(evt) => {
+										if (evt.target.checked) {
+											MakeItemActive(evt);
+										} else {
+											MakeItemInActive(evt);
+										}
+									}}
+								/>
+								<span className="blacklistToggleSlider" />
+							</label>
+							<IconButton
+								className="blacklistDeleteButton"
+								iconSrc="assets/delete_icon.svg"
+								label="Delete blacklist item"
+								showLabel={false}
+								ariaLabel={`Delete ${item.name}`}
+								onClick={() => { DeleteItem(idx); }}
+							/>
+						</li>
 					))}
 				</ul>
-
-				<ul>
-				{rabbithole_blacklist.map((item, idx) => (
-					item.active && (
-						<li key={idx}>
-							<p>{item.name}</p>
-							<p>{item.active + ""}</p>
-							<button name={`${idx}`} onClick={MakeItemInActive}>{`<`}</button>
-						</li>
-					)
-				))}
-				</ul>
 				<IconButton iconSrc="assets/save_icon.svg" onClick={() => { SaveBlacklist(rabbithole_blacklist) }} label="Save Blacklist"/>
+				<IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
 			</div>
 		</>
 	);
@@ -133,13 +142,16 @@ export function BlacklistEditPage() {
 export function SettingsPage() {
 	return (
 		<>
-		<h2 id="white">My Rabbit Holes</h2>
-
-		<div id="previousHeaderRow">
+		<div className="sessionEditHeader" id="settingsPageHeader">
+		<h2 className="sessionEditHeading" id="settingsPageHeading">My Rabbit Holes</h2>
 		{SectionRibbon('Settings')}
 		</div>
-		<section className="rabbitHole" id="settings">
-		{SettingsOptionsList()}
+		<section className="rabbitHole sessionEditSection" id="settings">
+			<div className="sessionEditLayout" id="settingsLayout">
+				<div className="rabbitHole sessionEditCard" id="settingsCard">
+					{SettingsOptionsList()}
+				</div>
+			</div>
 		</section>
 		<div id="previousPageContent">
 		<section id="previousBannerSection">

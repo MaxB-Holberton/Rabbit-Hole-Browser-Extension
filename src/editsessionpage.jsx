@@ -307,7 +307,7 @@ export function SessionEditPage() {
           <br />
           <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session"/>
           <IconButton className="sessionEditDeleteActionButton" iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
-          <button className="sessionEditBackButton" type="button" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`}>Back</button>
+          <IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`} />
         </form>
 
       </div>

@@ -21,7 +21,11 @@
   --brown-light: #422020;
   --brown-dark: #2c1616;
 }
-
+a {
+  all: unset;
+  cursor: pointer;
+}
+/* popup-specific styling */
 .popupBody {
   background-color: white;
   padding: 5%;
@@ -49,7 +53,7 @@
 .popupBody button {
   font-family: 'Cause', Verdana;
 }
-
+/* general buttons */
 button {
   font-family: 'Cause', Verdana !important;
   background-color: var(--secondary-dark);
@@ -119,6 +123,7 @@ button.iconButton.editSessionDeleteTagButton .iconButtonIcon {
   flex: 0 0 14px;
 }
 
+/* edit session page */
 .editTagText {
   font-size: 1rem;
   padding: 1rem;
@@ -831,6 +836,150 @@ button.sessionEditBackButton {
   font-family: 'Cause', Verdana;
   font-weight: 700;
   color: var(--primary-light);
+}
+
+/* settings page */
+.sessionMetadata #settingsOptionBlacklistLink {
+  font-size: 1.3rem;
+  background-color: var(--info-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--info-dark);
+  font-weight: 700;
+  color: var(--primary-light);
+  transition: transform 0.18s ease;
+  padding: 6px 12px;
+  margin: 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.sessionMetadata .editP {
+  display: inline-block;
+  font-size: 2rem;
+}
+
+.sessionMetadata #settingsOptionBlacklistLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 5px 5px 0 var(--primary-dark);
+}
+
+#settingsMetadataCard {
+  position: relative;
+  padding-right: 7rem;
+}
+
+.sessionMetadata #settingsOptionBlacklistLink:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+}
+#blacklistEditorCard {
+  border: 3px solid black;
+}
+
+#settingIcon {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  height: 5rem;
+  width: auto;
+}
+.rabbitHole #blacklistDescrip {
+  font-size: 1.2rem;
+}
+#blacklistInput {
+  font-family: 'Cause', Verdana;
+  font-size: 1.1rem;
+  padding: 0.45rem 0.6rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  width: min(100%, 420px);
+  margin: 0 1rem 1rem;
+}
+
+#blacklistItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin: 0.5rem 1rem 1rem;
+}
+
+.blacklistItemRow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 black;
+  padding: 0.5rem 0.7rem;
+}
+
+.blacklistItemName {
+  margin-right: auto;
+  font-family: 'Cause', Verdana;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+.blacklistToggleSwitch {
+  position: relative;
+  display: inline-flex;
+  width: 48px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.blacklistToggleSwitch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.blacklistToggleSlider {
+  position: absolute;
+  inset: 0;
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 var(--stop-dark);
+  transition: 0.18s ease;
+  padding: 0.8rem;
+}
+
+.blacklistToggleSlider::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  top: 3px;
+  background-color: white;
+  border: 2px solid black;
+  transition: transform 0.18s ease;
+}
+
+.blacklistToggleSwitch input:checked + .blacklistToggleSlider {
+  background-color: var(--start-light);
+  box-shadow: 2px 2px 0 var(--start-dark);
+}
+
+.blacklistToggleSwitch input:checked + .blacklistToggleSlider::before {
+  transform: translateX(20px);
+}
+
+button.iconButton.blacklistDeleteButton {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+  margin: 0;
+  padding: 3px;
+  gap: 0;
+}
+
+button.iconButton.blacklistDeleteButton .iconButtonIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
 }
 
 @media (max-width: 1180px) {
