@@ -211,13 +211,22 @@ export function SessionsFilterAndShow() {
 	const [filter_options, setFilteredItems] = useState([]);
 
 	function ApplyFilters() {
-		//making the tags search casesensitive first
+		//TODO:
+		//	- Make all tags and searched tags lowercase for better results
+		//	- Allow for multiple searched tags via array of tags (comma seperated)
+		//	- Ensure that a user cannot enter a comma when creating a tag
+		//	POSSIBLE: user selects exact match or contains match
+		const searched_tags = filter_options.tags;
+		const start_date = filter_options.start_date;
+		const end_date = filter_options.end_date;
 		const new_filter = [];
-		for (session of default_sessions)
-		{
-			if (session.tag_list.indexOf(filter_options.tags) >= 0)
+		if (!(searched_tags === "" || searched_tags === undefined)) {
+			for (session of default_sessions)
 			{
-				new_filter.push(session);
+				if (session.tag_list.indexOf(searched_tags) >= 0)
+				{
+					new_filter.push(session);
+				}
 			}
 		}
 		console.log(new_filter);
@@ -348,11 +357,17 @@ export function SessionsFilterAndShow() {
 					type="search"
 					onChange={FilterItemInputChanged}
 				/>
-				<label for="date">Date Search: </label>
+				<label for="start_date">Start Date: </label>
 				<input
-					name="date"
+					name="start_date"
 					type="date"
 					onChange={FilterItemInputChanged}
+				/>
+				<label for="end_date">End Date: </label>
+				<input
+				name="end_date"
+				type="date"
+				onChange={FilterItemInputChanged}
 				/>
 				<button onClick={() => {ApplyFilters()}}>Search</button>
 				<button onClick={() => {ClearFilters()}}>Clear</button>
@@ -369,20 +384,6 @@ export function SessionsFilterAndShow() {
 			}
 			 <section className="rabbitHole" id="previous">
 			{sessions.map((session, index) => {
-				return (
-					<div className="rabbitHole previousSessionCard" key={index}>
-						<IconButton
-							className="previousSessionDelete"
-							iconSrc="assets/delete_icon.svg"
-							label="Delete Session"
-							onClick={() => { DeleteSessionFromPrevious(session.session_key, setSessionsList); }}
-						/>
-						<Link className={"div-links"} to={`/session/${session.session_key}`}>
-							{ShowSessionMetadata(session)}
-							{ShowSessionTags(session)}
-						</Link>
-					</div>
-				);
 				const pages_to_display = page_options.num;
 				const current_page = page_options.current_page;
 				const page_offset = page_options.page_offset;
@@ -391,12 +392,18 @@ export function SessionsFilterAndShow() {
 				}
 				if (pages_to_display === "All" || (index < current_page * pages_to_display)) {
 					return (
-						<Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
-						<div className="rabbitHole">
-						{ShowSessionMetadata(session)}
-						{ShowSessionTags(session)}
+						<div className="rabbitHole previousSessionCard" key={index}>
+							<IconButton
+								className="previousSessionDelete"
+								iconSrc="assets/delete_icon.svg"
+								label="Delete Session"
+								onClick={() => { DeleteSessionFromPrevious(session.session_key, setSessionsList); }}
+							/>
+							<Link className={"div-links"} to={`/session/${session.session_key}`}>
+								{ShowSessionMetadata(session)}
+								{ShowSessionTags(session)}
+							</Link>
 						</div>
-						</Link>
 					);
 				}
 			})}
