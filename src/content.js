@@ -2,9 +2,14 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "STALE_CHECK") {
     showStalePrompt(sendResponse);
-    return true; // keeps the message channel open for async response
+    showStalePrompt();
+  }
+  if (message.type === "DISMISS_PROMPT") {
+    const overlay = document.getElementById("rabbithole-stale-prompt");
+    if (overlay) overlay.remove();
   }
 });
+
 
 function showStalePrompt() {
   // Don't show if already showing
@@ -26,7 +31,7 @@ function showStalePrompt() {
 
   overlay.innerHTML = `
     <div style="background: white; padding: 32px; border-radius: 12px; text-align: center; max-width: 400px;">
-      <img src="${chrome.runtime.getURL('assets/spiraleyerabbit_40ms.gif')}" width="60" /
+      <img src="${chrome.runtime.getURL('assets/still_recording.png')}" width="60" />
       <h2>Still down the rabbit hole?</h2>
       <p>You've been inactive for a while. Want to keep recording?</p>
       <button id="rh-keep" style="margin: 8px; padding: 10px 24px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">Keep Recording</button>
