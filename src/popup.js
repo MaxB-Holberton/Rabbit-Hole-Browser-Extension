@@ -2,8 +2,6 @@ import makeTag from "./maketag.js";
 import { RabbitHoleMetadata, GetBlacklist } from "./history.js";
 import { getManualTags, addManualTag, getPageId } from "./tagStore";
 
-const STALE_THRESHHOLD = 10 * 60 * 1000; //ten minutes
-
 //====================
 // UI RENDER HELPERS |
 //====================
@@ -168,15 +166,6 @@ async function onAddTag(historyEntry, tag, currentHistory) {
 // SESSION CREATION |
 //===================
 
-//CLEANUP CREW FOR STALE SESSIONS
-async function finalizeStaleSession({ startTime }) {
-  try {
-    await ProcessSessionData(startTime)
-  } catch (err) {
-    console.error(err);
-    await chrome.storage.local.set({ rabbit_hole_status: "error" });
-  }
-}
 
 async function ToggleTimer() {
   try {
@@ -315,28 +304,8 @@ async function ProcessSessionData(start_time)
  */
 document.addEventListener('DOMContentLoaded', function () {
   chrome.storage.local.get(["rabbit_hole_startTime", "rabbit_hole_status"],
-    async ({ rabbit_hole_startTime, rabbit_hole_status }) => {
+    async ({ rabbit_hole_startTime, rabbit_hole_status}) => {
       const isRecording = Boolean(rabbit_hole_startTime);
-
-      //STALE DETECTION
-      const now = Date.now();
-      const isStale =
-      rabbit_hole_startTime &&
-      now - rabbit_hole_lastActive > STALE_THRESHHOLD;
-
-      //AUTO FINALIZE IF STALE SESSION
-      if (isRecording && isStale) {
-        console.log("Stale session detected -> Auto Finalizing");
-
-        await finalizeStaleSession({
-          startTime: rabbit_hole_startTime
-        });
-
-        setSessionStatus("Finished");
-        stopElapsedClock(true);
-        stopPagesTrackedClock(true);
-        return;
-      }
 
       //STANDARD UI FLOW
       setRecordButtonIcon(isRecording);

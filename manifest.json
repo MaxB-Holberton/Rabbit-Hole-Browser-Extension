@@ -8,10 +8,19 @@
     "default_icon": "assets/rbe_logo_390.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "dist/background.js"
   },
   "permissions": [
   "storage",
-  "history"
+  "history",
+  "activeTab",
+  "tabs",
+  "alarms"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/content.js"]
+    }
   ]
 }

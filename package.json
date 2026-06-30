@@ -6,7 +6,9 @@
     "build:index": "esbuild src/index.jsx --bundle --format=iife --outfile=dist/homepage.js --jsx=automatic",
     "build:popup": "esbuild src/popup.js --bundle --format=iife --outfile=dist/popup.js",
     "build:history": "esbuild src/history.js --bundle --format=iife --outfile=dist/history.js",
-    "build": "npm run build:index && npm run build:popup && npm run build:history",
+    "build:background": "esbuild src/background.js --bundle --format=esm --outfile=dist/background.js", 
+    "build": "npm run build:index && npm run build:popup && npm run build:history && npm run build:background && npm run build:content",
+    "build:content": "esbuild src/content.js --bundle --format=iife --outfile=dist/content.js",
     "test": "jest"
   },
   "dependencies": {
