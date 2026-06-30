@@ -7,9 +7,26 @@
     "default_popup": "popup.html",
     "default_icon": "assets/rbe_logo_390.png"
   },
-  "background": {},
+  "background": {
+    "service_worker": "dist/background.js"
+  },
   "permissions": [
   "storage",
-  "history"
+  "history",
+  "activeTab",
+  "tabs",
+  "alarms"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
   ]
 }

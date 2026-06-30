@@ -6,7 +6,11 @@
     "build:index": "esbuild src/index.jsx --bundle --format=iife --outfile=dist/homepage.js --jsx=automatic",
     "build:popup": "esbuild src/popup.js --bundle --format=iife --outfile=dist/popup.js",
     "build:history": "esbuild src/history.js --bundle --format=iife --outfile=dist/history.js",
-    "build": "npm run build:index && npm run build:popup && npm run build:history"
+    "build:background": "esbuild src/background.js --bundle --format=esm --outfile=dist/background.js", 
+    "build": "npm run build:index && npm run build:popup && npm run build:history && npm run build:background && npm run build:content && npm run build:session",
+    "build:content": "esbuild src/content.js --bundle --format=iife --outfile=dist/content.js",
+    "build:session": "esbuild src/session.js --bundle --format=esm --outfile=dist/session.js",
+    "test": "jest"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -14,6 +18,12 @@
     "react-router-dom": "^6.26.2"
   },
   "devDependencies": {
-    "esbuild": "^0.23.1"
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "@babel/preset-react": "^8.0.1",
+    "babel-jest": "^30.4.1",
+    "esbuild": "^0.23.1",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1"
   }
 }
