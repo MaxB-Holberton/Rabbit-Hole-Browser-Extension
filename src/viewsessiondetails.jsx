@@ -5,15 +5,6 @@ import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
 
-async function DeleteSessionFromPrevious(session_key, setSessionsList) {
-	if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-		return;
-	}
-
-	await chrome.storage.local.remove([session_key]);
-	setSessionsList((currentSessions) => currentSessions.filter((session) => session.session_key !== session_key));
-}
-
 async function DeleteRecentSession(session_key, setLastSession) {
 	if (!confirm("Are you sure you want to delete this rabbit hole?")) {
 		return;
@@ -211,30 +202,45 @@ export function SessionsFilterAndShow() {
 	const [filter_options, setFilteredItems] = useState([]);
 
 	function ApplyFilters() {
-		//TODO:
-		//	- Make all tags and searched tags lowercase for better results
-		//	- Allow for multiple searched tags via array of tags (comma seperated)
-		//	- Ensure that a user cannot enter a comma when creating a tag
-		//	POSSIBLE: user selects exact match or contains match
 		const searched_tags = filter_options.tags;
-		const start_date = filter_options.start_date;
-		const end_date = filter_options.end_date;
-		const new_filter = [];
-		if (!(searched_tags === "" || searched_tags === undefined)) {
-			for (session of default_sessions)
-			{
-				if (session.tag_list.indexOf(searched_tags) >= 0)
-				{
-					new_filter.push(session);
+		const start_date = Date.parse(filter_options.start_date);
+		const end_date = Date.parse(filter_options.end_date) + ((1000 * 60 * 60 * 24) - 1);//24 hours - 1 second to be date@11:59:59
+
+		if (!start_date && !end_date && !searched_tags) {
+			//Nothing to sort
+			ApplySorted([...default_sessions]);
+			return;
+		}
+
+		const rtn_filter = default_sessions.filter(session => {
+			if (start_date) {
+				if (session.start_time_ms < start_date) {
+					return false;
 				}
 			}
-		}
-		console.log(new_filter);
-		setSessionsList(ApplySorted(new_filter));
+			if (end_date) {
+				if (session.end_time_ms > end_date) {
+					return false;
+				}
+			}
+			if (searched_tags) {
+				let match = false;
+				for (tag of session.tag_list) {
+					if (tag.includes(searched_tags)) {
+						match = true;
+						break;
+					}
+				}
+				if (!match) {
+					return false;
+				}
+			}
+			return true;
+		})
+		ApplySorted(rtn_filter);
 	}
 
 	function ApplySorted(data) {
-		console.log("Sorting...");
 		const session_sort = sort_options.sort;
 		const data_to_sort = [...data];
 
@@ -250,26 +256,24 @@ export function SessionsFilterAndShow() {
 		if (session_sort === 'Long') {
 			data_to_sort.sort((a, b) => (b.end_time_ms - b.start_time_ms) - (a.end_time_ms - a.start_time_ms));
 		}
-		return (data_to_sort);
+		setSessionsList(data_to_sort);
 	}
 
 	function ClearFilters() {
-		const new_session = [...default_sessions];
-		setSessionsList(ApplySorted(new_session));
+		//delete the text in the inputs
+		ApplySorted([...default_sessions]);
 	}
 
 	function FilterItemInputChanged(evt) {
 		const name = evt.target.name;
 		const val = evt.target.value;
 		setFilteredItems(vals => ({...vals, [name]: val}));
-		console.log(`filtering: ${name} | ${val}`);
 	}
 
 	function SortItemInputChanged(evt) {
 		const name = evt.target.name;
 		const val = evt.target.value;
 		setSortedItems(vals => ({...vals, [name]: val}));
-		console.log(`${name} | ${val}`);
 	}
 
 	function PageItemInputChanged(evt) {
@@ -277,7 +281,6 @@ export function SessionsFilterAndShow() {
 		const val = evt.target.value;
 		if (name === "num") {
 			setPagedItems(vals => ({...vals, [name]: val, page_offset: 0, current_page: 1}));
-			console.log(`Pageing ${name} | ${val}`);
 			return;
 		}
 		const pages_to_display = Number(page_options.num);
@@ -288,12 +291,10 @@ export function SessionsFilterAndShow() {
 		let new_page_offset = Number(page_options.page_offset);
 		if (name === "First") {
 			setPagedItems(vals => ({...vals, page_offset: 0, current_page: 1}));
-			console.log(`First Page: ${0} | ${1}`);
 			return;
 		}
 		if (name === "Last") {
 			setPagedItems(vals => ({...vals, page_offset: last_page, current_page: total_pages}));
-			console.log(`Last Page: ${last_page} | ${total_pages}`);
 			return;
 		}
 
@@ -321,6 +322,16 @@ export function SessionsFilterAndShow() {
 		setPagedItems(vals => ({...vals, page_offset: new_page_offset, current_page: new_current_page}));
 	}
 
+	async function DeleteSessionFromPrevious(session_key) {
+		if (!confirm("Are you sure you want to delete this rabbit hole?")) {
+			return;
+		}
+		await chrome.storage.local.remove([session_key]);
+		const new_session = sessions.filter((new_session) => new_session.session_key !== session_key);
+		setDefaultList(new_session);
+		return;
+	}
+
 	useEffect(() => {
 		RHGetSessionList().then((sessions) => {
 			setSessionsList(sessions);
@@ -328,8 +339,9 @@ export function SessionsFilterAndShow() {
 		});
 	}, []);
 
-	useEffect(() => {setSessionsList(ApplySorted(sessions))}, [sort_options]);
-	useEffect(() => {}, [page_options])
+	useEffect(() => {ApplySorted(sessions)}, [sort_options]);
+	useEffect(() => {ApplyFilters()}, [default_sessions]);
+	useEffect(() => {}, [page_options]);
 
 	return (
 		<>
@@ -356,18 +368,36 @@ export function SessionsFilterAndShow() {
 					name="tags"
 					type="search"
 					onChange={FilterItemInputChanged}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+							ApplyFilters()
+						}
+					}}
 				/>
 				<label for="start_date">Start Date: </label>
 				<input
 					name="start_date"
 					type="date"
 					onChange={FilterItemInputChanged}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+							ApplyFilters()
+						}
+					}}
 				/>
 				<label for="end_date">End Date: </label>
 				<input
 				name="end_date"
 				type="date"
 				onChange={FilterItemInputChanged}
+				onKeyDown={(e) => {
+					if (e.key === "Enter") {
+						e.preventDefault();
+						ApplyFilters()
+					}
+				}}
 				/>
 				<button onClick={() => {ApplyFilters()}}>Search</button>
 				<button onClick={() => {ClearFilters()}}>Clear</button>
@@ -397,7 +427,7 @@ export function SessionsFilterAndShow() {
 								className="previousSessionDelete"
 								iconSrc="assets/delete_icon.svg"
 								label="Delete Session"
-								onClick={() => { DeleteSessionFromPrevious(session.session_key, setSessionsList); }}
+								onClick={async () => await DeleteSessionFromPrevious(session.session_key)}
 							/>
 							<Link className={"div-links"} to={`/session/${session.session_key}`}>
 								{ShowSessionMetadata(session)}
