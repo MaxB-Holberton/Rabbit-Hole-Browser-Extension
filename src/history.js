@@ -3,10 +3,10 @@ function MiliToDatetime(milis) {
 }
 
 function MiliToTimeString(milis) {
-  let seconds = (milis / 1000);
-  let minutes = (milis / (1000 * 60));
-  let hours = (milis / (1000 * 60 * 60));
-  let days = (milis / (1000 * 60 * 60 * 24));
+  let seconds = Math.trunc(milis / 1000);
+  let minutes = Math.trunc(milis / (1000 * 60));
+  let hours = Math.trunc(milis / (1000 * 60 * 60));
+  let days = Math.trunc(milis / (1000 * 60 * 60 * 24));
   if (seconds < 60) {
     return seconds + " Sec";
   }
