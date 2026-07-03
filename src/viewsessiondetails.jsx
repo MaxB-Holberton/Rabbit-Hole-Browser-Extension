@@ -5,15 +5,6 @@ import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
 
-async function DeleteRecentSession(session_key, setLastSession) {
-  if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-    return;
-  }
-
-  await chrome.storage.local.remove([session_key]);
-  setLastSession(null);
-}
-
 /*
  * function to download the file as a JSON
  */
@@ -146,25 +137,42 @@ export function SessionDetailsPage() {
 }
 
 export function ShowLastSession() {
-  const [last_session, setLastSession] = useState([]);
+  const [sessions, setLastSession] = useState({});
+
+  async function DeleteRecentSession(session_key) {
+	  if (!confirm("Are you sure you want to delete this rabbit hole?")) {
+		  return;
+	  }
+
+	  await chrome.storage.local.remove([session_key]);
+	  RHGetSessionList().then((sessions) => {
+		  if (sessions.length > 0) {
+			 setLastSession((vals) => (
+			){...vals, sessions:sessions, last:sessions[sessions.length - 1] });
+		  }
+	  })
+	 return;
+  }
 
   useEffect(() => {
     RHGetSessionList().then((sessions) => {
       if (sessions.length > 0) {
-        setLastSession(sessions[sessions.length - 1]);
+        setLastSession((vals) => {...vals, sessions:sessions, last:sessions[sessions.length - 1] });
       }
     })
-  });
+  }, []);
+
+  const session_key = last_session.session_key !== undefined ? (last_session.session_key) : ("");
 
   return (
-    <div id={last_session.session_key} className="rabbitHole previousSessionCard">
+    <div className="rabbitHole previousSessionCard">
       <IconButton
         className="previousSessionDelete"
         iconSrc="assets/delete_icon.svg"
         label="Delete Session"
-        onClick={() => { DeleteRecentSession(last_session.session_key, setLastSession); }}
+        onClick={async () => { DeleteRecentSession(session_key); }}
       />
-      <Link className={"div-links"} to={`/session/${last_session.session_key}`}>
+      <Link className={"div-links"} to={`/session/${session_key}`}>
         {ShowSessionMetadata(last_session)}
         {ShowSessionTags(last_session)}
       </Link>
@@ -214,7 +222,7 @@ export function SessionsFilterAndShow() {
       return;
     }
 
-    const rtn_filter = default_sessions.filter(session => {
+    const rtn_filter = default_sessions.filter((session) => {
       if (start_date) {
         if (session.start_time_ms < start_date) {
           return false;
@@ -238,7 +246,7 @@ export function SessionsFilterAndShow() {
         }
       }
       return true;
-    })
+    });
     ApplySorted(rtn_filter);
   }
 
@@ -321,7 +329,7 @@ export function SessionsFilterAndShow() {
         new_page_offset -= pages_to_display;
       }
     }
-    setPagedItems(vals => ({ ...vals, page_offset: new_page_offset, current_page: new_current_page }));
+    setPagedItems((vals) => ({ ...vals, page_offset: new_page_offset, current_page: new_current_page }));
   }
 
   async function DeleteSessionFromPrevious(session_key) {
@@ -408,10 +416,10 @@ export function SessionsFilterAndShow() {
       {
         page_options.num !== "All" &&
         <span>
-          <button name="First" onClick={PageItemInputChanged}>First</button>
-          <button name="Prev" onClick={PageItemInputChanged}>Prev</button>
-          <button name="Next" onClick={PageItemInputChanged}>Next</button>
-          <button name="Last" onClick={PageItemInputChanged}>Last</button>
+          <button name="First" onClick={ PageItemInputChanged }>First</button>
+          <button name="Prev" onClick={ PageItemInputChanged }>Prev</button>
+          <button name="Next" onClick={ PageItemInputChanged }>Next</button>
+          <button name="Last" onClick={ PageItemInputChanged }>Last</button>
         </span>
       }
       <section className="rabbitHole" id="previous">
