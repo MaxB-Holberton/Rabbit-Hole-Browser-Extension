@@ -32,6 +32,33 @@ async function DownloadTxtFile(session_key) {
   URL.revokeObjectURL(link.href);
 }
 
+async function SetLocalStorageData(evt) {
+  const content = JSON.parse(evt.target.result);
+  const session_key = content.session_key;
+  if (!content || !session_key) {
+    return;
+  }
+  await chrome.storage.local.set({[session_key]: content});
+  location.reload();
+}
+
+function ImportJsonFile(evt) {
+  const file = evt.target.files[0];
+  const file_data = new FileReader();
+  file_data.onloadend = SetLocalStorageData;
+  file_data.readAsText(file);
+}
+
+
+
+async function DeleteSessionFunc(session_key) {
+  if (!confirm("Are you sure you want to delete this rabbit hole?")) {
+    return false;
+  }
+  await chrome.storage.local.remove([session_key]);
+  return true;
+}
+
 /*
  *
  */
@@ -99,12 +126,9 @@ export function SessionDetailsPage() {
   const [page_data, setPageData] = useState([]);
 
   async function DeleteSessionFromDetails(session_key) {
-    if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-      return;
+    if (await DeleteSessionFunc(session_key)) {
+      navigate('/previous');
     }
-
-    await chrome.storage.local.remove([session_key]);
-    navigate('/previous');
   }
 
   useEffect(() => {
@@ -121,7 +145,7 @@ export function SessionDetailsPage() {
             className="previousSessionDelete"
             iconSrc="assets/delete_icon.svg"
             label="Delete Session"
-            onClick={() => { DeleteSessionFromDetails(page_data.session_key); }}
+            onClick={async () => { await DeleteSessionFromDetails(page_data.session_key); }}
           />
           {ShowSessionMetadata(page_data)}
           <br />
@@ -137,66 +161,49 @@ export function SessionDetailsPage() {
 }
 
 export function ShowLastSession() {
-  const [sessions, setLastSession] = useState({});
+  const [sessions_list, setLastSession] = useState({});
+
+  function GetLastSessions(data) {
+    if (data.length > 0) {
+      setLastSession((vals) => ({...vals, sessions:data, last:data[data.length - 1] }));
+    }
+    else {
+      setLastSession((vals) => ({ }));
+    }
+  }
 
   async function DeleteRecentSession(session_key) {
-	  if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-		  return;
+	  if (await DeleteSessionFunc(session_key)) {
+        RHGetSessionList().then((sessions) => GetLastSessions(sessions))
 	  }
-
-	  await chrome.storage.local.remove([session_key]);
-	  RHGetSessionList().then((sessions) => {
-		  if (sessions.length > 0) {
-			 setLastSession((vals) => (
-			){...vals, sessions:sessions, last:sessions[sessions.length - 1] });
-		  }
-	  })
-	 return;
   }
 
   useEffect(() => {
     RHGetSessionList().then((sessions) => {
-      if (sessions.length > 0) {
-        setLastSession((vals) => {...vals, sessions:sessions, last:sessions[sessions.length - 1] });
-      }
+      GetLastSessions(sessions);
     })
   }, []);
 
-  const session_key = last_session.session_key !== undefined ? (last_session.session_key) : ("");
-
   return (
-    <div className="rabbitHole previousSessionCard">
+    <>
+    {sessions_list.last !== undefined ? (
+      <div className="rabbitHole previousSessionCard">
       <IconButton
-        className="previousSessionDelete"
-        iconSrc="assets/delete_icon.svg"
-        label="Delete Session"
-        onClick={async () => { DeleteRecentSession(session_key); }}
+      className="previousSessionDelete"
+      iconSrc="assets/delete_icon.svg"
+      label="Delete Session"
+      onClick={async () => { await DeleteRecentSession(sessions_list.last.session_key); }}
       />
-      <Link className={"div-links"} to={`/session/${session_key}`}>
-        {ShowSessionMetadata(last_session)}
-        {ShowSessionTags(last_session)}
+      <Link className={"div-links"} to={`/session/${sessions_list.last.session_key}`}>
+      {ShowSessionMetadata(sessions_list.last)}
+      {ShowSessionTags(sessions_list.last)}
       </Link>
-    </div>
+      </div>
+    ) : (
+      <p>No Recent Rabbit Holes!</p>
+    )}
+    </>
   );
-}
-
-export function ShowAllSessions() {
-  const [sessions, setSessionsList] = useState([]);
-
-  useEffect(() => {
-    RHGetSessionList().then((sessions) => setSessionsList(sessions));
-  });
-
-  return sessions.map((session, index) => {
-    return (
-      <Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
-        <div className="rabbitHole">
-          {ShowSessionMetadata(session)}
-          {ShowSessionTags(session)}
-        </div>
-      </Link>
-    );
-  });
 }
 
 export function SessionsFilterAndShow() {
@@ -286,6 +293,10 @@ export function SessionsFilterAndShow() {
     setSortedItems(vals => ({ ...vals, [name]: val }));
   }
 
+  function setNewPagedData(offset, current) {
+    setPagedItems(vals => ({ ...vals, page_offset: offset, current_page: current }));
+  }
+
   function PageItemInputChanged(evt) {
     const name = evt.target.name;
     const val = evt.target.value;
@@ -299,12 +310,13 @@ export function SessionsFilterAndShow() {
     let last_page = (total_pages - 1) * pages_to_display;
     let new_current_page = Number(page_options.current_page);
     let new_page_offset = Number(page_options.page_offset);
+
     if (name === "First") {
-      setPagedItems(vals => ({ ...vals, page_offset: 0, current_page: 1 }));
+      setNewPagedData(0, 1);
       return;
     }
     if (name === "Last") {
-      setPagedItems(vals => ({ ...vals, page_offset: last_page, current_page: total_pages }));
+      setNewPagedData(last_page, total_pages)
       return;
     }
 
@@ -329,17 +341,14 @@ export function SessionsFilterAndShow() {
         new_page_offset -= pages_to_display;
       }
     }
-    setPagedItems((vals) => ({ ...vals, page_offset: new_page_offset, current_page: new_current_page }));
+    setNewPagedData(new_page_offset,new_current_page);
   }
 
   async function DeleteSessionFromPrevious(session_key) {
-    if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-      return;
+    if (await DeleteSessionFunc(session_key)) {
+      const new_session = sessions.filter((new_data) => new_data.session_key !== session_key);
+      setDefaultList(new_session);
     }
-    await chrome.storage.local.remove([session_key]);
-    const new_session = sessions.filter((new_session) => new_session.session_key !== session_key);
-    setDefaultList(new_session);
-    return;
   }
 
   useEffect(() => {
@@ -411,6 +420,13 @@ export function SessionsFilterAndShow() {
         />
         <button onClick={() => { ApplyFilters() }}>Search</button>
         <button onClick={() => { ClearFilters() }}>Clear</button>
+      </span>
+      <span>
+        <input
+          type="file"
+          accept=".json"
+          onChange={ImportJsonFile}
+          />
       </span>
 
       {
