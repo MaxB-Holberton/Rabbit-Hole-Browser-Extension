@@ -71,10 +71,16 @@ function OverviewView() {
 function MostRecentView() {
   return (
     <>
-      <h2 id="white">My Rabbit Holes</h2>
-      {SectionRibbon('Most Recent Rabbit Hole')}
-      <section className="rabbitHole">
-        {ShowLastSession()}
+      <div className="sessionEditHeader" id="recentPageHeader">
+        <h2 className="sessionEditHeading" id="recentPageHeading">My Rabbit Holes</h2>
+        {SectionRibbon('Most Recent Rabbit Hole')}
+      </div>
+      <section className="rabbitHole sessionEditSection" id="recent">
+        <div className="sessionEditLayout" id="recentLayout">
+          <div className="rabbitHole sessionEditCard" id="recentCard">
+            {ShowLastSession()}
+          </div>
+        </div>
       </section>
       <div id="recentPageContent">
         <section id="recentBannerSection">
@@ -88,13 +94,16 @@ function MostRecentView() {
 function PreviousView() {
   return (
     <>
-      <h2 id="white">My Rabbit Holes</h2>
-
-      <div id="previousHeaderRow">
+      <div className="sessionEditHeader" id="previousPageHeader">
+        <h2 className="sessionEditHeading" id="previousPageHeading">My Rabbit Holes</h2>
         {SectionRibbon('Previous Rabbit Holes')}
       </div>
-      <section className="rabbitHole" id="previous">
-        {SessionsFilterAndShow()}
+      <section className="rabbitHole sessionEditSection" id="previousPageSection">
+        <div className="sessionEditLayout" id="previousLayout">
+          <div className="rabbitHole sessionEditCard" id="previousCard">
+            {SessionsFilterAndShow()}
+          </div>
+        </div>
       </section>
       <div id="previousPageContent">
           <section id="previousBannerSection">

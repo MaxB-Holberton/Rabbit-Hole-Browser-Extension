@@ -73,6 +73,7 @@ button:hover {
   transform: translateY(-1px);
   filter: brightness(1.04);
   box-shadow: 4px 4px 0 black;
+  cursor: pointer;
 }
 
 button:active {
@@ -92,6 +93,8 @@ button.iconButton {
   padding: 5px;
   font-family: 'Cause';
   margin: 1rem;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 button.iconButton .iconButtonIcon {
@@ -121,6 +124,14 @@ button.iconButton.editSessionDeleteTagButton .iconButtonIcon {
   width: 14px;
   height: 14px;
   flex: 0 0 14px;
+}
+
+button.iconButton.viewSessionEditButton {
+  background-color: var(--start-light);
+}
+
+button.iconButton.viewSessionDownloadButton {
+  background-color: var(--info-light);
 }
 
 /* edit session page */
@@ -209,6 +220,11 @@ button.iconButton.editSessionPageDeleteButton {
 }
 
 .sessionEditLayout {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.sessionEditLayoutWithRail {
   width: min(100%, 1100px);
   display: grid;
   grid-template-columns: minmax(0, 980px) max-content;
@@ -405,6 +421,9 @@ nav {
   text-decoration: none;
   font-family: 'Cause', Verdana;
   font-size: 1.8rem;
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 black;
 
 }
 
@@ -412,10 +431,15 @@ nav {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 12px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+}
+
+div#counter .headerLink {
+  justify-content: center;
+  flex: 1 1 10rem;
 }
 
 body {
@@ -432,6 +456,7 @@ body p {
 main {
   flex: 1;
   margin-top: calc(var(--header-height) + 3vh);
+  min-height: calc(100vh - var(--header-height) - 3vh);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -448,18 +473,54 @@ h2#white {
 
 section.rabbitHole {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: minmax(0, 980px);
+  justify-content: center;
   gap: 16px;
   padding: 0 16px;
 }
+
+#recent,
+#previousPageSection,
+#settings,
+#viewSessionSection,
+#blacklistPageSection {
+  min-height: calc(100vh - var(--header-height) - 3vh - 230px);
+  align-items: stretch;
+}
+
+#recentLayout,
+#previousLayout,
+#settingsLayout,
+#viewSessionLayout,
+#blacklistLayout {
+  height: 100%;
+}
+
+#recentCard,
+#previousCard,
+#settingsCard,
+#viewSessionCard,
+#blacklistEditorCard {
+  min-height: 100%;
+}
+
+main > section.rabbitHole {
+  flex: 1;
+}
+
+main > section.rabbitHole > div.rabbitHole {
+  min-height: 100%;
+}
+
 div.rabbitHole {
   background-color: white;
   height: auto;
-  width: 100%;
+  width: min(100%, 980px);
   border-radius: 2px;
   padding: 8px 12px;
   font-family: 'Cause', Verdana;
 }
+
 .rabbitHole p {
   font-size: 1rem;
 }
@@ -489,7 +550,6 @@ div#counter p {
 div#counter .headerLink {
   font-size: 1.4rem;
   white-space: nowrap;
-  border-radius: 2px;
   padding: 10px;
   transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
@@ -530,11 +590,36 @@ div#counter button:first-of-type {
 footer {
   background-color: white;
   color: black;
+  z-index:999;
 }
 
 .div-links{
   color: #000000;
   text-decoration: none;
+}
+
+.sessionCardMetaLine {
+  margin-bottom: 0.35rem;
+}
+
+.sessionCardFieldLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 1px 6px;
+  margin-right: 0.35rem;
+  background-color: var(--secondary-light);
+  color: var(--primary-dark);
+  font-weight: 800;
+  line-height: 1.1;
+  overflow: hidden;
+}
+
+.sessionCardFieldValue {
+  font-weight: 700;
+  color: var(--primary-light);
 }
 
 .previousSessionCard {
@@ -643,6 +728,21 @@ h2.sessionEditHeading {
   box-shadow: 5px 5px 0 var(--start-dark);
 }
 
+img.iconImg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: 0 0 auto;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+img.iconImg.bigger {
+  width: 1.55em;
+  height: 1.55em;
+
+}
+
 .rabbitHole .editP {
   font-size: 1.5rem;
 }
@@ -662,9 +762,9 @@ h2.sessionEditHeading {
   overflow: contain;
 }
 div.rabbitHole.sessionEditCard {
-  border: 3px solid black;
+  /*border: 3px solid black;*/
   border-radius: 0;
-  box-shadow: 6px 6px 0 black;
+  /*box-shadow: 6px 6px 0 black;*/
 }
 
 button.iconButton.sessionEditDeleteButton {
@@ -855,8 +955,8 @@ button.sessionEditBackButton {
 }
 
 .sessionMetadata .editP {
-  display: inline-block;
-  font-size: 2rem;
+  display: block;
+  font-size: 1.2rem;
 }
 
 .sessionMetadata #settingsOptionBlacklistLink:hover {
@@ -883,6 +983,217 @@ button.sessionEditBackButton {
   right: 0.75rem;
   height: 5rem;
   width: auto;
+}
+
+#recentCard {
+  padding-top: 1rem;
+}
+
+#recentCard .previousSessionCard {
+  margin: 0;
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+
+#recentCard .previousSessionCard p,
+#recentCard .previousSessionCard span {
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+#recentCard .div-links {
+  color: var(--primary-light);
+}
+
+#recentCard button.iconButton.previousSessionDelete {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
+
+#recentCard .previousSessionCard:hover {
+  box-shadow: 6px 6px 0 var(--start-dark);
+}
+
+#previousCard {
+  padding-top: 1rem;
+}
+
+#previousCard #previousControlsPanel {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--info-dark);
+  padding: 0.85rem;
+  font-size: 1.2rem;
+}
+
+#previousCard .previousControlsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+#previousCard .previousControlsRow:last-child {
+  margin-bottom: 0;
+}
+
+#previousCard .previousControlsRow label {
+  color: var(--primary-light);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+}
+
+#previousCard .previousControlSelect,
+#previousCard .previousControlInput {
+  font-family: 'Cause', Verdana;
+  font-size: 1rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.25rem 0.45rem;
+  background-color: white;
+  color: var(--primary-light);
+}
+
+#previousCard .previousControlButton {
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+}
+
+#previousCard .previousSearchButton {
+  background-color: var(--start-light);
+  box-shadow: 3px 3px 0 var(--start-dark);
+}
+
+#previousCard .previousClearButton {
+  background-color: var(--tertiary-light);
+  box-shadow: 3px 3px 0 var(--tertiary-dark);
+}
+
+#previousCard .previousPagerButton {
+  background-color: var(--info-light);
+  box-shadow: 3px 3px 0 var(--info-dark);
+}
+
+#previousCard #previousSessionsGrid {
+  margin-top: 1rem;
+  padding: 0;
+}
+
+#previousCard #previousSessionsGrid .previousSessionCard {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+
+#previousCard #previousSessionsGrid .previousSessionCard p,
+#previousCard #previousSessionsGrid .previousSessionCard span {
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+#previousCard #previousSessionsGrid .div-links {
+  color: var(--primary-light);
+}
+
+#previousCard #previousSessionsGrid .previousSessionCard:hover {
+  box-shadow: 6px 6px 0 var(--start-dark);
+}
+
+#previousCard button.iconButton.previousSessionDelete {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
+
+#viewSessionCard {
+  padding-top: 1rem;
+}
+
+#viewSessionContentCard {
+  margin: 0;
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--start-dark);
+  padding: 1rem;
+  padding-top: 46px;
+}
+
+#viewSessionContentCard > div {
+  font-size: 1.2rem;
+}
+
+#viewSessionContentCard .viewSessionMetaLine {
+  font-size: 1.35rem;
+  line-height: 1.45;
+  margin-bottom: 0.35rem;
+}
+
+#viewSessionContentCard .viewSessionTagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#viewSessionContentCard .viewSessionTagText {
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px 3px 10px;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: var(--primary-light);
+  background-color: var(--tertiary-light);
+  margin: 2px 0;
+}
+
+#viewSessionContentCard ul {
+  margin-top: 0.5rem;
+}
+
+#viewSessionContentCard li {
+  font-size: 1.12rem;
+  line-height: 1.45;
+  margin-bottom: 0.3rem;
+}
+
+#viewSessionContentCard span {
+  font-size: 1.12rem;
+}
+
+#viewSessionCard button.iconButton.previousSessionDelete {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
+
+#viewSessionContentCard a {
+  color: var(--info-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  transition: color 0.18s ease, filter 0.18s ease;
+}
+
+#viewSessionContentCard a:hover {
+  color: var(--tertiary-dark);
+  filter: brightness(0.95);
+}
+
+#viewSessionContentCard a:active {
+  color: var(--error-light);
+}
+
+.viewSessionActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.viewSessionActions .iconButton {
+  margin: 0.35rem;
 }
 .rabbitHole #blacklistDescrip {
   font-size: 1.2rem;
@@ -983,7 +1294,7 @@ button.iconButton.blacklistDeleteButton .iconButtonIcon {
 }
 
 @media (max-width: 1180px) {
-  .sessionEditLayout {
+  .sessionEditLayoutWithRail {
     grid-template-columns: minmax(0, 980px);
   }
 

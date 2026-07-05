@@ -238,8 +238,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   document.getElementById("RabbitHole_Index").addEventListener('click', () => {
-    /**/
-    chrome.tabs.create({ 'url': chrome.runtime.getURL('index.html') });
+    // Open the extension app directly on the Most Recent route.
+    chrome.tabs.create({ url: chrome.runtime.getURL('index.html#/recent') });
   });
 
   window.addEventListener("beforeunload", () => stopElapsedClock(false));

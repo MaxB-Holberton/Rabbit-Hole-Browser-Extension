@@ -66,10 +66,12 @@ function ShowSessionTags(data) {
   //shows the session tags
   const tags = Array.isArray(data?.tag_list) ? data.tag_list : [];
   return (
-    <div>
-      <b>Tags: </b>
+    <div className="viewSessionTagsRow sessionCardMetaLine">
+      <span className="sessionCardFieldLabel">
+        <img className="iconImg" src="assets/tag_icon.svg"></img>
+        Tags:</span>
       {tags.map((tag, index) => (
-        <span key={index}>
+        <span className="viewSessionTagText" key={index}>
           {tag}{index < tags.length - 1 ? ", " : ""}
         </span>
       ))}
@@ -81,9 +83,9 @@ function ShowSessionMetadata(data) {
   //shows the metadata for each session
   return (
     <>
-      <p><b>Topic: {data.title}</b></p>
-      <p><b>Date: {data.start_time_datetime}</b></p>
-      <p><b>Duration: {data.duration_string}</b></p>
+      <p className="viewSessionMetaLine sessionCardMetaLine"><span className="sessionCardFieldLabel"><img className="iconImg" src="assets/topic_icon.svg"></img>Topic:</span> <span className="sessionCardFieldValue">{data.title}</span></p>
+      <p className="viewSessionMetaLine sessionCardMetaLine"><span className="sessionCardFieldLabel"><img className="iconImg" src="assets/date_icon.svg"></img>Date:</span> <span className="sessionCardFieldValue">{data.start_time_datetime}</span></p>
+      <p className="viewSessionMetaLine sessionCardMetaLine"><span className="sessionCardFieldLabel"><img className="iconImg" src="assets/duration_icon.svg"></img>Duration:</span> <span className="sessionCardFieldValue">{data.duration_string}</span></p>
     </>
   );
 }
@@ -92,13 +94,13 @@ function ShowSessionDetailBtns({ session }) {
   const navigate = useNavigate();
 
   return (
-    <>
-      <IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
-      <IconButton iconSrc="assets/save_icon.svg" label="JSON" onClick={async () => { DownloadJsonFile(session.session_key); }} />
-      <IconButton iconSrc="assets/save_icon.svg" label="TXT" onClick={async () => { DownloadTxtFile(session.session_key); }} />
-      <IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
+    <div className="viewSessionActions">
+      <IconButton className="viewSessionEditButton" iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
+      <IconButton className="viewSessionDownloadButton" iconSrc="assets/save_icon.svg" label="JSON" onClick={async () => { DownloadJsonFile(session.session_key); }} />
+      <IconButton className="viewSessionDownloadButton" iconSrc="assets/save_icon.svg" label="TXT" onClick={async () => { DownloadTxtFile(session.session_key); }} />
+      {/*<IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />*/}
       <IconButton iconSrc="assets/back_icon.svg" label="Back" onClick={() => { navigate(`/previous`); }} />
-    </>
+    </div>
   );
 }
 
@@ -122,10 +124,14 @@ export function SessionDetailsPage() {
 
   return (
     <>
-      <h2 id="white">Session!</h2>
-      {SectionRibbon(`${page_data.title}`)}
-      <section className="rabbitHole" id="previous">
-        <div className="rabbitHole previousSessionCard">
+      <div className="sessionEditHeader" id="viewSessionHeader">
+        <h2 className="sessionEditHeading" id="viewSessionHeading">Session!</h2>
+        {SectionRibbon(`${page_data.title}`)}
+      </div>
+      <section className="rabbitHole sessionEditSection" id="viewSessionSection">
+        <div className="sessionEditLayout" id="viewSessionLayout">
+          <div className="rabbitHole sessionEditCard" id="viewSessionCard">
+            <div className="previousSessionCard" id="viewSessionContentCard">
           <IconButton
             className="previousSessionDelete"
             iconSrc="assets/delete_icon.svg"
@@ -139,6 +145,8 @@ export function SessionDetailsPage() {
           {ShowSessionPageList(page_data)}
           <br />
           <ShowSessionDetailBtns session={page_data} />
+            </div>
+          </div>
         </div>
       </section>
     </>
@@ -347,9 +355,10 @@ export function SessionsFilterAndShow() {
 
   return (
     <>
-      <span>
+      <div id="previousControlsPanel">
+      <span className="previousControlsRow" id="previousControlsPrimaryRow">
         <label for="num">Sessions per page: </label>
-        <select defaultValue="All" name="num" onChange={PageItemInputChanged}>
+        <select className="previousControlSelect" defaultValue="All" name="num" onChange={PageItemInputChanged}>
           {session_display_arr.map((val, idx) => {
             return (
               <option key={idx} val={val}>{`${val}`}</option>
@@ -357,16 +366,17 @@ export function SessionsFilterAndShow() {
           })}
         </select>
         <label for="sort">Sort by: </label>
-        <select defaultValue="Old" name="sort" onChange={SortItemInputChanged}>
+        <select className="previousControlSelect" defaultValue="Old" name="sort" onChange={SortItemInputChanged}>
           <option value="Old">Date: Old - New</option>
           <option value="New">Date: New - Old</option>
           <option value="Short">Time: Shortest - Longest</option>
           <option value="Long">Time: Longest - Shortest</option>
         </select>
       </span>
-      <span>
+      <span className="previousControlsRow" id="previousControlsFilterRow">
         <label for="tags">Search Tags: </label>
         <input
+          className="previousControlInput"
           name="tags"
           type="search"
           onChange={FilterItemInputChanged}
@@ -379,6 +389,7 @@ export function SessionsFilterAndShow() {
         />
         <label for="start_date">Start Date: </label>
         <input
+          className="previousControlInput"
           name="start_date"
           type="date"
           onChange={FilterItemInputChanged}
@@ -391,6 +402,7 @@ export function SessionsFilterAndShow() {
         />
         <label for="end_date">End Date: </label>
         <input
+          className="previousControlInput"
           name="end_date"
           type="date"
           onChange={FilterItemInputChanged}
@@ -401,20 +413,21 @@ export function SessionsFilterAndShow() {
             }
           }}
         />
-        <button onClick={() => { ApplyFilters() }}>Search</button>
-        <button onClick={() => { ClearFilters() }}>Clear</button>
+        <IconButton className="previousControlButton previousSearchButton" iconSrc="assets/search_icon.svg" label ="Search for Sessions" onClick={() => { ApplyFilters() }}>Search</IconButton>
+        <IconButton className="previousControlButton previousClearButton" iconSrc="assets/clear_icon.svg" label="Clear Search" onClick={() => { ClearFilters() }}>Clear</IconButton>
       </span>
 
       {
         page_options.num !== "All" &&
-        <span>
-          <button name="First" onClick={PageItemInputChanged}>First</button>
-          <button name="Prev" onClick={PageItemInputChanged}>Prev</button>
-          <button name="Next" onClick={PageItemInputChanged}>Next</button>
-          <button name="Last" onClick={PageItemInputChanged}>Last</button>
+        <span className="previousControlsRow" id="previousControlsPagerRow">
+          <button className="previousControlButton previousPagerButton" name="First" onClick={PageItemInputChanged}>First</button>
+          <button className="previousControlButton previousPagerButton" name="Prev" onClick={PageItemInputChanged}>Prev</button>
+          <button className="previousControlButton previousPagerButton" name="Next" onClick={PageItemInputChanged}>Next</button>
+          <button className="previousControlButton previousPagerButton" name="Last" onClick={PageItemInputChanged}>Last</button>
         </span>
       }
-      <section className="rabbitHole" id="previous">
+      </div>
+      <section className="rabbitHole" id="previousSessionsGrid">
         {sessions.map((session, index) => {
           const pages_to_display = page_options.num;
           const current_page = page_options.current_page;
