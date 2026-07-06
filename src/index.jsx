@@ -7,7 +7,7 @@ import { SectionRibbon, SessionDetailsPage,
   ShowLastSession, SessionsFilterAndShow } from "./viewsessiondetails";
 
 import { SessionEditPage } from "./editsessionpage";
-import { SettingsPage, BlacklistEditPage, ReportBugPage } from "./settingspage";
+import { SettingsPage, BlacklistEditPage, ReportBugPage, TimeoutSettingsPage } from "./settingspage";
 
 function Header() {
   return (
@@ -127,6 +127,7 @@ function AppShell() {
           <Route path="/previous" element={<PreviousView />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/settings/blacklist" element={<BlacklistEditPage/>} />
+          <Route path="/settings/timeout" element={<TimeoutSettingsPage/>} />
           <Route path="/settings/report-bug" element={<ReportBugPage/>} />
           <Route path="/session/:session_id" element={<SessionDetailsPage />} />
           <Route path="/session/:session_id/edit" element={<SessionEditPage />} />

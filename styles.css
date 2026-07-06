@@ -939,6 +939,7 @@ button.sessionEditBackButton {
 }
 
 /* settings page */
+.sessionMetadata #settingsOptionTimeoutLink,
 .sessionMetadata #settingsOptionBlacklistLink,
 .sessionMetadata #settingsOptionReportBugLink {
   font-size: 1.3rem;
@@ -963,6 +964,8 @@ button.sessionEditBackButton {
   font-size: 1.2rem;
 }
 
+
+.sessionMetadata #settingsOptionTimeoutLink:hover,
 .sessionMetadata #settingsOptionBlacklistLink:hover,
 .sessionMetadata #settingsOptionReportBugLink:hover {
   transform: translateY(-1px);
@@ -974,6 +977,8 @@ button.sessionEditBackButton {
   padding-right: 7rem;
 }
 
+
+.sessionMetadata #settingsOptionTimeoutLink:active,
 .sessionMetadata #settingsOptionBlacklistLink:active,
 .sessionMetadata #settingsOptionReportBugLink:active {
   transform: translateY(1px);

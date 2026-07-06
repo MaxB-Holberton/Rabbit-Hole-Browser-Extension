@@ -1,8 +1,7 @@
 import { ProcessSessionData } from "./session.js";
+import { GetStaleThresholdMinutes, ScheduleStaleCheckAlarm } from "./history.js";
 
-const STALE_THRESHOLD = 45 * 60 * 1000; // 45 minutes
-const AWAY_THRESHOLD = 60 * 60 * 1000; // 1 hour = auto save
-// const AWAY_THRESHOLD = 4 * 60 * 1000; // 2 minute testing autosave
+const AWAY_BUFFER = 1 * 60 * 1000; // Grace period after "are you still there?" before autosave
 
 // Update lastActive on new page visit
 chrome.history.onVisited.addListener(() => {
@@ -14,8 +13,10 @@ chrome.tabs.onActivated.addListener(() => {
   chrome.storage.local.set({ rabbit_hole_lastActive: Date.now() });
 });
 
-// Check for stale session every minute
-chrome.alarms.create("staleCheck", { periodInMinutes: 1 });
+// Check period is derived from the user's stale threshold setting;
+// re-registered here on every service worker startup so it's always
+// in sync even if storage changed while the worker was asleep.
+ScheduleStaleCheckAlarm();
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   console.log("Alarm fired:", alarm.name);
@@ -36,6 +37,10 @@ async function checkStale() {
 
   // No active session, nothing to do
   if (!rabbit_hole_startTime) return;
+
+  const staleThresholdMinutes = await GetStaleThresholdMinutes();
+  const STALE_THRESHOLD = staleThresholdMinutes * 60 * 1000;
+  const AWAY_THRESHOLD = STALE_THRESHOLD + AWAY_BUFFER;
 
   const now = Date.now();
   const idleTime = now - rabbit_hole_lastActive;
