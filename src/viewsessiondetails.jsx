@@ -293,12 +293,7 @@ export function SessionsFilterAndShow() {
     setImportedText(vals => ({ ...vals, [name]: val }));
 
     throw this back into the render on a successful handshake event
-    <span>
-    <input
-    type="file"
-    accept=".json"
-    onChange={ImportJsonFile}
-    />
+
     <input name="import_data" onChange={ImportTextInputChanged}/>
     <button
     onClick={ async () => { CreateRemoteChannel(import_text.import_data) }}>Import</button>
@@ -450,6 +445,13 @@ export function SessionsFilterAndShow() {
         />
         <IconButton className="previousControlButton previousSearchButton" iconSrc="assets/search_icon.svg" label ="Search for Sessions" onClick={() => { ApplyFilters() }}>Search</IconButton>
         <IconButton className="previousControlButton previousClearButton" iconSrc="assets/clear_icon.svg" label="Clear Search" onClick={() => { ClearFilters() }}>Clear</IconButton>
+        <label for="import_json">Import JSON:</label>
+        <input
+        name="import_json"
+        type="file"
+        accept=".json"
+        onChange={ImportJsonFile}
+        />
       </span>
       {
         page_options.num !== "All" &&
