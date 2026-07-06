@@ -1,8 +1,8 @@
 import { ProcessSessionData } from "./session.js";
 
-const STALE_THRESHOLD = 1 * 60 * 1000; // 10 minutes
-//const AWAY_THRESHOLD = 2 * 60 * 60 * 1000; // 2 hours = auto save
-const AWAY_THRESHOLD = 4 * 60 * 1000; // 2 minute testing autosave
+const STALE_THRESHOLD = 45 * 60 * 1000; // 45 minutes
+const AWAY_THRESHOLD = 60 * 60 * 1000; // 1 hour = auto save
+// const AWAY_THRESHOLD = 4 * 60 * 1000; // 2 minute testing autosave
 
 // Update lastActive on new page visit
 chrome.history.onVisited.addListener(() => {
