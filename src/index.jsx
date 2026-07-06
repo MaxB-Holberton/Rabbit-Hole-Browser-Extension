@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
 import { SectionRibbon, SessionDetailsPage,
-  ShowLastSession, ShowAllSessions, SessionsFilterAndShow } from "./viewsessiondetails";
+  ShowLastSession, SessionsFilterAndShow } from "./viewsessiondetails";
 
 import { SessionEditPage } from "./editsessionpage";
 import { SettingsPage, BlacklistEditPage, ReportBugPage } from "./settingspage";

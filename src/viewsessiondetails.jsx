@@ -4,15 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
-
-async function DeleteRecentSession(session_key, setLastSession) {
-  if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-    return;
-  }
-
-  await chrome.storage.local.remove([session_key]);
-  setLastSession(null);
-}
+import { CreateLocalChannel, CreateRemoteChannel } from "./linksharing.jsx";
 
 /*
  * function to download the file as a JSON
@@ -41,9 +33,31 @@ async function DownloadTxtFile(session_key) {
   URL.revokeObjectURL(link.href);
 }
 
-/*
- *
- */
+async function SetLocalStorageData(evt) {
+  const content = JSON.parse(evt.target.result);
+  const session_key = content.session_key;
+  if (!content || !session_key) {
+    return;
+  }
+  await chrome.storage.local.set({[session_key]: content});
+  location.reload();
+}
+
+function ImportJsonFile(evt) {
+  const file = evt.target.files[0];
+  const file_data = new FileReader();
+  file_data.onloadend = SetLocalStorageData;
+  file_data.readAsText(file);
+}
+
+async function DeleteSessionFunc(session_key) {
+  if (!confirm("Are you sure you want to delete this rabbit hole?")) {
+    return false;
+  }
+  await chrome.storage.local.remove([session_key]);
+  return true;
+}
+
 function ShowSessionPageList(data) {
   // Shows the total_pages from the session
   //TODO: create pagination and add it here
@@ -110,12 +124,9 @@ export function SessionDetailsPage() {
   const [page_data, setPageData] = useState([]);
 
   async function DeleteSessionFromDetails(session_key) {
-    if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-      return;
+    if (await DeleteSessionFunc(session_key)) {
+      navigate('/previous');
     }
-
-    await chrome.storage.local.remove([session_key]);
-    navigate('/previous');
   }
 
   useEffect(() => {
@@ -136,7 +147,7 @@ export function SessionDetailsPage() {
             className="previousSessionDelete"
             iconSrc="assets/delete_icon.svg"
             label="Delete Session"
-            onClick={() => { DeleteSessionFromDetails(page_data.session_key); }}
+            onClick={async () => { await DeleteSessionFromDetails(page_data.session_key); }}
           />
           {ShowSessionMetadata(page_data)}
           <br />
@@ -154,49 +165,49 @@ export function SessionDetailsPage() {
 }
 
 export function ShowLastSession() {
-  const [last_session, setLastSession] = useState([]);
+  const [sessions_list, setLastSession] = useState({});
+
+  function GetLastSessions(data) {
+    if (data.length > 0) {
+      setLastSession((vals) => ({...vals, sessions:data, last:data[data.length - 1] }));
+    }
+    else {
+      setLastSession((vals) => ({ }));
+    }
+  }
+
+  async function DeleteRecentSession(session_key) {
+	  if (await DeleteSessionFunc(session_key)) {
+        RHGetSessionList().then((sessions) => GetLastSessions(sessions))
+	  }
+  }
 
   useEffect(() => {
     RHGetSessionList().then((sessions) => {
-      if (sessions.length > 0) {
-        setLastSession(sessions[sessions.length - 1]);
-      }
+      GetLastSessions(sessions);
     })
-  });
+  }, []);
 
   return (
-    <div id={last_session.session_key} className="rabbitHole previousSessionCard">
+    <>
+    {sessions_list.last !== undefined ? (
+      <div className="rabbitHole previousSessionCard">
       <IconButton
-        className="previousSessionDelete"
-        iconSrc="assets/delete_icon.svg"
-        label="Delete Session"
-        onClick={() => { DeleteRecentSession(last_session.session_key, setLastSession); }}
+      className="previousSessionDelete"
+      iconSrc="assets/delete_icon.svg"
+      label="Delete Session"
+      onClick={async () => { await DeleteRecentSession(sessions_list.last.session_key); }}
       />
-      <Link className={"div-links"} to={`/session/${last_session.session_key}`}>
-        {ShowSessionMetadata(last_session)}
-        {ShowSessionTags(last_session)}
+      <Link className={"div-links"} to={`/session/${sessions_list.last.session_key}`}>
+      {ShowSessionMetadata(sessions_list.last)}
+      {ShowSessionTags(sessions_list.last)}
       </Link>
-    </div>
+      </div>
+    ) : (
+      <p>No Recent Rabbit Holes!</p>
+    )}
+    </>
   );
-}
-
-export function ShowAllSessions() {
-  const [sessions, setSessionsList] = useState([]);
-
-  useEffect(() => {
-    RHGetSessionList().then((sessions) => setSessionsList(sessions));
-  });
-
-  return sessions.map((session, index) => {
-    return (
-      <Link className={"div-links"} key={index} to={`/session/${session.session_key}`}>
-        <div className="rabbitHole">
-          {ShowSessionMetadata(session)}
-          {ShowSessionTags(session)}
-        </div>
-      </Link>
-    );
-  });
 }
 
 export function SessionsFilterAndShow() {
@@ -210,6 +221,7 @@ export function SessionsFilterAndShow() {
 
   //Hooks and array data for filtering the data
   const [filter_options, setFilteredItems] = useState([]);
+  //const [import_text, setImportedText] = useState([]);
 
   function ApplyFilters() {
     const searched_tags = filter_options.tags;
@@ -222,7 +234,7 @@ export function SessionsFilterAndShow() {
       return;
     }
 
-    const rtn_filter = default_sessions.filter(session => {
+    const rtn_filter = default_sessions.filter((session) => {
       if (start_date) {
         if (session.start_time_ms < start_date) {
           return false;
@@ -246,7 +258,7 @@ export function SessionsFilterAndShow() {
         }
       }
       return true;
-    })
+    });
     ApplySorted(rtn_filter);
   }
 
@@ -274,6 +286,27 @@ export function SessionsFilterAndShow() {
     ApplySorted([...default_sessions]);
   }
 
+  /*
+  function ImportTextInputChanged(evt) {
+    const name = evt.target.name;
+    const val = evt.target.value;
+    setImportedText(vals => ({ ...vals, [name]: val }));
+
+    throw this back into the render on a successful handshake event
+    <span>
+    <input
+    type="file"
+    accept=".json"
+    onChange={ImportJsonFile}
+    />
+    <input name="import_data" onChange={ImportTextInputChanged}/>
+    <button
+    onClick={ async () => { CreateRemoteChannel(import_text.import_data) }}>Import</button>
+    </span>
+
+  }
+  */
+
   function FilterItemInputChanged(evt) {
     const name = evt.target.name;
     const val = evt.target.value;
@@ -284,6 +317,10 @@ export function SessionsFilterAndShow() {
     const name = evt.target.name;
     const val = evt.target.value;
     setSortedItems(vals => ({ ...vals, [name]: val }));
+  }
+
+  function setNewPagedData(offset, current) {
+    setPagedItems(vals => ({ ...vals, page_offset: offset, current_page: current }));
   }
 
   function PageItemInputChanged(evt) {
@@ -299,12 +336,13 @@ export function SessionsFilterAndShow() {
     let last_page = (total_pages - 1) * pages_to_display;
     let new_current_page = Number(page_options.current_page);
     let new_page_offset = Number(page_options.page_offset);
+
     if (name === "First") {
-      setPagedItems(vals => ({ ...vals, page_offset: 0, current_page: 1 }));
+      setNewPagedData(0, 1);
       return;
     }
     if (name === "Last") {
-      setPagedItems(vals => ({ ...vals, page_offset: last_page, current_page: total_pages }));
+      setNewPagedData(last_page, total_pages)
       return;
     }
 
@@ -329,17 +367,14 @@ export function SessionsFilterAndShow() {
         new_page_offset -= pages_to_display;
       }
     }
-    setPagedItems(vals => ({ ...vals, page_offset: new_page_offset, current_page: new_current_page }));
+    setNewPagedData(new_page_offset,new_current_page);
   }
 
   async function DeleteSessionFromPrevious(session_key) {
-    if (!confirm("Are you sure you want to delete this rabbit hole?")) {
-      return;
+    if (await DeleteSessionFunc(session_key)) {
+      const new_session = sessions.filter((new_data) => new_data.session_key !== session_key);
+      setDefaultList(new_session);
     }
-    await chrome.storage.local.remove([session_key]);
-    const new_session = sessions.filter((new_session) => new_session.session_key !== session_key);
-    setDefaultList(new_session);
-    return;
   }
 
   useEffect(() => {
@@ -416,7 +451,6 @@ export function SessionsFilterAndShow() {
         <IconButton className="previousControlButton previousSearchButton" iconSrc="assets/search_icon.svg" label ="Search for Sessions" onClick={() => { ApplyFilters() }}>Search</IconButton>
         <IconButton className="previousControlButton previousClearButton" iconSrc="assets/clear_icon.svg" label="Clear Search" onClick={() => { ClearFilters() }}>Clear</IconButton>
       </span>
-
       {
         page_options.num !== "All" &&
         <span className="previousControlsRow" id="previousControlsPagerRow">
