@@ -32,8 +32,8 @@ function showStalePrompt() {
   overlay.innerHTML = `
     <div style="background: white; padding: 32px; border-radius: 12px; text-align: center; max-width: 400px;">
       <img src="${chrome.runtime.getURL('assets/still_recording.png')}" width="60" />
-      <h2>Still down the rabbit hole?</h2>
-      <p>You've been inactive for a while. Want to keep recording?</p>
+      <h2 style="color: black;">Still down the rabbit hole?</h2>
+      <p style="color: black;">You've been inactive for a while. Want to keep recording?</p>
       <button id="rh-keep" style="margin: 8px; padding: 10px 24px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">Keep Recording</button>
       <button id="rh-save" style="margin: 8px; padding: 10px 24px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">Save & Stop</button>
     </div>
