@@ -213,7 +213,7 @@ export function SessionsFilterAndShow() {
 
   //Hooks and array data for filtering the data
   const [filter_options, setFilteredItems] = useState([]);
-  const [import_text, setImportedText] = useState([]);
+  //const [import_text, setImportedText] = useState([]);
 
   function ApplyFilters() {
     const searched_tags = filter_options.tags;
@@ -278,11 +278,26 @@ export function SessionsFilterAndShow() {
     ApplySorted([...default_sessions]);
   }
 
+  /*
   function ImportTextInputChanged(evt) {
     const name = evt.target.name;
     const val = evt.target.value;
     setImportedText(vals => ({ ...vals, [name]: val }));
+
+    throw this back into the render on a successful handshake event
+    <span>
+    <input
+    type="file"
+    accept=".json"
+    onChange={ImportJsonFile}
+    />
+    <input name="import_data" onChange={ImportTextInputChanged}/>
+    <button
+    onClick={ async () => { CreateRemoteChannel(import_text.import_data) }}>Import</button>
+    </span>
+
   }
+  */
 
   function FilterItemInputChanged(evt) {
     const name = evt.target.name;
@@ -424,17 +439,6 @@ export function SessionsFilterAndShow() {
         <button onClick={() => { ApplyFilters() }}>Search</button>
         <button onClick={() => { ClearFilters() }}>Clear</button>
       </span>
-      <span>
-        <input
-          type="file"
-          accept=".json"
-          onChange={ImportJsonFile}
-          />
-          <input name="import_data" onChange={ImportTextInputChanged}/>
-          <button
-          onClick={ async () => { CreateRemoteChannel(import_text.import_data) }}>Import</button>
-      </span>
-
       {
         page_options.num !== "All" &&
         <span>

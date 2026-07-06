@@ -88,7 +88,7 @@ export async function CreateRemoteChannel(offer) {
 	const session_offer = new RTCSessionDescription(JSON.parse(offer));
 	pc.addEventListener('icecandidate', async (evt) => IceCandidate(evt));
 	pc.addEventListener('close', ChannelClosed);
-	pc.addEventListener('ondatachannel', ReceivedData)
+	pc.addEventListener('ondatachannel', ReceivedData);
 	try {
 		pc.setRemoteDescription(session_offer);
 		const answer_offer = await pc.createAnswer();
