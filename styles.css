@@ -939,7 +939,8 @@ button.sessionEditBackButton {
 }
 
 /* settings page */
-.sessionMetadata #settingsOptionBlacklistLink {
+.sessionMetadata #settingsOptionBlacklistLink,
+.sessionMetadata #settingsOptionReportBugLink {
   font-size: 1.3rem;
   background-color: var(--info-light);
   border: 2px solid black;
@@ -953,13 +954,17 @@ button.sessionEditBackButton {
   display: inline-flex;
   align-items: center;
 }
-
+.sessionMetadata #settingsOptionReportBugLink {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
 .sessionMetadata .editP {
   display: block;
   font-size: 1.2rem;
 }
 
-.sessionMetadata #settingsOptionBlacklistLink:hover {
+.sessionMetadata #settingsOptionBlacklistLink:hover,
+.sessionMetadata #settingsOptionReportBugLink:hover {
   transform: translateY(-1px);
   box-shadow: 5px 5px 0 var(--primary-dark);
 }
@@ -969,12 +974,73 @@ button.sessionEditBackButton {
   padding-right: 7rem;
 }
 
-.sessionMetadata #settingsOptionBlacklistLink:active {
+.sessionMetadata #settingsOptionBlacklistLink:active,
+.sessionMetadata #settingsOptionReportBugLink:active {
   transform: translateY(1px);
   filter: brightness(0.98);
 }
 #blacklistEditorCard {
   border: 3px solid black;
+}
+
+#reportBugCard {
+  border: 3px solid black;
+  background: linear-gradient(180deg, #fff9f5 0%, #fff 100%);
+  box-shadow: 6px 6px 0 var(--tertiary-dark);
+  padding: 1.25rem 1.25rem 1.4rem;
+}
+
+#reportBugDescription {
+  font-family: 'Cause', Verdana;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--error-light);
+  margin-bottom: 0.75rem;
+  text-shadow: 1px 1px 0 #fff;
+}
+
+#reportBugCard .reportBugBodyText {
+  font-size: 1.08rem;
+  line-height: 1.55;
+  color: var(--brown-light);
+  background-color: #fff2e8;
+  border-left: 6px solid var(--tertiary-dark);
+  border: 2px solid var(--tertiary-dark);
+  padding: 0.85rem 1rem;
+  margin: 0 0 1rem;
+}
+
+#reportBugEmailCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: center;
+  text-align: center;
+  background-color: var(--info-light);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--info-dark);
+  padding: 0.9rem 1rem;
+  margin: 0 0 1.1rem;
+}
+
+#reportBugEmailCard .reportBugEmailLabel {
+  font-size: 1rem;
+  color: var(--primary-light);
+}
+
+#reportBugEmailLink {
+  font-family: 'Cause', Verdana;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  word-break: break-word;
+}
+
+#reportBugEmailLink:hover {
+  color: var(--error-light);
 }
 
 #settingIcon {
