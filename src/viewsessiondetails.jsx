@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
-import { CreateLocalChannel } from "./linksharing.jsx";
+import { CreateLocalChannel, CreateRemoteChannel } from "./linksharing.jsx";
 
 /*
  * function to download the file as a JSON
@@ -110,7 +110,7 @@ function ShowSessionDetailBtns({ session }) {
       <IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
       <IconButton iconSrc="assets/save_icon.svg" label="JSON" onClick={async () => { DownloadJsonFile(session.session_key); }} />
       <IconButton iconSrc="assets/save_icon.svg" label="TXT" onClick={async () => { DownloadTxtFile(session.session_key); }} />
-      <IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={ async () => { CreateLocalChannel() }} />
+      <IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={ async () => { CreateLocalChannel(session.session_key) }} />
       <IconButton iconSrc="assets/back_icon.svg" label="Back" onClick={() => { navigate(`/previous`); }} />
     </>
   );
@@ -281,6 +281,7 @@ export function SessionsFilterAndShow() {
   function ImportTextInputChanged(evt) {
     const name = evt.target.name;
     const val = evt.target.value;
+    setImportedText(vals => ({ ...vals, [name]: val }));
   }
 
   function FilterItemInputChanged(evt) {
@@ -429,7 +430,9 @@ export function SessionsFilterAndShow() {
           accept=".json"
           onChange={ImportJsonFile}
           />
-          <input />
+          <input name="import_data" onChange={ImportTextInputChanged}/>
+          <button
+          onClick={ async () => { CreateRemoteChannel(import_text.import_data) }}>Import</button>
       </span>
 
       {
