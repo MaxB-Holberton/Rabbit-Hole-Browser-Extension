@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { GetBlacklist, SetBlacklist } from "./history.js";
+import { GetBlacklist, SetBlacklist, GetStaleThresholdMinutes, SetStaleThresholdMinutes, DEFAULT_STALE_THRESHOLD_MIN } from "./history.js";
 import { Link } from 'react-router-dom';
 import { SectionRibbon } from "./viewsessiondetails";
 import { IconButton } from "./iconbutton.jsx";
@@ -19,6 +19,7 @@ function SettingsOptionsList() {
 				<img src="./assets/settings_icon.svg" className="pageIcon" id="settingIcon"></img>
 				<ul>
 					<li id="settingsOptionBlacklistLink"><Link to="/settings/blacklist">Edit Blacklist</Link></li>
+					<li id="settingsOptionTimeoutLink"><Link to="/settings/timeout">Still Watching? Timeout</Link></li>
 					<li id="settingsOptionReportBugLink"><Link to="/settings/report-bug">Report a Bug</Link></li>
 				</ul>
 			</div>
@@ -42,6 +43,77 @@ export function ReportBugPage() {
 							<p className="reportBugEmailLabel"><b>Contact email</b></p>
 							<a id="reportBugEmailLink">rabbitholeexplorerdevs@gmail.com</a>
 						</div>
+						<IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
+					</div>
+				</div>
+			</section>
+			<div id="previousPageContent">
+				<section id="previousBannerSection">
+					<img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
+				</section>
+			</div>
+		</>
+	);
+}
+
+async function SaveStaleThreshold(minutes) {
+	await SetStaleThresholdMinutes(minutes);
+	alert('Timeout Saved');
+	window.location.href = `/index.html#/settings`;
+}
+
+export function TimeoutSettingsPage() {
+	const [minutes, SetMinutes] = useState(DEFAULT_STALE_THRESHOLD_MIN);
+
+	useEffect(() => {
+		GetStaleThresholdMinutes().then(value => SetMinutes(value));
+	}, []);
+
+	function OnMinutesChange(evt) {
+		const value = evt.target.value;
+		// Allow the field to be cleared while typing, but never store NaN/invalid values
+		if (value === "") {
+			SetMinutes("");
+			return;
+		}
+		const parsed = Number(value);
+		if (!Number.isNaN(parsed)) {
+			SetMinutes(parsed);
+		}
+	}
+
+	function HandleSave() {
+		const parsed = Number(minutes);
+		if (!Number.isFinite(parsed) || parsed <= 0) {
+			alert('Please enter a timeout of at least 1 minute.');
+			return;
+		}
+		SaveStaleThreshold(parsed);
+	}
+
+	return (
+		<>
+			<div className="sessionEditHeader" id="timeoutPageHeader">
+				<h2 className="sessionEditHeading" id="timeoutPageHeading">My Rabbit Holes</h2>
+				{SectionRibbon('Still Watching? Timeout')}
+			</div>
+			<section className="rabbitHole sessionEditSection" id="timeoutPageSection">
+				<div className="sessionEditLayout" id="timeoutLayout">
+					<div className="rabbitHole sessionEditCard" id="timeoutEditorCard">
+						<p id="timeoutDescrip">Choose how many minutes of inactivity should pass before Rabbit Hole Explorer asks "Still down the rabbit hole?"</p>
+						<label htmlFor="timeoutInput" id="timeoutInputLabel">Minutes of inactivity:</label>
+						<input
+							id="timeoutInput"
+							type="number"
+							min="1"
+							step="1"
+							name="staleThresholdMinutes"
+							onChange={OnMinutesChange}
+							value={minutes}
+							placeholder={`${DEFAULT_STALE_THRESHOLD_MIN}`}
+							required={true}
+						/>
+						<IconButton id="save_timeout_setting" iconSrc="assets/save_icon.svg" onClick={HandleSave} label="Save Timeout" />
 						<IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
 					</div>
 				</div>
