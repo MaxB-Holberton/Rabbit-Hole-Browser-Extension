@@ -21,11 +21,8 @@ import { useEffect, useState } from 'react';
 /*
  * Global scope variables
  */
-let pc1;
+let pc;
 let send_channel;
-
-let pc2;
-let recieve_channel;
 
 /*
 const servers = [
@@ -40,32 +37,58 @@ const servers = [
 
 const servers = null; //null is localhost only
 
-//Function to generate local host connection
-//fired by the 'link ' in a session's details
-export async function createLocalChannel() {
-	pc1 = new RTCPeerConnection(servers);
+function ChannelOpened() {
+	console.log("Send Channel Opened");
+	//we will want a buffer for truely massive files just in case
+}
 
-	const data_channel_params = {ordered: true};//make it ordered for better reliability -- reduces speed
-	send_channel = pc1.createDataChannel('sendDataChannel', data_channel_params);
-	send_channel.addEventListener('open', onChannelOpened);
-	send_channel.addEventListener('closed', onChannelClosed);
+function ChannelClosed() {
+	console.log("Channel Closed");
+	pc.close();
+	pc = null;
+}
 
-	console.log(send_channel);
+async function IceCandidate(evt) {
+	const candidate = evt.candidate;
+	if (!candidate) {
+		console.log(JSON.stringify(pc.localDescription));
+		//This will need to written to a textbox somewhere to paste
+	}
+	else {
+		console.log(candidate.candidate);
+	}
+}
 
-	pc1.addEventListener('icecandidate', evt => onIceCandidate(pc1, evt));
+export async function CreateLocalChannel() {
+	//Will need the session data to be grabbed when the connection is made
+	pc = new RTCPeerConnection(servers);
+	console.log('PeerConnection created... ', pc);
+	const data_channel_params = {ordered: true};//relilability over speed
+	send_channel = pc.createDataChannel('sendDataChannel', data_channel_params);
+	console.log('data channel created... ', send_channel);
+	send_channel.addEventListener('open', ChannelOpened);
+	send_channel.addEventListener('closed', ChannelClosed);
+	pc.addEventListener('icecandidate', evt => IceCandidate(evt));
 
+	//Create the offer to pass to the receiver
 	try {
-		const server_offer = await pc1.createOffer();
-		await handleLocalDescription(server_offer);
+		const new_offer = await pc.createOffer();
+		pc.setLocalDescription(new_offer);
 	} catch (err) {
 		console.error('Failed to create Session... ', err);
 	}
 }
 
-//function to generate a remote connection
-export async function createRemoteChannel() {
-	pc2 = new RTCPeerConnection(servers);
-	pc2.addEventListener('icecandidate', evt => onIceCandidate(pc2, evt));
-	pc2.addEventListener('datachannel', onChannelCallback);
+export async function CreateRemoteChannel(offer) {
+	pc = new RTCPeerConnection(servers);
+	const session_offer = new RTCSessionDescription(JSON.parse(offer));
+	try {
+		pc.setRemoteDescription(session_offer);
+		const answer_offer = await pc.createAnswer();
+		pc.setLocalDescription(answer_offer);
+	} catch (err) {
+		console.error("Session offer failed...", err);
+	}
 
 }
+

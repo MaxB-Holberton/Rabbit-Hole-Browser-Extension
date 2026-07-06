@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { RHGetSessionList, RHGetPage } from "./history.js";
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from "./iconbutton.jsx";
+import { CreateLocalChannel } from "./linksharing.jsx";
 
 /*
  * function to download the file as a JSON
@@ -49,8 +50,6 @@ function ImportJsonFile(evt) {
   file_data.readAsText(file);
 }
 
-
-
 async function DeleteSessionFunc(session_key) {
   if (!confirm("Are you sure you want to delete this rabbit hole?")) {
     return false;
@@ -59,9 +58,6 @@ async function DeleteSessionFunc(session_key) {
   return true;
 }
 
-/*
- *
- */
 function ShowSessionPageList(data) {
   // Shows the total_pages from the session
   //TODO: create pagination and add it here
@@ -114,7 +110,7 @@ function ShowSessionDetailBtns({ session }) {
       <IconButton iconSrc="assets/edit_icon.svg" label="Edit Session" onClick={() => { navigate(`/session/${session.session_key}/edit`); }} />
       <IconButton iconSrc="assets/save_icon.svg" label="JSON" onClick={async () => { DownloadJsonFile(session.session_key); }} />
       <IconButton iconSrc="assets/save_icon.svg" label="TXT" onClick={async () => { DownloadTxtFile(session.session_key); }} />
-      <IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={() => { }} />
+      <IconButton iconSrc="assets/share_icon.svg" label="Share Session" onClick={ async () => { CreateLocalChannel() }} />
       <IconButton iconSrc="assets/back_icon.svg" label="Back" onClick={() => { navigate(`/previous`); }} />
     </>
   );
@@ -217,6 +213,7 @@ export function SessionsFilterAndShow() {
 
   //Hooks and array data for filtering the data
   const [filter_options, setFilteredItems] = useState([]);
+  const [import_text, setImportedText] = useState([]);
 
   function ApplyFilters() {
     const searched_tags = filter_options.tags;
@@ -279,6 +276,11 @@ export function SessionsFilterAndShow() {
   function ClearFilters() {
     //delete the text in the inputs
     ApplySorted([...default_sessions]);
+  }
+
+  function ImportTextInputChanged(evt) {
+    const name = evt.target.name;
+    const val = evt.target.value;
   }
 
   function FilterItemInputChanged(evt) {
@@ -427,6 +429,7 @@ export function SessionsFilterAndShow() {
           accept=".json"
           onChange={ImportJsonFile}
           />
+          <input />
       </span>
 
       {
