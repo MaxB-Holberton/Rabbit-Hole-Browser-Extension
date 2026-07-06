@@ -19,10 +19,40 @@ function SettingsOptionsList() {
 				<img src="./assets/settings_icon.svg" className="pageIcon" id="settingIcon"></img>
 				<ul>
 					<li id="settingsOptionBlacklistLink"><Link to="/settings/blacklist">Edit Blacklist</Link></li>
+					<li id="settingsOptionReportBugLink"><Link to="/settings/report-bug">Report a Bug</Link></li>
 				</ul>
 			</div>
 		</>
 	)
+}
+
+export function ReportBugPage() {
+	return (
+		<>
+			<div className="sessionEditHeader" id="reportBugPageHeader">
+				<h2 className="sessionEditHeading" id="reportBugPageHeading">My Rabbit Holes</h2>
+				{SectionRibbon('Report a Bug')}
+			</div>
+			<section className="rabbitHole sessionEditSection" id="reportBugPageSection">
+				<div className="sessionEditLayout" id="reportBugLayout">
+					<div className="rabbitHole sessionEditCard" id="reportBugCard">
+						<p id="reportBugDescription">Found something broken or not working as expected?</p>
+						<p className="reportBugBodyText">Send a quick note to the Rabbit Hole Explorer dev team and include what happened, what you expected, and any steps to reproduce it.</p>
+						<div id="reportBugEmailCard" aria-label="Rabbit Hole Explorer support email">
+							<p className="reportBugEmailLabel"><b>Contact email</b></p>
+							<a id="reportBugEmailLink">rabbitholeexplorerdevs@gmail.com</a>
+						</div>
+						<IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
+					</div>
+				</div>
+			</section>
+			<div id="previousPageContent">
+				<section id="previousBannerSection">
+					<img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
+				</section>
+			</div>
+		</>
+	);
 }
 
 export function BlacklistEditPage() {
@@ -91,49 +121,62 @@ export function BlacklistEditPage() {
 
 	return (
 		<>
-			<div className="rabbitHole" id="blacklistEditorCard">
-				<p id="blacklistDescrip">Add the name of any website that you want hidden from your rabbit hole. No need for the full url!</p>
-				<input
-					id="blacklistInput"
-					name={`pages`}
-					onChange={evt => NewInputOnChange(evt.target.value)}
-					value={blacklist_item}
-					placeholder={`Example: facebook`}
-					required={true}
-				/>
-				<IconButton id="add_blacklist_item" iconSrc="assets/add_icon.svg" label="Add Blacklist Item" onClick={AddBlacklistItem} />
-				<ul id="blacklistItemsList">
-					{rabbithole_blacklist.map((item, idx) => (
-						<li className="blacklistItemRow" key={idx}>
-							<p className="blacklistItemName">{item.name}</p>
-							<label className="blacklistToggleSwitch" aria-label={`Toggle ${item.name}`}>
-								<input
-									type="checkbox"
-									name={`${idx}`}
-									checked={item.active}
-									onChange={(evt) => {
-										if (evt.target.checked) {
-											MakeItemActive(evt);
-										} else {
-											MakeItemInActive(evt);
-										}
-									}}
-								/>
-								<span className="blacklistToggleSlider" />
-							</label>
-							<IconButton
-								className="blacklistDeleteButton"
-								iconSrc="assets/delete_icon.svg"
-								label="Delete blacklist item"
-								showLabel={false}
-								ariaLabel={`Delete ${item.name}`}
-								onClick={() => { DeleteItem(idx); }}
-							/>
-						</li>
-					))}
-				</ul>
-				<IconButton iconSrc="assets/save_icon.svg" onClick={() => { SaveBlacklist(rabbithole_blacklist) }} label="Save Blacklist"/>
-				<IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
+			<div className="sessionEditHeader" id="blacklistPageHeader">
+				<h2 className="sessionEditHeading" id="blacklistPageHeading">My Rabbit Holes</h2>
+				{SectionRibbon('Edit Blacklist')}
+			</div>
+			<section className="rabbitHole sessionEditSection" id="blacklistPageSection">
+				<div className="sessionEditLayout" id="blacklistLayout">
+					<div className="rabbitHole sessionEditCard" id="blacklistEditorCard">
+						<p id="blacklistDescrip">Add the name of any website that you want hidden from your rabbit hole. No need for the full url!</p>
+						<input
+							id="blacklistInput"
+							name={`pages`}
+							onChange={evt => NewInputOnChange(evt.target.value)}
+							value={blacklist_item}
+							placeholder={`Example: facebook`}
+							required={true}
+						/>
+						<IconButton id="add_blacklist_item" iconSrc="assets/add_icon.svg" label="Add Blacklist Item" onClick={AddBlacklistItem} />
+						<ul id="blacklistItemsList">
+							{rabbithole_blacklist.map((item, idx) => (
+								<li className="blacklistItemRow" key={idx}>
+									<p className="blacklistItemName">{item.name}</p>
+									<label className="blacklistToggleSwitch" aria-label={`Toggle ${item.name}`}>
+										<input
+											type="checkbox"
+											name={`${idx}`}
+											checked={item.active}
+											onChange={(evt) => {
+												if (evt.target.checked) {
+													MakeItemActive(evt);
+												} else {
+													MakeItemInActive(evt);
+												}
+											}}
+										/>
+										<span className="blacklistToggleSlider" />
+									</label>
+									<IconButton
+										className="blacklistDeleteButton"
+										iconSrc="assets/delete_icon.svg"
+										label="Delete blacklist item"
+										showLabel={false}
+										ariaLabel={`Delete ${item.name}`}
+										onClick={() => { DeleteItem(idx); }}
+									/>
+								</li>
+							))}
+						</ul>
+						<IconButton iconSrc="assets/save_icon.svg" onClick={() => { SaveBlacklist(rabbithole_blacklist) }} label="Save Blacklist"/>
+						<IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
+					</div>
+				</div>
+			</section>
+			<div id="previousPageContent">
+				<section id="previousBannerSection">
+					<img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
+				</section>
 			</div>
 		</>
 	);

@@ -234,6 +234,7 @@ function EditSessionMetadata(data, SetSessionData) {
   return (
     <div className="sessionMetadata">
       <p className="editP">
+        <img className="iconImg bigger" src="assets/topic_icon.svg"></img>
         <b>Topic:</b>
         <input
           name={`title`}
@@ -242,8 +243,8 @@ function EditSessionMetadata(data, SetSessionData) {
           className="editInputTitle"
         />
       </p>
-      <p className="editP"><b>Date:</b> {data.start_time_datetime}</p>
-      <p className="editP"><b>Duration:</b> {data.duration_string}</p>
+      <p className="editP"><img className="iconImg bigger" src="assets/date_icon.svg"></img><b>Date:</b> {data.start_time_datetime}</p>
+      <p className="editP"><img className="iconImg bigger" src="assets/duration_icon.svg"></img><b>Duration:</b> {data.duration_string}</p>
     </div>
   );
 }
@@ -278,7 +279,7 @@ export function SessionEditPage() {
       {SectionRibbon(`${session_data.title}`)}
     </div>
     <section className="rabbitHole sessionEditSection" id="previous">
-      <div className="sessionEditLayout">
+      <div className="sessionEditLayout sessionEditLayoutWithRail">
       <div className="rabbitHole sessionEditCard">
         <IconButton
         className="sessionEditSaveButton"

@@ -1,8 +1,8 @@
 import { ProcessSessionData } from "./session.js";
 
-const STALE_THRESHOLD = 1 * 60 * 1000; // 10 minutes
-//const AWAY_THRESHOLD = 2 * 60 * 60 * 1000; // 2 hours = auto save
-const AWAY_THRESHOLD = 4 * 60 * 1000; // 2 minute testing autosave
+const STALE_THRESHOLD = 45 * 60 * 1000; // 45 minutes
+const AWAY_THRESHOLD = 60 * 60 * 1000; // 1 hour = auto save
+// const AWAY_THRESHOLD = 4 * 60 * 1000; // 2 minute testing autosave
 
 // Update lastActive on new page visit
 chrome.history.onVisited.addListener(() => {
@@ -15,7 +15,7 @@ chrome.tabs.onActivated.addListener(() => {
 });
 
 // Check for stale session every minute
-chrome.alarms.create("staleCheck", { periodInMinutes: 1});
+chrome.alarms.create("staleCheck", { periodInMinutes: 1 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   console.log("Alarm fired:", alarm.name);
@@ -56,7 +56,7 @@ async function checkStale() {
   }
 }
 async function promptUser() {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   if (!tabs[0]) return;
 
   chrome.tabs.sendMessage(tabs[0].id, { type: "STALE_CHECK" }).catch((err) => {
@@ -65,7 +65,7 @@ async function promptUser() {
 }
 
 async function autoSave(startTime) {
-  if(!startTime) {
+  if (!startTime) {
     console.warn("AutoSave called with no startTime, aboring");
     return;
   }
