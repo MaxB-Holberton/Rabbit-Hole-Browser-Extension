@@ -1,7 +1,7 @@
 import { ProcessSessionData } from "./session.js";
 import { GetStaleThresholdMinutes, ScheduleStaleCheckAlarm } from "./history.js";
 
-const AWAY_BUFFER = 60 * 1000; // Grace period after "are you still there?" before autosave
+const AWAY_BUFFER = 1 * 60 * 1000; // Grace period after "are you still there?" before autosave
 
 // Update lastActive on new page visit
 chrome.history.onVisited.addListener(() => {
