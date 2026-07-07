@@ -25,7 +25,7 @@ function ViewNav() {
 
   useEffect(() => {
     RHGetSessionList().then(sessions => setSessions(sessions));
-  });
+  }, []);
 
   return (
     <section className="rabbitHole">

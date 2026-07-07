@@ -131,7 +131,7 @@ export function SessionDetailsPage() {
 
   useEffect(() => {
     RHGetPage(params.session_id).then((data) => setPageData(data));
-  });
+  }, [params.session_id]);
 
   return (
     <>
