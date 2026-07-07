@@ -55,7 +55,8 @@ function determineCategory(title, url) {
     text.includes("monash") ||
     text.includes("swinburne") ||
     text.includes(".edu") ||
-    text.includes(".edu.au")
+    text.includes(".edu.au") ||
+    text.includes("britannica")
   ) { return "learning"; }
 
   return "general";
