@@ -30,7 +30,7 @@ function EditSessionPageList(page_data, SetPageData) {
     const val = evt.target.value;
     const new_title_val = page_data.map((item, i) => {
       if (i == idx) {
-        return {...item, title: val};
+        return { ...item, title: val };
       } else {
         return item;
       }
@@ -43,7 +43,7 @@ function EditSessionPageList(page_data, SetPageData) {
     const val = evt.target.value;
     const new_title_val = page_data.map((item, i) => {
       if (i == idx) {
-        return {...item, url: val};
+        return { ...item, url: val };
       } else {
         return item;
       }
@@ -58,7 +58,7 @@ function EditSessionPageList(page_data, SetPageData) {
     new_page_obj['concepts'] = [];
     new_page_obj['id'] = "000";
     new_page_obj['lastVisitTime'] = Date.now();
-    new_page_obj['manualTags'] = [];
+    //new_page_obj['manualTags'] = [];
     new_page_obj['structuralTags'] = [];
     new_page_obj['title'] = '';
     new_page_obj['typedCount'] = 0;
@@ -77,63 +77,63 @@ function EditSessionPageList(page_data, SetPageData) {
 
   return (
     <div>
-    <p className="editP"><b>Pages: </b></p><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={AddPage} />
-    <ul>
-    {page_data.map((item, idx) => (
-      <li
-      key={idx}
-      className="editSessionPageCard"
-      id={`editSessionPageCard_${idx}`}
-      >
-      <div className="editSessionPageTagBlock" id={`editSessionPageTagBlock_${idx}`}>
-      <div className="editSessionPageLinkRow" id={`editSessionPageLinkRow_${idx}`}>
-      <input
-      className="editSessionPageInput editSessionPageTitleInput"
-      id={`editSessionPageTitleInput_${idx}`}
-      name={`${idx}`}
-      onChange={PageTitleOnChange}
-      value={item.title}
-      placeholder={`Title of page`}
-      required={true}
-      />
-      <input
-      className="editSessionPageInput editSessionPageUrlInput"
-      id={`editSessionPageUrlInput_${idx}`}
-      name={`${idx}`}
-      onChange={PageUrlOnChange}
-      value={item.url}
-      type={`url`}
-      onInvalid={() => alert(`${item.title}: Invalid URL`)}
-      placeholder={`url of page`}
-      required={true}
-      />
-      <IconButton
-      className="editSessionDeletePageButton editSessionPageDeleteButton"
-      id={`editSessionPageDeleteButton_${idx}`}
-      iconSrc="assets/delete_icon.svg"
-      label="Delete"
-      showLabel={false}
-      ariaLabel="Delete page"
-      onClick={() => { DeletePage(idx) }}
-      />
-      </div>
-      <br />
-      <div id={`${idx}_tagdiv`} className="editSessionPageTags" >
-      <p className="editSessionPageTagLine editSessionPageCategoryLine"><span className="editSessionPageTagLabel editSessionPageCategoryLabel">Category:</span> <span className="editSessionPageTagValue editSessionPageCategoryValue">{item.category}</span></p>
-      <p className="editSessionPageTagLine editSessionPageStructTagLine"><span className="editSessionPageTagLabel editSessionPageStructTagLabel">structTag:</span> <span className="editSessionPageTagValue editSessionPageStructTagValue">{item.structuralTags}</span></p>
-      <p className="editSessionPageTagLine editSessionPageManualTagsLine"><span className="editSessionPageTagLabel editSessionPageManualTagsLabel">ManualTags:</span> <span className="editSessionPageTagValue editSessionPageManualTagsValue">{item.manualTags}</span></p>
-      </div>
-      </div>
-      </li>
-    ))}
-    </ul>
+      <p className="editP"><b>Pages: </b></p><IconButton id="add_page" iconSrc="assets/add_icon.svg" label="Add Page" onClick={AddPage} />
+      <ul>
+        {page_data.map((item, idx) => (
+          <li
+            key={idx}
+            className="editSessionPageCard"
+            id={`editSessionPageCard_${idx}`}
+          >
+            <div className="editSessionPageTagBlock" id={`editSessionPageTagBlock_${idx}`}>
+              <div className="editSessionPageLinkRow" id={`editSessionPageLinkRow_${idx}`}>
+                <input
+                  className="editSessionPageInput editSessionPageTitleInput"
+                  id={`editSessionPageTitleInput_${idx}`}
+                  name={`${idx}`}
+                  onChange={PageTitleOnChange}
+                  value={item.title}
+                  placeholder={`Title of page`}
+                  required={true}
+                />
+                <input
+                  className="editSessionPageInput editSessionPageUrlInput"
+                  id={`editSessionPageUrlInput_${idx}`}
+                  name={`${idx}`}
+                  onChange={PageUrlOnChange}
+                  value={item.url}
+                  type={`url`}
+                  onInvalid={() => alert(`${item.title}: Invalid URL`)}
+                  placeholder={`url of page`}
+                  required={true}
+                />
+                <IconButton
+                  className="editSessionDeletePageButton editSessionPageDeleteButton"
+                  id={`editSessionPageDeleteButton_${idx}`}
+                  iconSrc="assets/delete_icon.svg"
+                  label="Delete"
+                  showLabel={false}
+                  ariaLabel="Delete page"
+                  onClick={() => { DeletePage(idx) }}
+                />
+              </div>
+              <br />
+              <div id={`${idx}_tagdiv`} className="editSessionPageTags" >
+                <p className="editSessionPageTagLine editSessionPageCategoryLine"><span className="editSessionPageTagLabel editSessionPageCategoryLabel">Category:</span> <span className="editSessionPageTagValue editSessionPageCategoryValue">{item.category}</span></p>
+                <p className="editSessionPageTagLine editSessionPageStructTagLine"><span className="editSessionPageTagLabel editSessionPageStructTagLabel">structTag:</span> <span className="editSessionPageTagValue editSessionPageStructTagValue">{item.structuralTags}</span></p>
+                {/*<p className="editSessionPageTagLine editSessionPageManualTagsLine"><span className="editSessionPageTagLabel editSessionPageManualTagsLabel">ManualTags:</span> <span className="editSessionPageTagValue editSessionPageManualTagsValue">{item.manualTags}</span></p>*/}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 function EditSessionTags(session_data, SetSessionData) {
   const [session_tag, setSessionTagName] = useState({ isAdding: false });
-  useEffect(() => {}, [session_tag]);
+  useEffect(() => { }, [session_tag]);
   const tags = Array.isArray(session_data?.tag_list) ? session_data.tag_list : [];
 
   function AddSessionTag(tagValue) {
@@ -142,7 +142,7 @@ function EditSessionTags(session_data, SetSessionData) {
       return;
     }
 
-    const new_data = {...session_data};
+    const new_data = { ...session_data };
     const currentTags = Array.isArray(new_data.tag_list) ? [...new_data.tag_list] : [];
     currentTags.push(nextTag);
     new_data.tag_list = currentTags;
@@ -150,7 +150,7 @@ function EditSessionTags(session_data, SetSessionData) {
   }
 
   function RemoveSessionTag(index) {
-    const new_data = {...session_data};
+    const new_data = { ...session_data };
     new_data.tag_list.splice(index, 1);
     SetSessionData(vals => (new_data));
   }
@@ -166,62 +166,62 @@ function EditSessionTags(session_data, SetSessionData) {
 
   return (
     <div className="sessionEditTagsBlock">
-    <p className="editP"><b>Tags: </b></p>
-    {!session_tag.isAdding ? (
-      <IconButton
-      id="add_tags"
-      iconSrc="assets/tag_icon.svg"
-      label="Add Tags"
-      onClick={() => {setSessionTagName(vals => ({ ...vals, isAdding: true, newTag: "" }));}}
-      />
-    ) : (
-      <>
-      <input
-      autoFocus
-      id={"New_Session_Tag_Input"}
-      className="editTagInput"
-      defaultValue={""}
-      onChange={SessionTagName}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          AddSessionTag(session_tag.newTag);
-          ResetNewTags();
-        }
-      }}
-      />
-      <IconButton
-      className="sessionEditAddTagButton"
-      iconSrc="assets/add_icon.svg"
-      label="Add Tag"
-      onClick={() => { AddSessionTag(session_tag.newTag); ResetNewTags(); }}
-      />
-      <IconButton
-      className="sessionEditCancelTagButton"
-      iconSrc="assets/delete_icon.svg"
-      label="Cancel"
-      onClick={ResetNewTags}
-      />
-      </>
-    )}
+      <p className="editP"><b>Tags: </b></p>
+      {!session_tag.isAdding ? (
+        <IconButton
+          id="add_tags"
+          iconSrc="assets/tag_icon.svg"
+          label="Add Tags"
+          onClick={() => { setSessionTagName(vals => ({ ...vals, isAdding: true, newTag: "" })); }}
+        />
+      ) : (
+        <>
+          <input
+            autoFocus
+            id={"New_Session_Tag_Input"}
+            className="editTagInput"
+            defaultValue={""}
+            onChange={SessionTagName}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                AddSessionTag(session_tag.newTag);
+                ResetNewTags();
+              }
+            }}
+          />
+          <IconButton
+            className="sessionEditAddTagButton"
+            iconSrc="assets/add_icon.svg"
+            label="Add Tag"
+            onClick={() => { AddSessionTag(session_tag.newTag); ResetNewTags(); }}
+          />
+          <IconButton
+            className="sessionEditCancelTagButton"
+            iconSrc="assets/delete_icon.svg"
+            label="Cancel"
+            onClick={ResetNewTags}
+          />
+        </>
+      )}
 
-    {tags.map((tag, index) => (
-      <span key={index}
-      className="editTagText"
-      id={`editTagText_${index}`}
-      >{tag}
-      <IconButton
-      className="editTagDeleteButton editSessionDeleteTagButton"
-      id={`remove_tag_${index}`}
-      iconSrc="assets/delete_icon.svg"
-      label="Delete Tag"
-      showLabel={false}
-      ariaLabel={`Delete ${tag}`}
-      onClick={() => { RemoveSessionTag(index) }}
-      />
-      {" "}
-      </span>
-    ))}
+      {tags.map((tag, index) => (
+        <span key={index}
+          className="editTagText"
+          id={`editTagText_${index}`}
+        >{tag}
+          <IconButton
+            className="editTagDeleteButton editSessionDeleteTagButton"
+            id={`remove_tag_${index}`}
+            iconSrc="assets/delete_icon.svg"
+            label="Delete Tag"
+            showLabel={false}
+            ariaLabel={`Delete ${tag}`}
+            onClick={() => { RemoveSessionTag(index) }}
+          />
+          {" "}
+        </span>
+      ))}
     </div>
   );
 }
@@ -262,7 +262,7 @@ export function SessionEditPage() {
     });
   }, []);
 
-  useEffect(() => {}, [session_data, page_data]);
+  useEffect(() => { }, [session_data, page_data]);
 
   function ScrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -274,51 +274,51 @@ export function SessionEditPage() {
 
   return (
     <>
-    <div className="sessionEditHeader">
-      <h2 className="sessionEditHeading">Session!</h2>
-      {SectionRibbon(`${session_data.title}`)}
-    </div>
-    <section className="rabbitHole sessionEditSection" id="previous">
-      <div className="sessionEditLayout sessionEditLayoutWithRail">
-      <div className="rabbitHole sessionEditCard">
-        <IconButton
-        className="sessionEditSaveButton"
-        id="sessionEditSaveButtonTopRight"
-        iconSrc="assets/save_icon.svg"
-        label="Save Session"
-        showLabel={false}
-        ariaLabel="Save session"
-        onClick={(evt) => { RHSaveSession(evt, session_data, page_data); }}
-        />
-        <IconButton
-        className="sessionEditDeleteButton"
-        id="sessionEditDeleteButtonTopRight"
-        iconSrc="assets/delete_icon.svg"
-        label="Delete Session"
-        showLabel={false}
-        ariaLabel="Delete session"
-        onClick={() => { RHDeleteSession(session_data.session_key); }}
-        />
-        <form action='' onSubmit={(evt) => { RHSaveSession(evt, session_data, page_data) }}>
-          {EditSessionMetadata(session_data, SetSessionData)}
-          <br />
-          {EditSessionTags(session_data, SetSessionData)}
-          <br />
-          {EditSessionPageList(page_data, SetPageData)}
-          <br />
-          <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session"/>
-          <IconButton className="sessionEditDeleteActionButton" iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
-          <IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`} />
-        </form>
+      <div className="sessionEditHeader">
+        <h2 className="sessionEditHeading">Session!</h2>
+        {SectionRibbon(`${session_data.title}`)}
+      </div>
+      <section className="rabbitHole sessionEditSection" id="previous">
+        <div className="sessionEditLayout sessionEditLayoutWithRail">
+          <div className="rabbitHole sessionEditCard">
+            <IconButton
+              className="sessionEditSaveButton"
+              id="sessionEditSaveButtonTopRight"
+              iconSrc="assets/save_icon.svg"
+              label="Save Session"
+              showLabel={false}
+              ariaLabel="Save session"
+              onClick={(evt) => { RHSaveSession(evt, session_data, page_data); }}
+            />
+            <IconButton
+              className="sessionEditDeleteButton"
+              id="sessionEditDeleteButtonTopRight"
+              iconSrc="assets/delete_icon.svg"
+              label="Delete Session"
+              showLabel={false}
+              ariaLabel="Delete session"
+              onClick={() => { RHDeleteSession(session_data.session_key); }}
+            />
+            <form action='' onSubmit={(evt) => { RHSaveSession(evt, session_data, page_data) }}>
+              {EditSessionMetadata(session_data, SetSessionData)}
+              <br />
+              {EditSessionTags(session_data, SetSessionData)}
+              <br />
+              {EditSessionPageList(page_data, SetPageData)}
+              <br />
+              <IconButton type={`submit`} iconSrc="assets/save_icon.svg" label="Save Session" />
+              <IconButton className="sessionEditDeleteActionButton" iconSrc="assets/delete_icon.svg" label="Delete Session" onClick={() => { RHDeleteSession(session_data.session_key); }} />
+              <IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => window.location.href = `/index.html#/session/${session_data.session_key}`} />
+            </form>
 
-      </div>
-      <div className="sessionEditScrollRail" aria-label="Edit session page navigation">
-        <button className="sessionEditScrollButton sessionEditScrollButtonDown" type="button" onClick={ScrollToBottom}>Down to Bottom</button>
-        <button className="sessionEditScrollButton sessionEditScrollButtonTop" type="button" onClick={ScrollToTop}>Back to Top</button>
-      </div>
-      </div>
-    </section>
-    <div id="sessionEditPageEnd" />
+          </div>
+          <div className="sessionEditScrollRail" aria-label="Edit session page navigation">
+            <button className="sessionEditScrollButton sessionEditScrollButtonDown" type="button" onClick={ScrollToBottom}>Down to Bottom</button>
+            <button className="sessionEditScrollButton sessionEditScrollButtonTop" type="button" onClick={ScrollToTop}>Back to Top</button>
+          </div>
+        </div>
+      </section>
+      <div id="sessionEditPageEnd" />
     </>
   );
 }
