@@ -1,13 +1,50 @@
 * {
   margin: 0;
   padding: 0;
+  list-style-type: none;
   box-sizing: border-box;
   font-family: Verdana;
+  --primary-light: #3a1800;
+  --primary-dark: #000000;
+  --secondary-light: #ffffff;
+  --secondary-dark: #eaded6;
+  --tertiary-lighter: #ffc396;
+  --tertiary-light: #ffa360;
+  --tertiary-dark: #e66100;
+  --start-lighter: #99deab;
+  --start-light: #4de475;
+  --start-dark: #00a22b;
+  --stop-light: #ff9aa9;
+  --stop-dark: #e13d55;
+  --error-lightest: #f09d86;
+  --error-lighter: #bf5b3f;
+  --error-light: #9d2200;
+  --error-dark: #5d0000;
+  --info-light: #63baab;
+  --info-dark: #006b5e;
+  --brown-lightest: #d6a1a1;
+  --brown-lighter: #b36969;
+  --brown-light: #422020;
+  --brown-dark: #2c1616;
 }
-
+a {
+  all: unset;
+  cursor: pointer;
+}
+/* popup-specific styling */
 .popupBody {
   background-color: white;
   padding: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.popupActions {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .popupBody h1 {
   font-size: 25px;
@@ -22,10 +59,319 @@
 .popupBody button {
   font-family: 'Cause', Verdana;
 }
+/* general buttons */
+button {
+  font-family: 'Cause', Verdana !important;
+  background-color: var(--secondary-dark);
+  color: var(--primary-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 black;
+  padding: 6px 12px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+button * {
+  font-family: inherit;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 4px 4px 0 black;
+  cursor: pointer;
+}
+
+button:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+  box-shadow: 1px 1px 0 black;
+}
+
+button.iconButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--secondary-dark);
+  border-radius: 2px;
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 black;
+  padding: 5px;
+  font-family: 'Cause';
+  margin: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.iconButton .iconButtonIcon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 16px;
+}
+
+button.iconButton .iconButtonLabel {
+  line-height: 1;
+}
+
+button.iconButton.editSessionDeletePageButton,
+button.iconButton.editSessionDeleteTagButton {
+  padding: 2px;
+  gap: 0px;
+  margin: 0;
+}
+
+button.iconButton.editSessionDeletePageButton .iconButtonIcon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+button.iconButton.editSessionDeleteTagButton .iconButtonIcon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+}
+
+button.iconButton.viewSessionEditButton {
+  background-color: var(--start-light);
+}
+
+button.iconButton.viewSessionDownloadButton {
+  background-color: var(--info-light);
+}
+
+/* edit session page */
+.editTagText {
+  font-size: 1rem;
+  padding: 1rem;
+  margin: 0px 14px;
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--tertiary-light);
+}
+
+button.iconButton.editTagDeleteButton {
+  padding: 2px;
+  margin-left: 6px;
+}
+
+button.iconButton.editTagDeleteButton .iconButtonIcon {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+}
+
+.editSessionPageTagBlock {
+  position: relative;
+  background-color: var(--info-light);
+  border: 2px solid var(--info-dark);
+  padding: 1rem;
+  padding-top: 3rem;
+  margin: 1rem;
+}
+
+.editSessionPageLinkRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding-right: 2.75rem;
+}
+
+button.iconButton.editSessionPageDeleteButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.editSessionPageInput {
+  flex: 1 1 360px;
+  min-width: 280px;
+  width: 100%;
+  font-size: 1rem;
+  padding: 5px;
+}
+.editSessionPageTitleInput {
+  border: 3px solid var(--info-dark);
+}
+
+.editSessionPageTags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.editSessionPageTagLine {
+  margin: 0;
+}
+
+.editSessionPageCategoryLine,
+.editSessionPageStructTagLine,
+.editSessionPageManualTagsLine {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sessionEditSection {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: 'Cause', Verdana;
+  width: 100%;
+}
+
+.sessionEditSection * {
+  font-family: inherit;
+}
+
+.sessionEditLayout {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.sessionEditLayoutWithRail {
+  width: min(100%, 1100px);
+  display: grid;
+  grid-template-columns: minmax(0, 980px) max-content;
+  justify-content: center;
+  align-items: start;
+  gap: 1rem;
+}
+
+.sessionEditCard {
+  position: relative;
+  width: min(100%, 980px);
+  margin: 1rem 0;
+  padding-top: 3.5rem;
+}
+
+.sessionEditScrollRail {
+  position: sticky;
+  top: calc(var(--header-height) + 3vh + 1rem);
+  height: calc(100vh - var(--header-height) - 3vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 0;
+}
+
+.sessionEditScrollButton {
+  min-width: 9.5rem;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+}
+
+.sessionEditScrollButtonDown {
+  background-color: var(--tertiary-light);
+  box-shadow: 3px 3px 0 var(--tertiary-dark);
+}
+
+.sessionEditScrollButtonTop {
+  background-color: var(--secondary-dark);
+  box-shadow: 3px 3px 0 black;
+}
+.sessionEditTagsBlock {
+  background-color: var(--info-dark);
+  border: 3px solid black;
+  padding: 8px;
+}
+button.iconButton.sessionEditDeleteButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 1.5rem;
+  margin: 0;
+}
+
+button.iconButton.sessionEditSaveButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 4.9rem;
+  margin: 0;
+  background-color: var(--start-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--start-dark);
+}
+
+.editSessionPageUrlInput {
+  border: 3px solid var(--brown-light);
+}
+
+.editSessionPageCategoryLabel {
+  background-color: var(--stop-light);
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+
+.editSessionPageStructTagLabel {
+  background-color: var(--secondary-dark);
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+
+.editSessionPageManualTagsLabel {
+  background-color: var(--tertiary-light);
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+.popupActions #RabbitHole_Index {
+  margin-left: auto;
+  padding: 7px 9px;
+}
+
+.popupActions #RabbitHole_Index .iconButtonIcon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+}
+
+.popupActions #RabbitHole_Record .iconButtonIcon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+}
 html, body {
   min-height: 100%;
 }
+/* session status text */
+#SessionStatusText.status-ready, #SessionStatusText.status-recording, #SessionStatusText.status-finished, #SessionStatusText.status-error {
+  font-weight: bold;
+  font-family: inherit;
+  font-size: 1.5rem;
+}
 
+#SessionStatusText.status-ready {
+  color: var(--info-dark);
+}
+
+#SessionStatusText.status-recording {
+  color: var(--stop-dark);
+}
+
+#SessionStatusText.status-finished {
+  color: var(--start-dark);
+}
+
+#SessionStatusText.status-error {
+  color: var(--error-dark);
+}
+/* time elapsed text */
+#TimeElapsedVal, #PagesTrackedVal {
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 10px;
+}
+
+#TimeElapsedVal {
+  color: var(--info-dark);
+}
+
+#PagesTrackedVal {
+    color: var(--tertiary-dark);
+}
 :root {
   --header-height: clamp(64px, 15vh, 140px);
 }
@@ -64,14 +410,49 @@ h3 {
   font-size: 30px;
   padding-left: 16px;
 }
+label {
+  color:white;
+}
+
 nav {
   display: flex;
   align-items: center;
   height: var(--header-height);
   background-color: white;
 }
+
+.headerLink {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-family: 'Cause', Verdana;
+  font-size: 1.8rem;
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 black;
+
+}
+
+.headerLinksRow {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+div#counter .headerLink {
+  justify-content: center;
+  flex: 1 1 10rem;
+}
+
 body {
   background-color: black;
+}
+body p {
+  font-family: 'Cause', Verdana;
 }
 #root {
   display: flex;
@@ -81,26 +462,80 @@ body {
 main {
   flex: 1;
   margin-top: calc(var(--header-height) + 3vh);
+  min-height: calc(100vh - var(--header-height) - 3vh);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  font-family: 'Cause', Verdana;
 }
 
 h1#white, h2#white, h3#white {
   color: white;
 }
+
+h2#white {
+  font-family: 'RabbitHoleExplorer', sans-serif;
+}
+
 section.rabbitHole {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: minmax(0, 980px);
+  justify-content: center;
   gap: 16px;
   padding: 0 16px;
 }
+
+#recent,
+#previousPageSection,
+#settings,
+#viewSessionSection,
+#blacklistPageSection,
+#timeoutPageSection {
+  min-height: calc(100vh - var(--header-height) - 3vh - 230px);
+  align-items: stretch;
+}
+
+#recentLayout,
+#previousLayout,
+#settingsLayout,
+#viewSessionLayout,
+#blacklistLayout,
+#timeoutLayout {
+  height: 100%;
+}
+
+#recentCard,
+#previousCard,
+#settingsCard,
+#viewSessionCard,
+#blacklistEditorCard,
+#timeoutEditorCard {
+  min-height: 100%;
+}
+
+main > section.rabbitHole {
+  flex: 1;
+}
+
+main > section.rabbitHole > div.rabbitHole {
+  min-height: 100%;
+}
+
 div.rabbitHole {
   background-color: white;
   height: auto;
-  width: 100%;
-  border-radius: 10px;
+  width: min(100%, 980px);
+  border-radius: 2px;
   padding: 8px 12px;
+  font-family: 'Cause', Verdana;
+}
+
+.rabbitHole p {
+  font-size: 1rem;
+}
+#questionBold {
+  font-weight: bold;
+  font-size: 1.7rem;
 }
 div#counter {
   display: flex;
@@ -116,7 +551,30 @@ div#counter {
 
 div#counter p {
   width: 100%;
-  text-align: left;
+  text-align: center;
+  font-family: 'Cause', Verdana;
+  font-size: 1.9rem;
+}
+
+div#counter .headerLink {
+  font-size: 1.4rem;
+  white-space: nowrap;
+  padding: 10px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.headerLink:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+.headerLink:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.headerLink:visited {
+  color: var(--secondary-light);
 }
 div#recent button {
   text-align: center;
@@ -126,7 +584,973 @@ div#recent button {
 div#counter button:first-of-type {
   margin-right: 8px;
 }
+#overviewHeaderLink {
+  background-color: var(--start-dark);
+}
+#recentHeaderLink {
+  background-color: var(--tertiary-dark);
+}
+#previousHeaderLink {
+  background-color: var(--error-light);
+}
+#settingsHeaderLink {
+  background-color: var(--info-dark);
+}
 footer {
   background-color: white;
   color: black;
+  z-index:999;
+}
+
+.div-links{
+  color: #000000;
+  text-decoration: none;
+}
+
+.sessionCardMetaLine {
+  margin-bottom: 0.35rem;
+}
+
+.sessionCardFieldLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 1px 6px;
+  margin-right: 0.35rem;
+  background-color: var(--secondary-light);
+  color: var(--primary-dark);
+  font-weight: 800;
+  line-height: 1.1;
+  overflow: hidden;
+}
+
+.sessionCardFieldValue {
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+.previousSessionCard {
+  position: relative;
+  padding-top: 46px;
+  border: 3px solid black;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+.previousSessionCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+.previousSessionCard:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+button.iconButton.previousSessionDelete {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 4px;
+}
+
+button.iconButton.previousSessionDelete .iconButtonIcon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+button.iconButton.previousSessionDelete .iconButtonLabel {
+  display: none;
+}
+
+
+
+#previousBannerSection, #recentBannerSection, #overviewBannerSection {
+  background-color: white;
+  padding: 6px 16px;
+  display: flex;
+  justify-content: flex-end;
+  height: 100px;
+}
+
+#previousBanner, #recentBanner, #overviewBanner {
+  height: 100%;
+  width: auto;
+  max-width: 90%;
+  object-fit: contain;
+}
+
+#previousPageContent, #recentPageContent, #overviewPageContent {
+  background-color: white;
+  margin-top: auto;
+}
+
+/* Edit session page restyle */
+h2.sessionEditHeading {
+  display: inline-block;
+  font-family: 'Cause', Verdana;
+  font-size: 50px;
+  color: var(--secondary-dark);
+  background-color: var(--primary-light);
+  border: 3px solid black;
+  padding: 12px 16px;
+  box-shadow: 5px 5px 0 var(--tertiary-dark);
+}
+
+.sessionEditHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sessionEditHeader h2.sessionEditHeading,
+.sessionEditHeader .sectionRibbon,
+.sessionEditHeader .sectionRibbon * {
+  font-family: 'RabbitHoleExplorer', sans-serif !important;
+}
+
+.sectionRibbon {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  font-family: 'Cause', Verdana;
+  font-size: 30px;
+  color: var(--primary-light);
+  background-color: var(--tertiary-dark);
+  border: 3px solid black;
+  padding: 8px 16px;
+  box-shadow: 5px 5px 0 var(--tertiary-light);
+}
+
+.sectionRibbon h3 {
+  color: var(--primary-light);
+  font-family: 'Cause', Verdana;
+  padding-left: 0;
+}
+
+.sessionMetadata {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  padding: 12px;
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+
+img.iconImg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: 0 0 auto;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+img.iconImg.bigger {
+  width: 1.55em;
+  height: 1.55em;
+
+}
+
+.rabbitHole .editP {
+  font-size: 1.5rem;
+}
+
+.rabbitHole .editInputTitle {
+  height: 2rem;
+  width: 30vw;
+  font-size: 1.3rem;
+  margin-left: 0.8rem;
+  overflow: contain;
+}
+.rabbitHole .editTagInput {
+  height: 2rem;
+  width: 10vw;
+  font-size: 1.3rem;
+  margin-left: 0.8rem;
+  overflow: contain;
+}
+div.rabbitHole.sessionEditCard {
+  /*border: 3px solid black;*/
+  border-radius: 0;
+  /*box-shadow: 6px 6px 0 black;*/
+}
+
+button.iconButton.sessionEditDeleteButton {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--stop-dark);
+  margin: 0;
+}
+
+.sessionEditTagsBlock {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  border-radius: 0;
+  padding: 12px;
+  box-shadow: 5px 5px 0 black;
+}
+
+.editTagText {
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px 3px 10px;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin: 5px;
+}
+
+button.iconButton.editSessionDeleteTagButton {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-left: 4px;
+  gap: 0;
+}
+
+button.iconButton.editSessionDeleteTagButton:hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+  filter: brightness(0.8);
+}
+button.iconButton.editSessionDeleteTagButton:active {
+  transform: translateY(1px);
+  filter: brightness(0);
+}
+
+button.iconButton#add_tags,
+button.iconButton#add_page {
+  background-color: var(--start-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--start-dark);
+  color: var(--primary-light);
+}
+
+.editSessionPageTagBlock {
+  background-color: var(--info-light);
+  border: 3px solid black;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 var(--info-dark);
+}
+
+button.iconButton.editSessionDeletePageButton {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--stop-dark);
+}
+
+button.iconButton.editSessionDeletePageButton .iconButtonIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.editSessionPageInput {
+  border-radius: 0;
+  font-family: 'Cause', Verdana;
+  box-shadow: 2px 2px 0 black;
+}
+
+.editSessionPageTitleInput {
+  border: 2px solid var(--info-dark);
+}
+
+.editSessionPageUrlInput {
+  border: 2px solid var(--brown-light);
+}
+
+.editSessionPageCategoryLabel,
+.editSessionPageStructTagLabel,
+.editSessionPageManualTagsLabel {
+  border: 2px solid black;
+  border-radius: 2px;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+.editSessionPageCategoryLabel {
+  box-shadow: 2px 2px 0 var(--stop-dark);
+}
+
+.editSessionPageStructTagLabel {
+  box-shadow: 2px 2px 0 var(--brown-light);
+}
+
+.editSessionPageManualTagsLabel {
+  box-shadow: 2px 2px 0 var(--tertiary-dark);
+}
+
+.editSessionPageCategoryValue {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px;
+  box-shadow: 2px 2px 0 black;
+  font-family: 'Cause', Verdana;
+  color: var(--primary-light);
+}
+
+.editSessionPageStructTagValue {
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px;
+  box-shadow: 2px 2px 0 black;
+  font-family: 'Cause', Verdana;
+  color: var(--primary-light);
+}
+
+.editSessionPageManualTagsValue {
+  background-color: var(--tertiary-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px;
+  box-shadow: 2px 2px 0 black;
+  font-family: 'Cause', Verdana;
+  color: var(--primary-light);
+}
+
+button.iconButton[type="submit"] {
+  background-color: var(--start-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--start-dark);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+button.iconButton[aria-label="Delete session"],
+button.iconButton.sessionEditDeleteActionButton {
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--stop-dark);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+button.sessionEditBackButton {
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 6px 12px;
+  box-shadow: 3px 3px 0 black;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+/* settings page */
+.sessionMetadata #settingsOptionTimeoutLink,
+.sessionMetadata #settingsOptionBlacklistLink,
+.sessionMetadata #settingsOptionAccessibilityLink,
+.sessionMetadata #settingsOptionReportBugLink {
+  font-size: 1.3rem;
+  background-color: var(--info-light);
+  border: 2px solid black;
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 var(--info-dark);
+  font-weight: 700;
+  color: var(--primary-light);
+  transition: transform 0.18s ease;
+  padding: 6px 12px;
+  margin: 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+.sessionMetadata #settingsOptionReportBugLink {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
+
+.sessionMetadata #settingsOptionTimeoutLink {
+  background-color: var(--tertiary-light);
+  box-shadow: 3px 3px 0 var(--tertiary-dark);
+}
+
+.sessionMetadata #settingsOptionAccessibilityLink {
+  background-color: var(--error-lightest);
+}
+.sessionMetadata .editP {
+  display: block;
+  font-size: 1.2rem;
+}
+
+
+.sessionMetadata #settingsOptionTimeoutLink:hover,
+.sessionMetadata #settingsOptionBlacklistLink:hover,
+.sessionMetadata #settingsOptionAccessibilityLink:hover,
+.sessionMetadata #settingsOptionReportBugLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 5px 5px 0 var(--primary-dark);
+}
+
+#settingsMetadataCard {
+  position: relative;
+  padding-right: 7rem;
+}
+
+
+.sessionMetadata #settingsOptionTimeoutLink:active,
+.sessionMetadata #settingsOptionBlacklistLink:active,
+.sessionMetadata #settingsOptionAccessibilityLink:active,
+.sessionMetadata #settingsOptionReportBugLink:active {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+}
+#blacklistEditorCard {
+  border: 3px solid black;
+}
+
+#timeoutEditorCard {
+  border: 3px solid black;
+  background: linear-gradient(180deg, #fff7ed 0%, #fff 100%);
+  box-shadow: 6px 6px 0 var(--tertiary-dark);
+  padding: 1.2rem 1.25rem 1.4rem;
+}
+
+#timeoutDescrip {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--brown-light);
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 var(--brown-lighter);
+  padding: 0.75rem 0.85rem;
+  margin: 0 0 1rem;
+}
+
+#timeoutInputLabel {
+  display: inline-flex;
+  color: var(--primary-light);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  background-color: var(--start-lighter);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 var(--start-dark);
+  padding: 0.35rem 0.55rem;
+  margin: 0 0 0.5rem;
+}
+
+#timeoutInput {
+  display: block;
+  width: min(100%, 300px);
+  font-family: 'Cause', Verdana;
+  font-size: 1.05rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.4rem 0.55rem;
+  margin: 0 0 0.85rem;
+}
+
+#reportBugCard {
+  border: 3px solid black;
+  background: linear-gradient(180deg, #fff9f5 0%, #fff 100%);
+  box-shadow: 6px 6px 0 var(--tertiary-dark);
+  padding: 1.25rem 1.25rem 1.4rem;
+}
+
+#reportBugDescription {
+  font-family: 'Cause', Verdana;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--error-light);
+  margin-bottom: 0.75rem;
+  text-shadow: 1px 1px 0 #fff;
+}
+
+#reportBugCard .reportBugBodyText {
+  font-size: 1.08rem;
+  line-height: 1.55;
+  color: var(--brown-light);
+  background-color: #fff2e8;
+  border-left: 6px solid var(--tertiary-dark);
+  border: 2px solid var(--tertiary-dark);
+  padding: 0.85rem 1rem;
+  margin: 0 0 1rem;
+}
+
+#reportBugEmailCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: center;
+  text-align: center;
+  background-color: var(--info-light);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--info-dark);
+  padding: 0.9rem 1rem;
+  margin: 0 0 1.1rem;
+}
+
+#reportBugEmailCard .reportBugEmailLabel {
+  font-size: 1rem;
+  color: var(--primary-light);
+}
+
+#reportBugEmailLink {
+  font-family: 'Cause', Verdana;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-light);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  word-break: break-word;
+}
+
+#reportBugEmailLink:hover {
+  color: var(--error-light);
+}
+
+#settingIcon {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  height: 5rem;
+  width: auto;
+}
+
+#recentCard {
+  padding-top: 1rem;
+}
+
+#recentCard .previousSessionCard {
+  margin: 0;
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+
+#recentCard .previousSessionCard p,
+#recentCard .previousSessionCard span {
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+#recentCard .div-links {
+  color: var(--primary-light);
+}
+
+#recentCard button.iconButton.previousSessionDelete {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
+
+#recentCard .previousSessionCard:hover {
+  box-shadow: 6px 6px 0 var(--start-dark);
+}
+
+#previousCard {
+  padding-top: 1rem;
+}
+
+#previousCard #previousControlsPanel {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--info-dark);
+  padding: 0.85rem;
+  font-size: 1.2rem;
+}
+
+#previousCard #previousControlsDivider {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.7rem 0 0.95rem;
+}
+
+#previousCard .previousControlsDividerIcon {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+#previousCard .previousControlsDividerIconHover {
+  position: absolute;
+  opacity: 0;
+}
+
+#previousCard #previousControlsDivider:hover .previousControlsDividerIconForward {
+  opacity: 0;
+}
+
+#previousCard #previousControlsDivider:hover .previousControlsDividerIconHover {
+  opacity: 1;
+}
+
+#previousCard .previousControlsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+#previousCard .previousControlsRow:last-child {
+  margin-bottom: 0;
+}
+
+#previousCard .previousControlsRow label {
+  color: var(--primary-light);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+}
+
+#previousCard .previousTagSearchGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--tertiary-lighter);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.45rem 0.55rem;
+}
+
+#previousCard .previousTagSearchGroup .previousControlInput {
+  margin: 0;
+}
+
+#previousCard .previousDateRangeGroup {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  background-color: var(--error-lightest);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.45rem 0.55rem;
+}
+
+#previousCard .previousDateField {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#previousCard .previousDateField .previousControlInput {
+  margin: 0;
+}
+
+#previousCard .previousActionsGroup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background-color: var(--start-lighter);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.45rem 0.55rem;
+  flex-basis: 100%;
+  width: fit-content;
+  margin: 0.35rem auto 0;
+}
+
+#previousCard .previousActionsButtonsRow,
+#previousCard .previousActionsImportRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+#previousCard .previousActionsGroup .iconButton,
+#previousCard .previousActionsGroup input[name="import_json"] {
+  margin: 0;
+}
+
+#previousCard .previousControlSelect,
+#previousCard .previousControlInput {
+  font-family: 'Cause', Verdana;
+  font-size: 1rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.25rem 0.45rem;
+  background-color: white;
+  color: var(--primary-light);
+}
+
+#previousCard input[name="import_json"] {
+  font-family: 'Cause', Verdana;
+  font-size: 1rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.2rem 0.25rem;
+  background-color: white;
+  color: var(--primary-light);
+}
+
+#previousCard input[name="import_json"]::file-selector-button {
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  background-color: var(--info-light);
+  color: var(--primary-light);
+  padding: 0.2rem 0.45rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+#previousCard .previousControlButton {
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+}
+
+#previousCard .previousSearchButton {
+  background-color: var(--secondary-dark);
+  box-shadow: 3px 3px 0 var(--start-dark);
+}
+
+#previousCard .previousClearButton {
+  background-color: var(--tertiary-light);
+  box-shadow: 3px 3px 0 var(--tertiary-dark);
+}
+
+#previousCard .previousPagerButton {
+  background-color: var(--info-light);
+  box-shadow: 3px 3px 0 var(--info-dark);
+}
+
+#previousCard #previousSessionsGrid {
+  margin-top: 1rem;
+  padding: 0;
+}
+
+#previousCard #previousSessionsGrid .previousSessionCard {
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--start-dark);
+}
+
+#previousCard #previousSessionsGrid .previousSessionCard p,
+#previousCard #previousSessionsGrid .previousSessionCard span {
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+#previousCard #previousSessionsGrid .div-links {
+  color: var(--primary-light);
+}
+
+#previousCard #previousSessionsGrid .previousSessionCard:hover {
+  box-shadow: 6px 6px 0 var(--start-dark);
+}
+
+#previousCard button.iconButton.previousSessionDelete {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
+
+#viewSessionCard {
+  padding-top: 1rem;
+}
+
+#viewSessionContentCard {
+  margin: 0;
+  background-color: var(--secondary-dark);
+  border: 3px solid black;
+  box-shadow: 5px 5px 0 var(--start-dark);
+  padding: 1rem;
+  padding-top: 46px;
+}
+
+#viewSessionContentCard > div {
+  font-size: 1.2rem;
+}
+
+#viewSessionContentCard .viewSessionMetaLine {
+  font-size: 1.35rem;
+  line-height: 1.45;
+  margin-bottom: 0.35rem;
+}
+
+#viewSessionContentCard .viewSessionTagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#viewSessionContentCard .viewSessionTagText {
+  border: 2px solid black;
+  border-radius: 2px;
+  padding: 3px 6px 3px 10px;
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: var(--primary-light);
+  background-color: var(--tertiary-light);
+  margin: 2px 0;
+}
+
+#viewSessionContentCard ul {
+  margin-top: 0.5rem;
+}
+
+#viewSessionContentCard li {
+  font-size: 1.12rem;
+  line-height: 1.45;
+  margin-bottom: 0.3rem;
+}
+
+#viewSessionContentCard span {
+  font-size: 1.12rem;
+}
+
+#viewSessionCard button.iconButton.previousSessionDelete {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+}
+
+#viewSessionContentCard a {
+  color: var(--info-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  transition: color 0.18s ease, filter 0.18s ease;
+}
+
+#viewSessionContentCard a:hover {
+  color: var(--tertiary-dark);
+  filter: brightness(0.95);
+}
+
+#viewSessionContentCard a:active {
+  color: var(--error-light);
+}
+
+.viewSessionActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.viewSessionActions .iconButton {
+  margin: 0.35rem;
+}
+.rabbitHole #blacklistDescrip {
+  font-size: 1.2rem;
+}
+#blacklistInput {
+  font-family: 'Cause', Verdana;
+  font-size: 1.1rem;
+  padding: 0.45rem 0.6rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  width: min(100%, 420px);
+  margin: 0 1rem 1rem;
+}
+
+#blacklistItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin: 0.5rem 1rem 1rem;
+}
+
+.blacklistItemRow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 black;
+  padding: 0.5rem 0.7rem;
+}
+
+.blacklistItemName {
+  margin-right: auto;
+  font-family: 'Cause', Verdana;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+
+.blacklistToggleSwitch {
+  position: relative;
+  display: inline-flex;
+  width: 48px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.blacklistToggleSwitch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.blacklistToggleSlider {
+  position: absolute;
+  inset: 0;
+  background-color: var(--stop-light);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 var(--stop-dark);
+  transition: 0.18s ease;
+  padding: 0.8rem;
+}
+
+.blacklistToggleSlider::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  top: 3px;
+  background-color: white;
+  border: 2px solid black;
+  transition: transform 0.18s ease;
+}
+
+.blacklistToggleSwitch input:checked + .blacklistToggleSlider {
+  background-color: var(--start-light);
+  box-shadow: 2px 2px 0 var(--start-dark);
+}
+
+.blacklistToggleSwitch input:checked + .blacklistToggleSlider::before {
+  transform: translateX(20px);
+}
+
+button.iconButton.blacklistDeleteButton {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
+  margin: 0;
+  padding: 3px;
+  gap: 0;
+}
+
+button.iconButton.blacklistDeleteButton .iconButtonIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+@media (max-width: 1180px) {
+  .sessionEditLayoutWithRail {
+    grid-template-columns: minmax(0, 980px);
+  }
+
+  .sessionEditScrollRail {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 0 1rem 1rem;
+  }
 }

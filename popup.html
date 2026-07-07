@@ -10,15 +10,19 @@
   </head>
   <body class="popupBody" style="width:300px;">
     <h1>Rabbit Hole Explorer</h1>
-    <p>Session status:</p>
-    <p>Current session:</p>
-    <p>Pages tracked:</p>
-    <p>Time elapsed:</p>
+    <p>Session status: <span id='SessionStatusText'>Ready</span></p>
+    <p>Pages tracked:<span id="PagesTrackedVal">0</span></p>
+    <p>Time elapsed:<span id='TimeElapsedVal'></span></p>
     <h2 id='StartTime'></h2>
-    <button id='RabbitHole_Record'>Start/Stop</button>
-    <button id='RabbitHole_Index'>
-      <img src="assets/spiraleyerabbit_40ms.gif" style="width: 100px;">
-    </button>
+    <div class='popupActions'>
+      <button id='RabbitHole_Record' class='iconButton' aria-label='Start or stop recording'>
+        <img id='RabbitHole_Record_Icon' class='iconButtonIcon' src='assets/start_icon.svg' alt=''>
+      </button>
+      <button id='RabbitHole_Index' class='iconButton' aria-label='Open the explorer'>
+        <img id='RabbitHole_Index_Icon' class='iconButtonIcon' src="assets/spiraleyerabbit_40ms.gif" alt=''>
+        Home
+      </button>
+    </div>
     <script src="dist/popup.js"></script>
   </body>
 </html>

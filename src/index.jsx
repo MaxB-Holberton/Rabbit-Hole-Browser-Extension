@@ -2,16 +2,20 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
-import { GetRabbitHoleHistory } from "./history.js";
+import { RHGetSessionList, RHGetPage } from "./history.js";
+import { SectionRibbon, SessionDetailsPage,
+  ShowLastSession, SessionsFilterAndShow } from "./viewsessiondetails";
 
+import { SessionEditPage } from "./editsessionpage";
+import { SettingsPage, BlacklistEditPage, ReportBugPage, TimeoutSettingsPage, AccessibilitySettingsPage } from "./settingspage";
 
 function Header() {
   return (
     <header>
-      <nav>
-        <img src="assets/rbe_logo_390.png" alt="Rabbit Hole Explorer Static Logo" id="headerLogo" />
-        <h1>Rabbit Hole Explorer</h1>
-      </nav>
+    <nav>
+    <img src="assets/rbe_logo_390.png" alt="Rabbit Hole Explorer Static Logo" id="headerLogo" />
+    <h1>Rabbit Hole Explorer</h1>
+    </nav>
     </header>
   );
 }
@@ -20,18 +24,19 @@ function ViewNav() {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
+    RHGetSessionList().then(sessions => setSessions(sessions));
   }, []);
 
   return (
     <section className="rabbitHole">
       <div className="rabbitHole" id="counter">
-        <p>Topic:</p>
         <p>You have {sessions.length} rabbit holes!</p>
-        <p>
-          <Link to="/overview">Overview</Link> | <Link to="/recent">Most Recent</Link> |{' '}
-          <Link to="/previous">Previous</Link>
-        </p>
+        <div className="headerLinksRow" aria-label="View navigation">
+          <Link to="/overview" className="headerLink" id="overviewHeaderLink" aria-label="">Overview</Link>
+          <Link to="/recent" className="headerLink" id="recentHeaderLink">Most Recent</Link>
+          <Link to="/previous" className="headerLink" id="previousHeaderLink">Previous</Link>
+          <Link to="/settings" className="headerLink" id="settingsHeaderLink">Settings</Link>
+        </div>
       </div>
     </section>
   );
@@ -40,22 +45,25 @@ function ViewNav() {
 function OverviewView() {
   return (
     <>
-      <h2 id="white">My Rabbit Holes</h2>
-      <div>
-        <h3 id="white">Overview</h3>
-      </div>
-      <section className="rabbitHole">
-        <div className="rabbitHole">
-          <p>Ready to explore your rabbit holes?</p>
-          <p><b>Use the links above to switch views.</b></p>
-        </div>
-      </section>
-            <section className="rabbitHole">
-        <div className="rabbitHole">
-          <p><b>How does Rabbit Hole Explorer work?</b></p>
-          <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
-        </div>
-      </section>
+    <h2 id="white">My Rabbit Holes</h2>
+    {SectionRibbon('Overview')}
+    <section className="rabbitHole">
+    <div className="rabbitHole">
+    <p id="questionBold">Ready to explore your rabbit holes?</p>
+    <p>Use the links above to switch views.</p>
+    </div>
+    </section>
+    <section className="rabbitHole">
+    <div className="rabbitHole">
+    <p id="questionBold">How does Rabbit Hole Explorer work?</p>
+    <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
+    </div>
+    </section>
+    <div id="overviewPageContent">
+      <section id="overviewBannerSection">
+      <img src="assets/overview_banner_white.svg" alt="Rabbit Hole Explorer Overview Banner" id="overviewBanner" />
+    </section>
+    </div>
     </>
   );
 }
@@ -63,13 +71,22 @@ function OverviewView() {
 function MostRecentView() {
   return (
     <>
-      <h2 id="white">My Rabbit Holes</h2>
-      <div>
-        <h3 id="white">Most Recent Rabbit Hole</h3>
+      <div className="sessionEditHeader" id="recentPageHeader">
+        <h2 className="sessionEditHeading" id="recentPageHeading">My Rabbit Holes</h2>
+        {SectionRibbon('Most Recent Rabbit Hole')}
       </div>
-      <section className="rabbitHole">
-        {BuildSessionsDiv()}
+      <section className="rabbitHole sessionEditSection" id="recent">
+        <div className="sessionEditLayout" id="recentLayout">
+          <div className="rabbitHole sessionEditCard" id="recentCard">
+            {ShowLastSession()}
+          </div>
+        </div>
       </section>
+      <div id="recentPageContent">
+        <section id="recentBannerSection">
+          <img src="assets/recent_banner_white.svg" alt="Rabbit Hole Explorer Recent Banner" id="recentBanner" />
+      </section>
+      </div>
     </>
   );
 }
@@ -77,46 +94,24 @@ function MostRecentView() {
 function PreviousView() {
   return (
     <>
-    <h2 id="white">My Rabbit Holes</h2>
-    <div>
-    <h3 id="white">Previous Rabbit Holes</h3>
-    </div>
-    <section className="rabbitHole" id="previous">
-    {BuildSessionsDiv()}
-    </section>
+      <div className="sessionEditHeader" id="previousPageHeader">
+        <h2 className="sessionEditHeading" id="previousPageHeading">My Rabbit Holes</h2>
+        {SectionRibbon('Previous Rabbit Holes')}
+      </div>
+      <section className="rabbitHole sessionEditSection" id="previousPageSection">
+        <div className="sessionEditLayout" id="previousLayout">
+          <div className="rabbitHole sessionEditCard" id="previousCard">
+            {SessionsFilterAndShow()}
+          </div>
+        </div>
+      </section>
+      <div id="previousPageContent">
+          <section id="previousBannerSection">
+            <img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
+          </section>
+      </div>
     </>
   );
-}
-
-function BuildSessionsDiv() {
-  const [sessions, setSessions] = useState([]);
-
-  useEffect(() => {
-    GetRabbitHoleHistory().then(sessions => setSessions(sessions));
-  }, [])
-
-  const display_sessions = sessions.map((session, index) => {
-    const sessionPages = Array.isArray(session?.data) ? session.data : [];
-
-    return (
-      <div className="rabbitHole" key={index}>
-        <button>Edit</button>
-        <button>Delete</button>
-        <p><b>Topic: {session.title}</b></p>
-        <p><b>Date: {session.start_time_datetime}</b></p>
-        <p><b>Duration: {session.duration_string}</b></p>
-        <p><b>Pages:</b></p>
-        {sessionPages.map((item, index2) => (
-          <div key={index2}>
-            <p><a href={item.url}>{item.title}</a></p>
-          </div>
-        ))}
-        <button>Save</button>
-        <button>Share</button>
-      </div>
-    );
-  });
-  return display_sessions;
 }
 
 function AppShell() {
@@ -130,10 +125,17 @@ function AppShell() {
           <Route path="/overview" element={<OverviewView />} />
           <Route path="/recent" element={<MostRecentView />} />
           <Route path="/previous" element={<PreviousView />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings/blacklist" element={<BlacklistEditPage/>} />
+          <Route path="/settings/timeout" element={<TimeoutSettingsPage/>} />
+          <Route path="/settings/accessibility" element={<AccessibilitySettingsPage/>} />
+          <Route path="/settings/report-bug" element={<ReportBugPage/>} />
+          <Route path="/session/:session_id" element={<SessionDetailsPage />} />
+          <Route path="/session/:session_id/edit" element={<SessionEditPage />} />
         </Routes>
       </main>
       <footer>
-        <p id="footerP">2026 Rabbit Hole Explorer. Andrew Kasapidis, Uliana Deshin, Max Brook, Pavith Raj.</p>
+        <p id="footerP">Copyright © 2026 Andrew Kasapidis, Uliana Deshin, Max Brook, Pavith Raj. All rights reserved.</p>
       </footer>
     </>
   );
