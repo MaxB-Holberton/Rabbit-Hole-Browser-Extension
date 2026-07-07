@@ -19,12 +19,38 @@ function SettingsOptionsList() {
         <img src="./assets/settings_icon.svg" className="pageIcon" id="settingIcon"></img>
         <ul>
           <li id="settingsOptionBlacklistLink"><Link to="/settings/blacklist">Edit Blacklist</Link></li>
-          <li id="settingsOptionTimeoutLink"><Link to="/settings/timeout">Still Watching? Timeout</Link></li>
+          <li id="settingsOptionTimeoutLink"><Link to="/settings/timeout">Change Timeout</Link></li>
+          <li id="settingsOptionAccessibilityLink"><Link to="/settings/accessibility">Accessibility</Link></li>
           <li id="settingsOptionReportBugLink"><Link to="/settings/report-bug">Report a Bug</Link></li>
         </ul>
       </div>
     </>
   )
+}
+
+export function AccessibilitySettingsPage() {
+  return (
+    <>
+      <div className="sessionEditHeader" id="accessibilityPageHeader">
+        <h2 className="sessionEditHeading" id="accessibilityPageHeading">My Rabbit Holes</h2>
+        {SectionRibbon('Accessibility')}
+      </div>
+      <section className="rabbitHole sessionEditSection" id="accessibilityPageSection">
+        <div className="sessionEditLayout" id="accessibilityLayout">
+          <div className="rabbitHole sessionEditCard" id="accessibilityCard">
+            <p id="accessibilityDescription">Accessibility settings are coming soon.</p>
+            <p className="reportBugBodyText">Placeholder text: this page will include controls for improving readability, contrast, and keyboard navigation.</p>
+            <IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
+          </div>
+        </div>
+      </section>
+      <div id="previousPageContent">
+        <section id="previousBannerSection">
+          <img src="assets/previous_banner_white.svg" alt="Rabbit Hole Explorer Previous Banner" id="previousBanner" />
+        </section>
+      </div>
+    </>
+  );
 }
 
 export function ReportBugPage() {

@@ -8,16 +8,22 @@
   --primary-dark: #000000;
   --secondary-light: #ffffff;
   --secondary-dark: #eaded6;
+  --tertiary-lighter: #ffc396;
   --tertiary-light: #ffa360;
   --tertiary-dark: #e66100;
+  --start-lighter: #99deab;
   --start-light: #4de475;
   --start-dark: #00a22b;
   --stop-light: #ff9aa9;
   --stop-dark: #e13d55;
+  --error-lightest: #f09d86;
+  --error-lighter: #bf5b3f;
   --error-light: #9d2200;
   --error-dark: #5d0000;
   --info-light: #63baab;
   --info-dark: #006b5e;
+  --brown-lightest: #d6a1a1;
+  --brown-lighter: #b36969;
   --brown-light: #422020;
   --brown-dark: #2c1616;
 }
@@ -483,7 +489,8 @@ section.rabbitHole {
 #previousPageSection,
 #settings,
 #viewSessionSection,
-#blacklistPageSection {
+#blacklistPageSection,
+#timeoutPageSection {
   min-height: calc(100vh - var(--header-height) - 3vh - 230px);
   align-items: stretch;
 }
@@ -492,7 +499,8 @@ section.rabbitHole {
 #previousLayout,
 #settingsLayout,
 #viewSessionLayout,
-#blacklistLayout {
+#blacklistLayout,
+#timeoutLayout {
   height: 100%;
 }
 
@@ -500,7 +508,8 @@ section.rabbitHole {
 #previousCard,
 #settingsCard,
 #viewSessionCard,
-#blacklistEditorCard {
+#blacklistEditorCard,
+#timeoutEditorCard {
   min-height: 100%;
 }
 
@@ -941,6 +950,7 @@ button.sessionEditBackButton {
 /* settings page */
 .sessionMetadata #settingsOptionTimeoutLink,
 .sessionMetadata #settingsOptionBlacklistLink,
+.sessionMetadata #settingsOptionAccessibilityLink,
 .sessionMetadata #settingsOptionReportBugLink {
   font-size: 1.3rem;
   background-color: var(--info-light);
@@ -959,6 +969,15 @@ button.sessionEditBackButton {
   background-color: var(--stop-light);
   box-shadow: 3px 3px 0 var(--stop-dark);
 }
+
+.sessionMetadata #settingsOptionTimeoutLink {
+  background-color: var(--tertiary-light);
+  box-shadow: 3px 3px 0 var(--tertiary-dark);
+}
+
+.sessionMetadata #settingsOptionAccessibilityLink {
+  background-color: var(--error-lightest);
+}
 .sessionMetadata .editP {
   display: block;
   font-size: 1.2rem;
@@ -967,6 +986,7 @@ button.sessionEditBackButton {
 
 .sessionMetadata #settingsOptionTimeoutLink:hover,
 .sessionMetadata #settingsOptionBlacklistLink:hover,
+.sessionMetadata #settingsOptionAccessibilityLink:hover,
 .sessionMetadata #settingsOptionReportBugLink:hover {
   transform: translateY(-1px);
   box-shadow: 5px 5px 0 var(--primary-dark);
@@ -980,12 +1000,54 @@ button.sessionEditBackButton {
 
 .sessionMetadata #settingsOptionTimeoutLink:active,
 .sessionMetadata #settingsOptionBlacklistLink:active,
+.sessionMetadata #settingsOptionAccessibilityLink:active,
 .sessionMetadata #settingsOptionReportBugLink:active {
   transform: translateY(1px);
   filter: brightness(0.98);
 }
 #blacklistEditorCard {
   border: 3px solid black;
+}
+
+#timeoutEditorCard {
+  border: 3px solid black;
+  background: linear-gradient(180deg, #fff7ed 0%, #fff 100%);
+  box-shadow: 6px 6px 0 var(--tertiary-dark);
+  padding: 1.2rem 1.25rem 1.4rem;
+}
+
+#timeoutDescrip {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--brown-light);
+  background-color: var(--secondary-dark);
+  border: 2px solid black;
+  box-shadow: 3px 3px 0 var(--brown-lighter);
+  padding: 0.75rem 0.85rem;
+  margin: 0 0 1rem;
+}
+
+#timeoutInputLabel {
+  display: inline-flex;
+  color: var(--primary-light);
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  background-color: var(--start-lighter);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 var(--start-dark);
+  padding: 0.35rem 0.55rem;
+  margin: 0 0 0.5rem;
+}
+
+#timeoutInput {
+  display: block;
+  width: min(100%, 300px);
+  font-family: 'Cause', Verdana;
+  font-size: 1.05rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.4rem 0.55rem;
+  margin: 0 0 0.85rem;
 }
 
 #reportBugCard {
@@ -1098,6 +1160,34 @@ button.sessionEditBackButton {
   font-size: 1.2rem;
 }
 
+#previousCard #previousControlsDivider {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.7rem 0 0.95rem;
+}
+
+#previousCard .previousControlsDividerIcon {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+#previousCard .previousControlsDividerIconHover {
+  position: absolute;
+  opacity: 0;
+}
+
+#previousCard #previousControlsDivider:hover .previousControlsDividerIconForward {
+  opacity: 0;
+}
+
+#previousCard #previousControlsDivider:hover .previousControlsDividerIconHover {
+  opacity: 1;
+}
+
 #previousCard .previousControlsRow {
   display: flex;
   flex-wrap: wrap;
@@ -1116,6 +1206,70 @@ button.sessionEditBackButton {
   font-weight: 700;
 }
 
+#previousCard .previousTagSearchGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--tertiary-lighter);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.45rem 0.55rem;
+}
+
+#previousCard .previousTagSearchGroup .previousControlInput {
+  margin: 0;
+}
+
+#previousCard .previousDateRangeGroup {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  background-color: var(--error-lightest);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.45rem 0.55rem;
+}
+
+#previousCard .previousDateField {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#previousCard .previousDateField .previousControlInput {
+  margin: 0;
+}
+
+#previousCard .previousActionsGroup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background-color: var(--start-lighter);
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.45rem 0.55rem;
+  flex-basis: 100%;
+  width: fit-content;
+  margin: 0.35rem auto 0;
+}
+
+#previousCard .previousActionsButtonsRow,
+#previousCard .previousActionsImportRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+#previousCard .previousActionsGroup .iconButton,
+#previousCard .previousActionsGroup input[name="import_json"] {
+  margin: 0;
+}
+
 #previousCard .previousControlSelect,
 #previousCard .previousControlInput {
   font-family: 'Cause', Verdana;
@@ -1127,13 +1281,35 @@ button.sessionEditBackButton {
   color: var(--primary-light);
 }
 
+#previousCard input[name="import_json"] {
+  font-family: 'Cause', Verdana;
+  font-size: 1rem;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  padding: 0.2rem 0.25rem;
+  background-color: white;
+  color: var(--primary-light);
+}
+
+#previousCard input[name="import_json"]::file-selector-button {
+  font-family: 'Cause', Verdana;
+  font-weight: 700;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 black;
+  background-color: var(--info-light);
+  color: var(--primary-light);
+  padding: 0.2rem 0.45rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
 #previousCard .previousControlButton {
   font-family: 'Cause', Verdana;
   font-weight: 700;
 }
 
 #previousCard .previousSearchButton {
-  background-color: var(--start-light);
+  background-color: var(--secondary-dark);
   box-shadow: 3px 3px 0 var(--start-dark);
 }
 
