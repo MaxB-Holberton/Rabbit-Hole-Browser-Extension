@@ -31,6 +31,7 @@ const CATEGORY_KEYWORDS = {
     "docker",
     "w3schools",
     "geeksforgeeks",
+    "codecademy",
   ],
   gaming: [
     "steam",
