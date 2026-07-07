@@ -404,54 +404,74 @@ export function SessionsFilterAndShow() {
         </select>
       </span>
       <span className="previousControlsRow" id="previousControlsFilterRow">
-        <label for="tags">Search Tags: </label>
-        <input
-          className="previousControlInput"
-          name="tags"
-          type="search"
-          onChange={FilterItemInputChanged}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              ApplyFilters()
-            }
-          }}
-        />
-        <label for="start_date">Start Date: </label>
-        <input
-          className="previousControlInput"
-          name="start_date"
-          type="date"
-          onChange={FilterItemInputChanged}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              ApplyFilters()
-            }
-          }}
-        />
-        <label for="end_date">End Date: </label>
-        <input
-          className="previousControlInput"
-          name="end_date"
-          type="date"
-          onChange={FilterItemInputChanged}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              ApplyFilters()
-            }
-          }}
-        />
-        <IconButton className="previousControlButton previousSearchButton" iconSrc="assets/search_icon.svg" label ="Search for Sessions" onClick={() => { ApplyFilters() }}>Search</IconButton>
-        <IconButton className="previousControlButton previousClearButton" iconSrc="assets/clear_icon.svg" label="Clear Search" onClick={() => { ClearFilters() }}>Clear</IconButton>
-        <label for="import_json">Import JSON:</label>
-        <input
-        name="import_json"
-        type="file"
-        accept=".json"
-        onChange={ImportJsonFile}
-        />
+        <div className="previousTagSearchGroup">
+          <img className="iconImg" src="assets/tag_icon.svg" alt="" aria-hidden="true"></img>
+          <label htmlFor="tags">Search Tags: </label>
+          <input
+            className="previousControlInput"
+            id="tags"
+            name="tags"
+            type="search"
+            onChange={FilterItemInputChanged}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                ApplyFilters()
+              }
+            }}
+          />
+        </div>
+        <div className="previousDateRangeGroup">
+          <div className="previousDateField">
+            <img className="iconImg" src="assets/date_icon.svg" alt="" aria-hidden="true"></img>
+            <label htmlFor="start_date">Start Date: </label>
+            <input
+              className="previousControlInput"
+              id="start_date"
+              name="start_date"
+              type="date"
+              onChange={FilterItemInputChanged}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  ApplyFilters()
+                }
+              }}
+            />
+          </div>
+          <div className="previousDateField">
+            <label htmlFor="end_date">End Date: </label>
+            <input
+              className="previousControlInput"
+              id="end_date"
+              name="end_date"
+              type="date"
+              onChange={FilterItemInputChanged}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  ApplyFilters()
+                }
+              }}
+            />
+          </div>
+        </div>
+        <div className="previousActionsGroup">
+          <div className="previousActionsButtonsRow">
+            <IconButton className="previousControlButton previousSearchButton" iconSrc="assets/search_icon.svg" label ="Search for Sessions" onClick={() => { ApplyFilters() }}>Search</IconButton>
+            <IconButton className="previousControlButton previousClearButton" iconSrc="assets/clear_icon.svg" label="Clear Search" onClick={() => { ClearFilters() }}>Clear</IconButton>
+          </div>
+          <div className="previousActionsImportRow">
+            <label htmlFor="import_json">Import JSON:</label>
+            <input
+            id="import_json"
+            name="import_json"
+            type="file"
+            accept=".json"
+            onChange={ImportJsonFile}
+            />
+          </div>
+        </div>
       </span>
       {
         page_options.num !== "All" &&
@@ -462,6 +482,10 @@ export function SessionsFilterAndShow() {
           <button className="previousControlButton previousPagerButton" name="Last" onClick={PageItemInputChanged}>Last</button>
         </span>
       }
+      </div>
+      <div id="previousControlsDivider" aria-hidden="true">
+        <img className="previousControlsDividerIcon previousControlsDividerIconForward" src="assets/look_forward.svg" alt=""></img>
+        <img className="previousControlsDividerIcon previousControlsDividerIconHover" src="assets/look_both.gif" alt=""></img>
       </div>
       <section className="rabbitHole" id="previousSessionsGrid">
         {sessions.map((session, index) => {
