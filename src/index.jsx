@@ -45,19 +45,69 @@ function ViewNav() {
 function OverviewView() {
   return (
     <>
-    <h2 id="white">My Rabbit Holes</h2>
     {SectionRibbon('Overview')}
-    <section className="rabbitHole">
-    <div className="rabbitHole">
-    <p id="questionBold">Ready to explore your rabbit holes?</p>
-    <p>Use the links above to switch views.</p>
-    </div>
+    <section className="rabbitHole" id="overviewIntroSection">
+      <div className="rabbitHole" id="overviewIntroCard">
+        <p id="questionBold">Find <b>How to Use Instructions</b> and the <b>FAQ</b> below!</p>
+      </div>
     </section>
-    <section className="rabbitHole">
-    <div className="rabbitHole">
-    <p id="questionBold">How does Rabbit Hole Explorer work?</p>
-    <p>Rabbit Hole Explorer is a Chrome browser extension that helps you remember the websites you visit. When you press the 'start' button, the extension records your browser history until you press 'Stop'. Then, it will save your Rabbit Hole on this page, where you can edit or delete it. Finally, you can save the rabbit hole or even share it with others!</p>
-    </div>
+            <h2 id="white">How to Use Rabbit Hole Explorer</h2>
+    <section className="rabbitHole" id="overviewGuideSection">
+      <div className="rabbitHole" id="overviewGuideCard">
+
+        <ol id="overviewStepsList">
+          <li>Open the extension popup <img class="overviewIcon" src="./assets/rbe_logo_390.png" aria-label="Logo Image"></img>from Chrome.</li>
+          <li>Press <b>Start</b> <img class="overviewIcon" src="./assets/start_icon.png" aria-label="Start Button Image"></img>to begin recording the websites you visit.</li>
+          <li>Browse normally while the extension tracks your rabbit hole.</li>
+          <li>Press <b>Stop</b> <img class="overviewIcon" src="./assets/stop_icon.png" aria-label="Stop Button Image"></img> when you are done recording.</li>
+          <li>Press the <b>Home</b> <img class="overviewIcon" src="./assets/home_button_sc.png" aria-label="Home Button Image"></img> button to view your rabbit hole on the <b>Most Recent</b> <img class="overviewIcon" src="./assets/most_recent_sc.png" aria-label="Most Recent Button Image"></img> page.</li>
+          <li>Click on your rabbit hole to see more details and the edit <img class="overviewIcon" src="./assets/edit_icon.svg" aria-label="Edit Button Image"></img> and download <img class="overviewIcon" src="./assets/save_icon.svg" aria-label="Save Button Image"></img>buttons.</li>
+          <li><b>Edit</b> pages, tags, or the title if you want to clean up the rabbit hole.</li>
+          <li><b>Save</b> <img class="overviewIcon" src="./assets/save_icon.svg" aria-label="Save Button Image"></img>your changes so they are ready the next time you explore.</li>
+          <li>Use <b>Previous</b> <img class="overviewIcon" src="./assets/previous_sc.png" aria-label="Previous Button Image"></img> to find older rabbit holes you saved earlier.</li>
+          <li>Open <b>Settings</b><img class="overviewIcon" src="./assets/settings_sc.png" aria-label="Settings Button Image"></img>to change the blacklist, timeout, or accessibility options.</li>
+          
+        </ol>
+      </div>
+    </section>
+    <section className="rabbitHole" id="overviewScreenshotsSection">
+      <div className="overviewScreenshotGrid">
+        <div className="overviewScreenshotCard">
+          <p className="overviewScreenshotTitle">Pop-up Buttons</p>
+          <div className="overviewScreenshotPlaceholder" aria-label="Extension button screenshots">
+            <img src="./assets/popup_diagram.jpg" aria-label="Diagram of Popup"></img>
+          </div>
+        </div>
+        <div className="overviewScreenshotCard">
+          <p className="overviewScreenshotTitle">Most Recent Rabbit Hole</p>
+          <div className="overviewScreenshotPlaceholder" aria-label="Page screenshots">
+            <img src="./assets/recent_diagram.jpg" aria-label="Diagram of Recent page"></img>
+          </div>
+        </div>
+        <div className="overviewScreenshotCard">
+          <p className="overviewScreenshotTitle">Saved pages</p>
+          <div className="overviewScreenshotPlaceholder" aria-label="Page screenshots">
+            <img src="./assets/previous_diagram.jpg" aria-label="Diagram of Previous page"></img>
+          </div>
+        </div>
+      </div>
+    </section>
+                    <h2 id="white">FAQ</h2>
+    <section className="rabbitHole" id="overviewDetailSection">
+      <div className="rabbitHole" id="overviewDetailCard">
+        <p id="questionBold">What happens after you stop recording?</p>
+        <p>Rabbit Hole Explorer saves the session so you can look back at the sites you visited, rename the rabbit hole, and decide whether to keep it private or share it.</p>
+        <p>On the edit pages, you can update the title, add tags, remove pages, and organize the rabbit hole before saving.</p>
+      </div>
+    </section>
+    <section className="rabbitHole" id="overviewDetailSection">
+      <div className="rabbitHole" id="overviewDetailCard">
+        <p id="questionBold">Who can access my browser history after recording or saving it?</p>
+        <p>Your browser history is stored locally. That means that <b>only you can access your rabbit holes.</b> None of your browser history is saved onto an external server.</p>
+        <p>Nobody can access your data other than yourself. <b>The Rabbit Hole Explorer dev team cannot access any saved browser history.</b></p>
+        <p>The only way that someone else can access your rabbit hole is if you download it as a JSON or txt file and send it to them.</p>
+      
+      </div>
     </section>
     <div id="overviewPageContent">
       <section id="overviewBannerSection">

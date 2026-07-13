@@ -65,9 +65,16 @@ export function ReportBugPage() {
           <div className="rabbitHole sessionEditCard" id="reportBugCard">
             <p id="reportBugDescription">Found something broken or not working as expected?</p>
             <p className="reportBugBodyText">Send a quick note to the Rabbit Hole Explorer dev team and include what happened, what you expected, and any steps to reproduce it.</p>
+            <div className="chromeStore" id="reportBugEmailCard" aria-label="Google Support Link">
+              <p><b>Google Support Form</b></p>
+              <div className="reportBugLinkRow">
+                <a id="reportBugEmailLink" target="_blank" href="https://chromewebstore.google.com/detail/minboipknnbkihdbbihjfahaligkdeno/support?authuser=1">Click here for Rabbit Hole Explorer Google Support</a>
+                <img className="pageIcon" id="settingIcon" src="./assets/Google_Chrome_Web_Store_icon_2022.jpeg"></img>
+              </div>
+            </div>
             <div id="reportBugEmailCard" aria-label="Rabbit Hole Explorer support email">
               <p className="reportBugEmailLabel"><b>Contact email</b></p>
-              <a id="reportBugEmailLink">rabbitholeexplorerdevs@gmail.com</a>
+              <p id="reportBugEmailLink">rabbitholeexplorerdev@gmail.com</p>
             </div>
             <IconButton className="sessionEditBackButton" iconSrc="assets/back_icon.svg" label="Back" onClick={() => { window.location.href = `/index.html#/settings`; }} />
           </div>
