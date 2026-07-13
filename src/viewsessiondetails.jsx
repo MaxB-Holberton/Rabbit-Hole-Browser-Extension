@@ -39,7 +39,7 @@ async function SetLocalStorageData(evt) {
   if (!content || !session_key) {
     return;
   }
-  await chrome.storage.local.set({[session_key]: content});
+  await chrome.storage.local.set({ [session_key]: content });
   location.reload();
 }
 
@@ -143,19 +143,19 @@ export function SessionDetailsPage() {
         <div className="sessionEditLayout" id="viewSessionLayout">
           <div className="rabbitHole sessionEditCard" id="viewSessionCard">
             <div className="previousSessionCard" id="viewSessionContentCard">
-          <IconButton
-            className="previousSessionDelete"
-            iconSrc="assets/delete_icon.svg"
-            label="Delete Session"
-            onClick={async () => { await DeleteSessionFromDetails(page_data.session_key); }}
-          />
-          {ShowSessionMetadata(page_data)}
-          <br />
-          {ShowSessionTags(page_data)}
-          <br />
-          {ShowSessionPageList(page_data)}
-          <br />
-          <ShowSessionDetailBtns session={page_data} />
+              <IconButton
+                className="previousSessionDelete"
+                iconSrc="assets/delete_icon.svg"
+                label="Delete Session"
+                onClick={async () => { await DeleteSessionFromDetails(page_data.session_key); }}
+              />
+              {ShowSessionMetadata(page_data)}
+              <br />
+              {ShowSessionTags(page_data)}
+              <br />
+              {ShowSessionPageList(page_data)}
+              <br />
+              <ShowSessionDetailBtns session={page_data} />
             </div>
           </div>
         </div>
@@ -169,17 +169,17 @@ export function ShowLastSession() {
 
   function GetLastSessions(data) {
     if (data.length > 0) {
-      setLastSession((vals) => ({...vals, sessions:data, last:data[data.length - 1] }));
+      setLastSession((vals) => ({ ...vals, sessions: data, last: data[data.length - 1] }));
     }
     else {
-      setLastSession((vals) => ({ }));
+      setLastSession((vals) => ({}));
     }
   }
 
   async function DeleteRecentSession(session_key) {
-	  if (await DeleteSessionFunc(session_key)) {
-        RHGetSessionList().then((sessions) => GetLastSessions(sessions))
-	  }
+    if (await DeleteSessionFunc(session_key)) {
+      RHGetSessionList().then((sessions) => GetLastSessions(sessions))
+    }
   }
 
   useEffect(() => {
@@ -190,22 +190,22 @@ export function ShowLastSession() {
 
   return (
     <>
-    {sessions_list.last !== undefined ? (
-      <div className="rabbitHole previousSessionCard">
-      <IconButton
-      className="previousSessionDelete"
-      iconSrc="assets/delete_icon.svg"
-      label="Delete Session"
-      onClick={async () => { await DeleteRecentSession(sessions_list.last.session_key); }}
-      />
-      <Link className={"div-links"} to={`/session/${sessions_list.last.session_key}`}>
-      {ShowSessionMetadata(sessions_list.last)}
-      {ShowSessionTags(sessions_list.last)}
-      </Link>
-      </div>
-    ) : (
-      <p>No Recent Rabbit Holes!</p>
-    )}
+      {sessions_list.last !== undefined ? (
+        <div className="rabbitHole previousSessionCard">
+          <IconButton
+            className="previousSessionDelete"
+            iconSrc="assets/delete_icon.svg"
+            label="Delete Session"
+            onClick={async () => { await DeleteRecentSession(sessions_list.last.session_key); }}
+          />
+          <Link className={"div-links"} to={`/session/${sessions_list.last.session_key}`}>
+            {ShowSessionMetadata(sessions_list.last)}
+            {ShowSessionTags(sessions_list.last)}
+          </Link>
+        </div>
+      ) : (
+        <p>No Recent Rabbit Holes!</p>
+      )}
     </>
   );
 }
@@ -362,7 +362,7 @@ export function SessionsFilterAndShow() {
         new_page_offset -= pages_to_display;
       }
     }
-    setNewPagedData(new_page_offset,new_current_page);
+    setNewPagedData(new_page_offset, new_current_page);
   }
 
   async function DeleteSessionFromPrevious(session_key) {
@@ -386,102 +386,102 @@ export function SessionsFilterAndShow() {
   return (
     <>
       <div id="previousControlsPanel">
-      <span className="previousControlsRow" id="previousControlsPrimaryRow">
-        <label for="num">Sessions per page: </label>
-        <select className="previousControlSelect" defaultValue="All" name="num" onChange={PageItemInputChanged}>
-          {session_display_arr.map((val, idx) => {
-            return (
-              <option key={idx} val={val}>{`${val}`}</option>
-            );
-          })}
-        </select>
-        <label for="sort">Sort by: </label>
-        <select className="previousControlSelect" defaultValue="Old" name="sort" onChange={SortItemInputChanged}>
-          <option value="Old">Date: Old - New</option>
-          <option value="New">Date: New - Old</option>
-          <option value="Short">Time: Shortest - Longest</option>
-          <option value="Long">Time: Longest - Shortest</option>
-        </select>
-      </span>
-      <span className="previousControlsRow" id="previousControlsFilterRow">
-        <div className="previousTagSearchGroup">
-          <img className="iconImg" src="assets/tag_icon.svg" alt="" aria-hidden="true"></img>
-          <label htmlFor="tags">Search Tags: </label>
-          <input
-            className="previousControlInput"
-            id="tags"
-            name="tags"
-            type="search"
-            onChange={FilterItemInputChanged}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                ApplyFilters()
-              }
-            }}
-          />
-        </div>
-        <div className="previousDateRangeGroup">
-          <div className="previousDateField">
-            <img className="iconImg" src="assets/date_icon.svg" alt="" aria-hidden="true"></img>
-            <label htmlFor="start_date">Start Date: </label>
-            <input
-              className="previousControlInput"
-              id="start_date"
-              name="start_date"
-              type="date"
-              onChange={FilterItemInputChanged}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  ApplyFilters()
-                }
-              }}
-            />
-          </div>
-          <div className="previousDateField">
-            <label htmlFor="end_date">End Date: </label>
-            <input
-              className="previousControlInput"
-              id="end_date"
-              name="end_date"
-              type="date"
-              onChange={FilterItemInputChanged}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  ApplyFilters()
-                }
-              }}
-            />
-          </div>
-        </div>
-        <div className="previousActionsGroup">
-          <div className="previousActionsButtonsRow">
-            <IconButton className="previousControlButton previousSearchButton" iconSrc="assets/search_icon.svg" label ="Search for Sessions" onClick={() => { ApplyFilters() }}>Search</IconButton>
-            <IconButton className="previousControlButton previousClearButton" iconSrc="assets/clear_icon.svg" label="Clear Search" onClick={() => { ClearFilters() }}>Clear</IconButton>
-          </div>
-          <div className="previousActionsImportRow">
-            <label htmlFor="import_json">Import JSON:</label>
-            <input
-            id="import_json"
-            name="import_json"
-            type="file"
-            accept=".json"
-            onChange={ImportJsonFile}
-            />
-          </div>
-        </div>
-      </span>
-      {
-        page_options.num !== "All" &&
-        <span className="previousControlsRow" id="previousControlsPagerRow">
-          <button className="previousControlButton previousPagerButton" name="First" onClick={PageItemInputChanged}>First</button>
-          <button className="previousControlButton previousPagerButton" name="Prev" onClick={PageItemInputChanged}>Prev</button>
-          <button className="previousControlButton previousPagerButton" name="Next" onClick={PageItemInputChanged}>Next</button>
-          <button className="previousControlButton previousPagerButton" name="Last" onClick={PageItemInputChanged}>Last</button>
+        <span className="previousControlsRow" id="previousControlsPrimaryRow">
+          <label htmlFor="num">Sessions per page: </label>
+          <select className="previousControlSelect" defaultValue="All" name="num" onChange={PageItemInputChanged}>
+            {session_display_arr.map((val, idx) => {
+              return (
+                <option key={idx} val={val}>{`${val}`}</option>
+              );
+            })}
+          </select>
+          <label htmlFor="sort">Sort by: </label>
+          <select className="previousControlSelect" defaultValue="Old" name="sort" onChange={SortItemInputChanged}>
+            <option value="Old">Date: Old - New</option>
+            <option value="New">Date: New - Old</option>
+            <option value="Short">Time: Shortest - Longest</option>
+            <option value="Long">Time: Longest - Shortest</option>
+          </select>
         </span>
-      }
+        <span className="previousControlsRow" id="previousControlsFilterRow">
+          <div className="previousTagSearchGroup">
+            <img className="iconImg" src="assets/tag_icon.svg" alt="" aria-hidden="true"></img>
+            <label htmlFor="tags">Search Tags: </label>
+            <input
+              className="previousControlInput"
+              id="tags"
+              name="tags"
+              type="search"
+              onChange={FilterItemInputChanged}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  ApplyFilters()
+                }
+              }}
+            />
+          </div>
+          <div className="previousDateRangeGroup">
+            <div className="previousDateField">
+              <img className="iconImg" src="assets/date_icon.svg" alt="" aria-hidden="true"></img>
+              <label htmlFor="start_date">Start Date: </label>
+              <input
+                className="previousControlInput"
+                id="start_date"
+                name="start_date"
+                type="date"
+                onChange={FilterItemInputChanged}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    ApplyFilters()
+                  }
+                }}
+              />
+            </div>
+            <div className="previousDateField">
+              <label htmlFor="end_date">End Date: </label>
+              <input
+                className="previousControlInput"
+                id="end_date"
+                name="end_date"
+                type="date"
+                onChange={FilterItemInputChanged}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    ApplyFilters()
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <div className="previousActionsGroup">
+            <div className="previousActionsButtonsRow">
+              <IconButton className="previousControlButton previousSearchButton" iconSrc="assets/search_icon.svg" label="Search for Sessions" onClick={() => { ApplyFilters() }}>Search</IconButton>
+              <IconButton className="previousControlButton previousClearButton" iconSrc="assets/clear_icon.svg" label="Clear Search" onClick={() => { ClearFilters() }}>Clear</IconButton>
+            </div>
+            <div className="previousActionsImportRow">
+              <label htmlFor="import_json">Import JSON:</label>
+              <input
+                id="import_json"
+                name="import_json"
+                type="file"
+                accept=".json"
+                onChange={ImportJsonFile}
+              />
+            </div>
+          </div>
+        </span>
+        {
+          page_options.num !== "All" &&
+          <span className="previousControlsRow" id="previousControlsPagerRow">
+            <button className="previousControlButton previousPagerButton" name="First" onClick={PageItemInputChanged}>First</button>
+            <button className="previousControlButton previousPagerButton" name="Prev" onClick={PageItemInputChanged}>Prev</button>
+            <button className="previousControlButton previousPagerButton" name="Next" onClick={PageItemInputChanged}>Next</button>
+            <button className="previousControlButton previousPagerButton" name="Last" onClick={PageItemInputChanged}>Last</button>
+          </span>
+        }
       </div>
       <div id="previousControlsDivider" aria-hidden="true">
         <img className="previousControlsDividerIcon previousControlsDividerIconForward" src="assets/look_forward.svg" alt=""></img>
