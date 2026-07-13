@@ -3,13 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:index": "esbuild src/index.jsx --bundle --format=iife --outfile=dist/homepage.js --jsx=automatic",
-    "build:popup": "esbuild src/popup.js --bundle --format=iife --outfile=dist/popup.js",
-    "build:history": "esbuild src/history.js --bundle --format=iife --outfile=dist/history.js",
-    "build:background": "esbuild src/background.js --bundle --format=esm --outfile=dist/background.js",
+    "build:index": "esbuild src/index.jsx --bundle --format=iife --outfile=dist/homepage.js --jsx=automatic --define:process.env.NODE_ENV='\"production\"' --minify",
+    "build:popup": "esbuild src/popup.js --bundle --format=iife --outfile=dist/popup.js --define:process.env.NODE_ENV='\"production\"' --minify",
+    "build:history": "esbuild src/history.js --bundle --format=iife --outfile=dist/history.js --define:process.env.NODE_ENV='\"production\"' --minify",
+    "build:background": "esbuild src/background.js --bundle --format=esm --outfile=dist/background.js --define:process.env.NODE_ENV='\"production\"' --minify",
     "build": "npm run build:index && npm run build:popup && npm run build:history && npm run build:background && npm run build:content && npm run build:session",
-    "build:content": "esbuild src/content.js --bundle --format=iife --outfile=dist/content.js",
-    "build:session": "esbuild src/session.js --bundle --format=esm --outfile=dist/session.js",
+    "build:content": "esbuild src/content.js --bundle --format=iife --outfile=dist/content.js --define:process.env.NODE_ENV='\"production\"' --minify",
+    "build:session": "esbuild src/session.js --bundle --format=esm --outfile=dist/session.js --define:process.env.NODE_ENV='\"production\"' --minify",
+
+    "build:index:dev": "esbuild src/index.jsx --bundle --format=iife --outfile=dist/homepage.js --jsx=automatic",
+    "build:popup:dev": "esbuild src/popup.js --bundle --format=iife --outfile=dist/popup.js",
+    "build:history:dev": "esbuild src/history.js --bundle --format=iife --outfile=dist/history.js",
+    "build:background:dev": "esbuild src/background.js --bundle --format=esm --outfile=dist/background.js",
+    "build:content:dev": "esbuild src/content.js --bundle --format=iife --outfile=dist/content.js",
+    "build:session:dev": "esbuild src/session.js --bundle --format=esm --outfile=dist/session.js",
+    "build:dev": "npm run build:index:dev && npm run build:popup:dev && npm run build:history:dev && npm run build:background:dev && npm run build:content:dev && npm run build:session:dev",
+ 
     "test": "jest"
   },
   "dependencies": {
