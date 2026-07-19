@@ -191,9 +191,6 @@ button.iconButton.editSessionPageDeleteButton {
   font-size: 1rem;
   padding: 5px;
 }
-.editSessionPageTitleInput {
-  border: 3px solid var(--info-dark);
-}
 
 .editSessionPageTags {
   display: flex;
@@ -272,11 +269,6 @@ button.iconButton.editSessionPageDeleteButton {
   background-color: var(--secondary-dark);
   box-shadow: 3px 3px 0 black;
 }
-.sessionEditTagsBlock {
-  background-color: var(--info-dark);
-  border: 3px solid black;
-  padding: 8px;
-}
 button.iconButton.sessionEditDeleteButton {
   position: absolute;
   top: 0.75rem;
@@ -293,10 +285,6 @@ button.iconButton.sessionEditSaveButton {
   border: 2px solid black;
   border-radius: 2px;
   box-shadow: 3px 3px 0 var(--start-dark);
-}
-
-.editSessionPageUrlInput {
-  border: 3px solid var(--brown-light);
 }
 
 .editSessionPageCategoryLabel {
@@ -1274,38 +1262,47 @@ div.chromeStore#reportBugEmailCard {
   width: auto;
 }
 
-#recentCard {
+#recentCard,
+#previousCard,
+#viewSessionCard {
   padding-top: 1rem;
 }
 
-#recentCard .previousSessionCard {
-  margin: 0;
+#recentCard .previousSessionCard,
+#previousCard #previousSessionsGrid .previousSessionCard,
+#viewSessionContentCard {
   background-color: var(--secondary-dark);
   border: 3px solid black;
   box-shadow: 5px 5px 0 var(--start-dark);
 }
 
+#recentCard .previousSessionCard {
+  margin: 0;
+}
+
 #recentCard .previousSessionCard p,
-#recentCard .previousSessionCard span {
+#recentCard .previousSessionCard span,
+#previousCard #previousSessionsGrid .previousSessionCard p,
+#previousCard #previousSessionsGrid .previousSessionCard span {
   font-size: 1.15rem;
   line-height: 1.4;
 }
 
-#recentCard .div-links {
+#recentCard .div-links,
+#previousCard #previousSessionsGrid .div-links {
   color: var(--primary-light);
 }
 
-#recentCard button.iconButton.previousSessionDelete {
-  background-color: var(--stop-light);
-  box-shadow: 3px 3px 0 var(--stop-dark);
-}
-
-#recentCard .previousSessionCard:hover {
+#recentCard .previousSessionCard:hover,
+#previousCard #previousSessionsGrid .previousSessionCard:hover {
   box-shadow: 6px 6px 0 var(--start-dark);
 }
 
-#previousCard {
-  padding-top: 1rem;
+#recentCard button.iconButton.previousSessionDelete,
+#previousCard button.iconButton.previousSessionDelete,
+#viewSessionCard button.iconButton.previousSessionDelete {
+  background-color: var(--stop-light);
+  box-shadow: 3px 3px 0 var(--stop-dark);
 }
 
 #previousCard #previousControlsPanel {
@@ -1427,24 +1424,23 @@ div.chromeStore#reportBugEmailCard {
 }
 
 #previousCard .previousControlSelect,
-#previousCard .previousControlInput {
-  font-family: 'Cause', Verdana;
-  font-size: 1rem;
-  border: 2px solid black;
-  box-shadow: 2px 2px 0 black;
-  padding: 0.25rem 0.45rem;
-  background-color: white;
-  color: var(--primary-light);
-}
-
+#previousCard .previousControlInput,
 #previousCard input[name="import_json"] {
   font-family: 'Cause', Verdana;
   font-size: 1rem;
   border: 2px solid black;
   box-shadow: 2px 2px 0 black;
-  padding: 0.2rem 0.25rem;
   background-color: white;
   color: var(--primary-light);
+}
+
+#previousCard .previousControlSelect,
+#previousCard .previousControlInput {
+  padding: 0.25rem 0.45rem;
+}
+
+#previousCard input[name="import_json"] {
+  padding: 0.2rem 0.25rem;
 }
 
 #previousCard input[name="import_json"]::file-selector-button {
@@ -1484,40 +1480,8 @@ div.chromeStore#reportBugEmailCard {
   padding: 0;
 }
 
-#previousCard #previousSessionsGrid .previousSessionCard {
-  background-color: var(--secondary-dark);
-  border: 3px solid black;
-  box-shadow: 5px 5px 0 var(--start-dark);
-}
-
-#previousCard #previousSessionsGrid .previousSessionCard p,
-#previousCard #previousSessionsGrid .previousSessionCard span {
-  font-size: 1.15rem;
-  line-height: 1.4;
-}
-
-#previousCard #previousSessionsGrid .div-links {
-  color: var(--primary-light);
-}
-
-#previousCard #previousSessionsGrid .previousSessionCard:hover {
-  box-shadow: 6px 6px 0 var(--start-dark);
-}
-
-#previousCard button.iconButton.previousSessionDelete {
-  background-color: var(--stop-light);
-  box-shadow: 3px 3px 0 var(--stop-dark);
-}
-
-#viewSessionCard {
-  padding-top: 1rem;
-}
-
 #viewSessionContentCard {
   margin: 0;
-  background-color: var(--secondary-dark);
-  border: 3px solid black;
-  box-shadow: 5px 5px 0 var(--start-dark);
   padding: 1rem;
   padding-top: 46px;
 }
@@ -1563,11 +1527,6 @@ div.chromeStore#reportBugEmailCard {
 
 #viewSessionContentCard span {
   font-size: 1.12rem;
-}
-
-#viewSessionCard button.iconButton.previousSessionDelete {
-  background-color: var(--stop-light);
-  box-shadow: 3px 3px 0 var(--stop-dark);
 }
 
 #viewSessionContentCard a {
